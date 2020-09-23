@@ -1,0 +1,17 @@
+
+
+
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+
+' Backspace, Tab, Linefeed, Space
+If KeyAscii = 8 Or KeyAscii = 9 Or KeyAscii = 10 Or KeyAscii = 32 Then Exit Sub
+' Key values between 44 and 57 are
+' Comma(44), Minus(45), Period(46) And 0 through 9
+' Except (47) which is the / Character
+If KeyAscii < 44 Or KeyAscii > 57 Then
+    KeyAscii = 0
+ElseIf KeyAscii = 47 Then ' / Character
+    KeyAscii = 0
+End If
+
+End Sub

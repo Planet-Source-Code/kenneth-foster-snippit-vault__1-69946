@@ -1,0 +1,37 @@
+' need 5 checkboxs on form
+
+
+
+Private Sub Check1_GotFocus()
+ChkValue Check1
+End Sub
+
+Private Sub Check2_GotFocus()
+ChkValue Check2
+End Sub
+
+Public Function ChkValue(chk As CheckBox)
+Dim Control As Control
+
+'call from the GotFocus property of each checkbox
+'ex: ChkValue Check1
+
+For Each Control In Me
+If TypeOf Control Is CheckBox Then Control.Value = 0
+Next Control
+
+End Function
+
+Private Sub Check3_GotFocus()
+ChkValue Check3
+
+End Sub
+
+Private Sub Check4_GotFocus()
+ChkValue Check4
+End Sub
+
+Private Sub Check5_GotFocus()
+ChkValue Check5
+End Sub
+

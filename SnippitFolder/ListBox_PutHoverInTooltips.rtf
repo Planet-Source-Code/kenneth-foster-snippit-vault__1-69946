@@ -1,0 +1,35 @@
+
+
+
+Private Const LB_ITEMFROMPOINT As Long = &H1A9
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Long) As Long
+
+Private Sub Form_Load()
+    Dim i As Integer
+    
+    For i = 0 To 5
+        List1.AddItem "This is item #" & i
+    Next i
+End Sub
+
+Private Sub List1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Dim lR As Long
+    
+    lR = (CLng(X / Screen.TwipsPerPixelX) And &HFFFF) Or (&H10000 * CLng(Y / Screen.TwipsPerPixelY))
+    'High word = Y position in pixels, Low Word = X psoition in pixels
+    'X and Y are divided by Screen.TwipsPerPixelX and Screen.TwipsPerPixelY to obtain the pixel position
+    'this can be simplified by changing the form's Scale Mode to twips:
+    'lR = (CLng(X ) And &HFFFF) Or (&H10000 * CLng(Y))
+    'X and Y are converted with CLNG() to prevent evil type coersion
+
+    lR = SendMessage(List1.hWnd, LB_ITEMFROMPOINT, 0&, ByVal lR)
+   
+    If lR > -1 Then
+        lR = lR And &H7FFF
+        List1.ToolTipText = List1.List(lR)
+        'lR now contains the list index of the item under the mouse
+        'It may be converted to an integer without problems
+    End If
+End Sub
+

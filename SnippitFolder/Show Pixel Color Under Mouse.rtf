@@ -1,0 +1,73 @@
+Open a new project with a form.
+Add two text boxes named Text1 and Text2.
+Add a picturebox named Picture1.
+Copy the code below into the code section of the form.
+Code will position objects in form.
+
+
+Option Explicit
+
+Private Toggle As Boolean
+
+Private Type POINTAPI
+    X As Long
+    Y As Long
+End Type
+
+Private Declare Function GetCursorPos Lib "USER32" (lpPoint As POINTAPI) As Long
+Private Declare Function GetPixel Lib "gdi32.dll" (ByVal hdc As Long, ByVal nXPos As Long, ByVal nYPos As Long) As Long
+Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hdc As Long) As Long
+Private Declare Function GetWindowDC Lib "USER32" (ByVal hWnd As Long) As Long
+Private Declare Function GetDesktopWindow Lib "USER32" () As Long
+
+Private Sub Form_Load()
+Me.Move 0, 0, 2715, 2100
+Text1.Move 0, 0, 2565, 285
+Text2.Move 0, 300, 2565, 285
+Picture1.Move 0, 600, 2564, 465
+With Me
+    .AutoRedraw = True
+    .CurrentX = 9: .CurrentY = 1125
+    Me.Print "Position mouse pointer in this area,"
+    .CurrentX = 9: .CurrentY = 1290
+    Me.Print "hold left mouse button down, move"
+    .CurrentX = 9: .CurrentY = 1455
+    Me.Print "mouse to color and release button."
+End With
+End Sub
+
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+'turn toggle off when left mouse button is released
+If Button = 1 Then Toggle = False
+End Sub
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+'turn toggle on when left mouse button is pressed over form
+If Button = 1 Then Toggle = True
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Dim mXY As POINTAPI, mHc As Long, rgbV As Long, mDC As Long
+Dim R As Byte, G As Byte, B As Byte, rv As Long
+Dim oXY As POINTAPI, HexVal As String
+If Toggle Then
+    rv = GetCursorPos(mXY) 'get mouse position
+    mHc = GetDesktopWindow() 'get a handle to screen
+    mDC = GetWindowDC(mHc) 'get device context to screen
+    rgbV = GetPixel(mDC, mXY.X, mXY.Y) 'get pixel color
+    rv = ReleaseDC(mHc, mDC) ' release device context
+    '---convert color value from long to hex/rgb-----------------------
+    HexVal = Hex(Val(rgbV))
+    If Len(HexVal) < 6 Then
+        HexVal = String(6 - Len(HexVal), "0") + HexVal
+    End If
+    R = CLng("&H" + Mid(HexVal, 1, 2)) 'red color value
+    G = CLng("&H" + Mid(HexVal, 3, 2)) 'green color value
+    B = CLng("&H" + Mid(HexVal, 5, 2)) 'blue color value
+    '--display information-----------------------------------------------
+    Me.Caption = "(x,y)=" & mXY.X & "," & mXY.Y 'mouse position in title bar
+    Picture1.BackColor = rgbV 'display color in picture box
+    Text1.Text = "RGB= " & R & "," & G & "," & B 'show RGB values
+    Text2.Text = "Hex= " & HexVal 'show hex color value
+End If
+End Sub

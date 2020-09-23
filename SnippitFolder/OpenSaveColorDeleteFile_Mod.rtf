@@ -1,0 +1,323 @@
+Option Explicit
+
+  ' ***************************************************************************
+   ' Project:       OpenSaveFiles-Color dialog
+   '
+   ' Module:        modOpenSave
+   '
+   ' Description:   Open and save text files.Also has color dialog.Will add
+   '                vertical scoll bar as needed and will set left,right
+   '                margins of textbox and get RGB of color. File exists also included.
+   '
+   ' ===========================================================================
+   '    DATE      NAME             DESCRIPTION
+   ' -----------  ---------------  ---------------------------------------------
+   ' 28-JUL-2004  Ken Foster       Module created
+   ' ***************************************************************************
+
+Private Declare Function ShowScrollBar Lib "user32" (ByVal hWnd As Long, ByVal wBar As Long, ByVal bShow As Long) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function SendMessageLong Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function TranslateColor Lib "olepro32.dll" Alias "OleTranslateColor" (ByVal clr As OLE_COLOR, ByVal palet As Long, Col As Long) As Long
+
+Private Const SB_VERT = 1
+Private Const EM_GETFIRSTVISIBLELINE = &HCE
+Private Const EM_GETLINECOUNT = &HBA
+Private Const EM_GETRECT = &HB2
+
+Private Declare Function DeleteFile Lib "kernel32.dll" Alias "DeleteFileA" (ByVal lpFileName As String) As Long
+Private Declare Function CHOOSECOLOR Lib "comdlg32.dll" Alias "ChooseColorA" (pChoosecolor As CHOOSECOLOR) As Long
+Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameA" (pOpenfilename As OPENFILENAME) As Long
+Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameA" (pOpenfilename As OPENFILENAME) As Long
+Private strfileName As OPENFILENAME
+
+Private Type RECT
+  Left As Long
+  top As Long
+  Right As Long
+  Bottom As Long
+End Type
+
+Private Type OPENFILENAME
+  lStructSize As Long
+  hwndOwner As Long
+  hInstance As Long
+  lpstrFilter As String
+  lpstrCustomFilter As String
+  nMaxCustFilter As Long
+  nFilterIndex As Long
+  lpstrFile As String
+  nMaxFile As Long
+  lpstrFileTitle As String
+  nMaxFileTitle As Long
+  lpstrInitialDir As String
+  lpstrTitle As String
+  flags As Long
+  nFileOffset As Integer
+  nFileExtension As Integer
+  lpstrDefExt As String
+  lCustData As Long
+  lpfnHook As Long
+  lpTemplateName As String
+End Type
+
+Private Type CHOOSECOLOR
+  lStructSize As Long
+  hwndOwner As Long
+  hInstance As Long
+  rgbResult As Long
+  lpCustColors As String
+  flags As Long
+  lCustData As Long
+  lpfnHook As Long
+  lpTemplateName As String
+End Type
+
+Private Const EM_SETMARGINS = &HD3
+Private Const EC_LEFTMARGIN = &H1
+Private Const EC_RIGHTMARGIN = &H2
+
+Private Sub DialogFilter(WantedFilter As String)
+   Dim intLoopCount As Integer
+
+   strfileName.lpstrFilter = ""
+
+   For intLoopCount = 1 To Len(WantedFilter)
+      If Mid(WantedFilter, intLoopCount, 1) = "|" Then strfileName.lpstrFilter = _
+      strfileName.lpstrFilter + Chr(0) Else strfileName.lpstrFilter = _
+      strfileName.lpstrFilter + Mid(WantedFilter, intLoopCount, 1)
+   Next intLoopCount
+   strfileName.lpstrFilter = strfileName.lpstrFilter + Chr(0)
+End Sub
+  
+Public Function Color(frm As Form, ctl As Control)
+   '================== put on main form ==================
+   'Dim CustomColors() As Byte   --- goes in declare section
+   '---------------------------------------------------------
+   'Private Sub Form_Load()
+   'ReDim CustomColors(0 To 16 * 4 - 1) As Byte
+   'Dim i As Integer
+
+   'For i = LBound(CustomColors) To UBound(CustomColors)
+   'CustomColors(i) = 0
+   'Next i
+
+   'End Sub
+   '=====================================================
+   'Example of call : Color Me, Picture1
+
+   Dim NewColor As Long
+
+   NewColor = ShowColor(frm)
+
+   If NewColor <> -1 Then ctl.BackColor = NewColor  'make .BackColor whatever you need
+
+End Function
+
+Public Function OpenFile(tPathName As TextBox, tContents As TextBox)
+   'ex: OpenFile Text1,text2
+
+   Dim FileLength
+   Dim var1 As String
+   Dim fFile As Integer
+
+   tPathName = FileNametoOpen("Select a Text file...", "Text Files (*.txt)|*.txt" + Chr$(0) + "All Files (*.*)|*.*", "*.*")
+
+   If tPathName = "" Then Exit Function
+   fFile = FreeFile
+   Open tPathName For Input As #fFile
+   FileLength = LOF(fFile)
+   var1 = Input(FileLength, #fFile)
+    tContents = var1
+   Close #fFile
+
+   ShowScrollBars tContents  'add vertical scrollbar
+
+   LeftMargin tContents.hWnd, 10  'set left margin
+   RightMargin tContents.hWnd, 10  'set right margin
+
+End Function
+
+Public Function SaveFile(tPath As TextBox, tContents As TextBox)
+   'ex: SaveFile Text1,text2
+
+   Dim fileNum As Integer
+   Dim xPath As String
+   Dim iResponse As String
+
+    tPath = FileNametoSave("Text Files (*.txt)|*.txt", "*.txt", "Save Your Text file...")
+   xPath = tPath
+   If xPath = "" Then Exit Function
+
+   If FileExists(xPath) = True Then
+      iResponse = MsgBox("File Exists!! Do you want to overwrite file?", vbYesNo, "File Exists")
+      If iResponse = vbNo Then Exit Function
+   End If
+
+   fileNum = FreeFile() 'Set fileNum to available file number
+   Open xPath For Output As #fileNum 'Open file
+   Print #fileNum, tContents 'Write data
+   Close #fileNum 'Close File
+   MsgBox "File Saved " & tPath
+End Function
+
+Public Sub ShowScrollBars(theTextbox As TextBox)
+   'make sure multiline is true for the textbox
+   'example call:  ShowScrollBars  Text1
+
+   Dim firstVisibleLine As Long
+   Dim R As RECT
+   Dim numberOfLines As Long
+   Dim numberOfVisibleLines As Long
+   Dim rectHeight As Long
+   Dim lineHeight As Long
+   Dim hWnd As Long
+
+   hWnd = theTextbox.hWnd
+
+   firstVisibleLine = SendMessage(hWnd, EM_GETFIRSTVISIBLELINE, 0, 0)
+
+   If firstVisibleLine <> 0 Then
+      ShowScrollBar hWnd, SB_VERT, 1
+   Else
+      numberOfLines = SendMessage(hWnd, EM_GETLINECOUNT, 0, 0)
+      SendMessage hWnd, EM_GETRECT, 0, R
+      rectHeight = R.Bottom - R.top
+      lineHeight = theTextbox.Parent.TextHeight("W") / Screen.TwipsPerPixelY
+      numberOfVisibleLines = rectHeight / lineHeight
+
+      If numberOfVisibleLines < numberOfLines Then
+         ShowScrollBar hWnd, SB_VERT, 1
+      Else
+         ShowScrollBar hWnd, SB_VERT, 0
+      End If
+   End If
+End Sub
+Public Function FileExists(Fname As String) As Boolean
+
+   If Fname = "" Or Right(Fname, 1) = "\" Then
+      FileExists = False
+      Exit Function
+   End If
+
+   FileExists = (Dir(Fname) <> "")
+
+End Function
+
+Public Sub LeftMargin(hWnd As Long, n As Integer)
+   SendMessageLong hWnd, EM_SETMARGINS, EC_LEFTMARGIN, n
+End Sub
+
+Public Sub RightMargin(hWnd As Long, n As Integer)
+   SendMessageLong hWnd, EM_SETMARGINS, EC_RIGHTMARGIN, n * &H10000
+End Sub
+
+Public Sub GetRGB(R As Integer, G As Integer, B As Integer, ByVal Color As Long)
+    Dim TempValue As Long
+
+    'First translate the color from a long v
+    '     alue to a short value
+    TranslateColor Color, 0, TempValue
+
+    'Calculate the red, green, and blue valu
+    '     es from the short value
+    R = TempValue And &HFF&
+    G = (TempValue And &HFF00&) / 2 ^ 8
+    B = (TempValue And &HFF0000) / 2 ^ 16
+End Sub
+
+Public Sub EliminateFile(TheFile As String)
+Dim FileLength As Integer
+Dim bsB As String
+Dim rtval As Long  ' return value
+Dim fFile As String
+
+'Open file and overwrite
+fFile = FreeFile
+Open TheFile For Binary As #fFile
+For FileLength = 1 To LOF(1)
+   bsB = LOF(1) - FileLength + 1
+   Put #fFile, bsB, Chr$(FileLength Mod 255)
+Next FileLength
+Close #fFile
+
+'Delete file
+rtval = DeleteFile(TheFile)
+If rtval = 1 Then
+MsgBox "File deleted successfully."
+Else
+MsgBox "Error"
+End If
+
+End Sub
+'Support Functions
+'========================================
+   'Use the OpenFile Function ,not this function
+   '========================================
+   Private Function FileNametoOpen(Optional strDialogTitle As String = "Open", Optional strFilter As String = "All Files|*.*", Optional strDefaultExtention As String = "*.*") As String
+   Dim lngReturnValue As Long
+   Dim intRest As Integer
+
+   strfileName.lpstrInitialDir = App.Path & "\Temp" 'set open dir here
+   strfileName.lpstrTitle = strDialogTitle
+   strfileName.lpstrDefExt = strDefaultExtention
+   DialogFilter (strFilter)
+   strfileName.hInstance = App.hInstance
+   strfileName.lpstrFile = Chr(0) & Space(259)
+   strfileName.nMaxFile = 260
+   strfileName.flags = &H4
+   strfileName.lStructSize = Len(strfileName)
+   lngReturnValue = GetOpenFileName(strfileName)
+   FileNametoOpen = strfileName.lpstrFile
+
+End Function
+   '================================
+   'Use the SaveFile  Function, not this function
+   '=================================
+   Private Function FileNametoSave(strFilter As String, strDefaultExtention As String, Optional strDialogTitle As String = "Save") As String
+   Dim lngReturnValue As Long
+   Dim intRest As Integer
+
+   strfileName.lpstrInitialDir = App.Path & "\Temp"  'set save dir here
+   strfileName.lpstrTitle = strDialogTitle
+   strfileName.lpstrDefExt = strDefaultExtention
+   DialogFilter (strFilter)
+   strfileName.hInstance = App.hInstance
+   strfileName.lpstrFile = Chr(0) & Space(259)
+   strfileName.nMaxFile = 260
+   strfileName.flags = &H80000 Or &H4
+   strfileName.lStructSize = Len(strfileName)
+   lngReturnValue = GetSaveFileName(strfileName)
+   FileNametoSave = strfileName.lpstrFile
+
+End Function
+   '=============================================
+   'use Color function not this one
+   '=============================================
+   Private Function ShowColor(frm As Form) As Long
+   Dim CC As CHOOSECOLOR
+   Dim Custcolor(16) As Long
+   Dim lReturn As Long
+   Dim CustomColors() As Byte
+
+   'set the structure size
+   CC.lStructSize = Len(CC)
+   'Set the owner
+   CC.hwndOwner = frm.hWnd
+   'set the application's instance
+   CC.hInstance = App.hInstance
+   'set the custom colors (converted to Unicode)
+   CC.lpCustColors = StrConv(CustomColors, vbUnicode)
+   'no extra flags
+   CC.flags = 0  'set to 0 = define custom colors unselected. 2= define custom colors selected
+
+   'Show the 'Select Color'-dialog
+   If CHOOSECOLOR(CC) <> 0 Then
+      ShowColor = CC.rgbResult
+      CustomColors = StrConv(CC.lpCustColors, vbFromUnicode)
+   Else
+      ShowColor = -1
+   End If
+
+End Function
+

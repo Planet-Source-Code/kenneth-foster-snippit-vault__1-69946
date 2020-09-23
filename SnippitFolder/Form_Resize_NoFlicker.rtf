@@ -1,0 +1,26 @@
+
+
+
+Private Sub Form_Resize()
+Select Case Me.WindowState
+Case vbMinimized
+   Exit Sub
+Case vbNormal, vbMaximized
+  If Me.Width < 5000 Or Me.Height < 6000 Then  'if too small...
+     With Me.tmrWait 'smooth w/timer
+        .Enabled = False 'turn timer off
+        DoEvents 'screen catch up
+        .Enabled = True 'restart timer
+     End With
+  Exit Sub 'let timer do work
+  End If
+' 'other control arrangement code goes her ' e. '
+End Select
+End Sub
+
+Private Sub tmrWait_Timer()
+   Me.tmrWait.Enabled = False ' 'do nothing if minimized '
+   If Me.WindowState = vbMinimized Then Exit Sub ' 'resize to minimum dims '
+   If Me.Width < 5000 Then Me.Width = 5000
+   If Me.Height < 6000 Then Me.Height = 6000
+End Sub

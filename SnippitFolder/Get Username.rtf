@@ -1,0 +1,22 @@
+'Put in Module
+
+Declare Function GetUserName Lib "advapi32.dll" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long) As Long
+'===============================
+
+Dim username As String
+Dim slength As Long
+Dim retval As Long
+
+Private Sub Command1_Click()
+
+username = Space(255)
+slength = 255
+retval = GetUserName(username, slength)  ' slength is now the length of the returned string
+username = Left(username, slength - 1)  ' extract the returned info from the buffer
+
+Text1 = "The name of the current user is " + username
+
+End Sub
+
+
+

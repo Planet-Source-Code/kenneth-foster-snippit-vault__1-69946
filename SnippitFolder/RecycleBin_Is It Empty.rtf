@@ -1,0 +1,21 @@
+Private Type SHQUERYRBINFO
+    cbSize As Long
+    i64SizeLo As Long
+    i64SizeHi As Long
+    i64NumItemsLo As Long
+    i64NumItemsHi As Long
+End Type
+
+
+Private Declare Function SHQueryRecycleBin Lib "shell32" Alias _
+"SHQueryRecycleBinA" (ByVal pszRootPath As String, _
+        pSHQueryRBInfo As SHQUERYRBINFO) As Long
+
+Private Sub Command1_Click()
+Dim RB As SHQUERYRBINFO
+
+    RB.cbSize = Len(RB)
+    Call SHQueryRecycleBin("c:\", RB)
+    MsgBox "There are " & RB.i64NumItemsLo & " in the Recycle bin. The total size of which is " & _
+            RB.i64SizeLo
+End Sub

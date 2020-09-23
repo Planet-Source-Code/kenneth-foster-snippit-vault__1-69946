@@ -1,0 +1,39 @@
+Private Sub RemoveDuplicates(lst As ListView) 
+    Dim lRet As ListItem
+    Dim strTemp As String
+    Dim intCnt As Integer
+    intCnt = 0
+
+
+    Do While intCnt <= lst.ListItems.Count - 1
+        
+        intCnt = intCnt + 1
+        'Save the text that was in the listvew i
+        '     ndex
+        strTemp = lst.ListItems.Item(intCnt).Text
+        
+
+
+        Do
+            lst.ListItems.Item(intCnt).Text = "" 'Remove the text inside the specific index
+            'Use the FindItem() call to search for t
+            '     he specific item
+            Set lRet = lst.FindItem(strTemp, lvwText, lvwPartial)
+            'If the item is found, then it is a dupl
+            '     icate and is removed
+
+
+            If Not lRet Is Nothing Then
+                lst.ListItems.Remove (lRet.Index)
+            End If
+        Loop While Not lRet Is Nothing 'If no item is found the loop is exited
+        
+        lst.ListItems.Item(intCnt).Text = strTemp 'reset the listitem index text back To what it was, and Then continue
+        Debug.Print intCnt
+
+
+        DoEvents 'Added To ensure that the application does Not lock up when doing large amounts of data.
+            
+        Loop
+    End Sub
+

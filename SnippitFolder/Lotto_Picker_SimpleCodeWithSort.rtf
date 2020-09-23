@@ -1,0 +1,75 @@
+'Simple Lotto picker program with sort
+'one command button and lblPick array 0 thru 5
+'============================
+Option Explicit 
+
+Dim deck(1 To 64) as String 
+Dim picks(5) as Integer 
+Dim a(6) as Integer 
+
+Private Sub Command1_Click() 
+Dim X as Integer 
+
+Num_Pick 
+
+For X = 0 To 5 
+      picks(X) = deck(X + 1) 
+Next X 
+
+Sort_num   '  sorts picks()  in numerical order and puts into a() 
+
+  For X = 0 To 5 
+       lblPick(X).Caption = a(X + 1) 
+  Next X 
+
+End Sub 
+
+Private Sub Num_Pick() 
+
+Dim n as Integer 
+Dim temp as Integer 
+Dim i as Integer 
+Dim temp1 as Integer 
+
+Randomize Timer 
+
+For n = 1 To 64 
+    deck(n) = n 
+Next n 
+
+For i = 0 To 9 
+
+    For temp = 1 To 64 
+        n = Int((64 * Rnd) + 1) 
+               temp1 = deck(temp) 
+        deck(temp) = deck(n) 
+        deck(n) = temp1 
+    Next temp 
+Next i 
+End Sub 
+
+Private Sub Sort_num() 
+Dim temp as Integer 
+Dim n as Integer 
+Dim i as Integer, i2 as Integer, i3 as Integer 
+Dim z as Integer 
+
+    For i = 1 To 6 
+        a(i) = picks(i - 1) 
+    Next i 
+
+    For i2 = 1 To 6 
+
+        For i3 = 0 To 5 
+
+            If a(i3) > a(i3 + 1) Then 
+                temp = a(i3) 
+                a(i3) = a(i3 + 1) 
+                a(i3 + 1) = temp 
+            End If 
+        Next i3 
+    Next i2 
+
+End Sub 
+
+

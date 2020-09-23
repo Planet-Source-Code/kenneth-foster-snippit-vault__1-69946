@@ -1,0 +1,40 @@
+'**************************************
+' Name: ____A Listbox Rearrange With Mou
+'     se
+' Description:This code allows you To mo
+'     ve items in a list box just using the mo
+'     use. Every Line commented. It is very si
+'     mple. I have searched high And low For a
+'     code that JUST DOES THIS without Any oth
+'     er jargon but couldn't find Any so I mad
+'     e it And posted it. Please give me sugge
+'     stions/comments
+' By: Michael Anderson
+'
+'This code is copyrighted And has limited warranties.Please see 
+'http://www.Planet-Source-Code.com/xq/ASP/txtCode    'Id.44151/lngWId.1/qx/vb/scripts/ShowCode .htm For details.
+'**************************************
+'add a listbox (list1) And some values in it!!!!!  
+'Thats it!!!
+Dim thing1 As String   'declaring the list item To move
+Dim thing2 As String   'declaring the list item it is replacing
+Dim ind As Integer       'declaring the index of the item you wish To move
+
+Public Sub List1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    If Button = 1 Then           'left mousebutton is down
+        thing1 = List1.Text      'the list item you are moving is Set
+        ind = List1.ListIndex    'the index is Set
+    End If
+End Sub
+
+Private Sub List1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    If thing1 = List1.Text Then Exit Sub   'to stop the program from continuously doing func            
+    If thing1 = "" Then Exit Sub      'to stop the program from continuously doing  functions
+    thing2 = List1.Text      'list item you are replacing is Set
+    List1.List(ind) = thing2      'move the item above/below the item you are moving
+    ' To its New location
+       ind = List1.ListIndex        'set the New list index of the item you  are moving
+    List1.List(ind) = thing1     'put the item you are moving in its New  location
+End Sub
+

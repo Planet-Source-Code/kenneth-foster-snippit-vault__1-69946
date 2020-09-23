@@ -1,0 +1,31 @@
+'put in module
+
+Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (pDst As Any, pSrc As Any, ByVal ByteLen As Long)
+
+'--------------------------------------
+'example of function Call
+
+'Private Sub Command1_Click()
+'Text1.Text = AddToString(Text1.Text, Text2.Text)
+'End Sub
+'------------------------------------------
+
+Function AddToString(St As String, ToAdd As String, Optional NumTimes As Long = 1) As String
+    Dim LC As Long, StrLoc As Long
+    AddToString = String$((Len(ToAdd) * NumTimes) + Len(St), 0) 'For CopyMemory() to work, the string must be padded With nulls to the desired size
+    CopyMemory ByVal StrPtr(AddToString), ByVal StrPtr(St), LenB(St) 'Copy the original string to the return code
+    StrLoc = StrPtr(AddToString) + LenB(St) 'Memory Location = Location of return code + size of original string
+    'We use LenB() because strings are actua
+    '     lly twice as long as Len() says when sto
+    '     red in memory
+
+
+    For LC = 1 To NumTimes
+        CopyMemory ByVal StrLoc, ByVal StrPtr(ToAdd), LenB(ToAdd) 'Copy the source String to the return code
+        StrLoc = StrLoc + LenB(ToAdd) 'Add the size of the String to the pointer
+
+
+        'DoEvents 'Comment this out If you don't plan To use huge repeat values, you'll Get a nice speed boost
+        Next LC
+    End Function
+

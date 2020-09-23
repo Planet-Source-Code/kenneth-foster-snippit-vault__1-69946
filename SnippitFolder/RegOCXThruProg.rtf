@@ -1,0 +1,30 @@
+Add a module To your project named "modMain" 
+--------------------------------------------- 
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd as Long, ByVal lpOperation as String, ByVal lpFile as String, ByVal lpParameters as String, ByVal lpDirectory as String, ByVal nShowCmd as Long) as Long 
+
+Add a text box And a timer 
+---------------------------- 
+text box text For example your ocx Name "comdlg32.ocx" 
+timer1 interval = "5000" 
+
+The code 
+---------- 
+Private Sub Form_Load() 
+
+Timer1.Enabled = True 
+
+End Sub 
+
+Private Sub Form_Unload(Cancel as Integer) 
+Cancel = 1 
+
+End Sub 
+
+Private Sub Timer1_Timer() 
+ShellExecute Me.hwnd, "Open", "regsvr32.exe", Text1.Text, 0, 1 
+
+Timer1.Enabled = False 
+
+End Sub 
+
+

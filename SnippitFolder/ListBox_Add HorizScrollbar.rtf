@@ -1,0 +1,35 @@
+'Add to a Module
+Public Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+ Public Const LB_SETHORIZONTALEXTENT = &H194
+
+'Put on Form
+'Place a listbox(List1) on Form
+Private Sub Form_Load()
+
+List1.AddItem "Kenneth Foster was here:"
+List1.AddItem "Its a nice day"
+List1.AddItem "Yes it is"
+
+ListBoxHBar List1, Me  'to call the function
+
+End Sub
+
+Function ListBoxHBar(LstBox As ListBox, Frm As Form)
+
+Dim lngReturn As Long
+Dim lngExtent As Long
+Dim i As Integer
+
+With Frm
+.ScaleMode = 3
+.Font = LstBox.Font
+.FontBold = LstBox.FontBold
+.FontItalic = LstBox.FontItalic
+.FontSize = LstBox.FontSize
+For i = 0 To LstBox.ListCount - 1
+If lngExtent < .TextWidth(LstBox.List(i)) Then lngExtent = .TextWidth(LstBox.List(i))
+Next i
+End With
+lngReturn = SendMessage(LstBox.hwnd, LB_SETHORIZONTALEXTENT, lngExtent, 0&)
+End Function
+

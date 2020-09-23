@@ -1,0 +1,151 @@
+Create a new form. The name is irrelevant To this code.
+Place two text boxes and a picture box On the form. Name one text box "TextLeft" and the other "TextRight". Name the picture box "SlidingDivider".
+All other attributes should be left as-is. Location and dimenstion of the controls are irrelevant.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=896&lngWId=1
+'for details.
+'**************************************
+
+'General declarations section
+'Sliding Divider between two controls.
+'Written by: Aaron Stephens
+'Midnight Hour Enterprises, 1998.05.21
+'This code may be freely distributed and
+'     may be
+'altered in any way shape and form, if t
+'     he author's
+'name is removed.
+'
+'If this code is used in it's un-altered
+
+
+'     form,
+    'please give me some credit. Thanks.
+    'Flag for to tell MouseMove wether the s
+    '     liding divider
+    'has been clicked.
+    Dim SDActive As Boolean
+    'Define the minimum with of the right an
+    '     d left
+    'controls.
+    Const MinRightWidth = 0
+    Const MinLeftWidth = 0
+    'End general declarations section
+
+
+Private Sub Form_Load()
+    'Set the text boxes and sliding divider 
+    '     to their
+    'default parameters. In an adaptation, t
+    '     hese
+    'options could be loaded at startup, hav
+    '     ing been
+    'saved at the last shutdown.
+    'In addition, and controls (tool or stat
+    '     us bars)
+    'at the top or bottom of the form would 
+    '     need to
+    'be compensated for. It would be prefera
+    '     ble to
+    'use a variable containing the offsets t
+    '     hey
+    'produce, instead of hard-coding the val
+    '     ues
+    'into every occurance in this form.
+    TextLeft.Top = 0
+    TextLeft.Left = 0
+    TextLeft.Width = Me.ScaleWidth * 0.25
+    TextLeft.Height = Me.ScaleHeight
+    SlidingDivider.Top = 0
+    SlidingDivider.Left = TextLeft.Width
+    SlidingDivider.Width = 30
+    SlidingDivider.Height = TextLeft.Height
+    TextRight.Top = 0
+    TextRight.Left = TextLeft.Width + SlidingDivider.Width
+    TextRight.Width = Me.ScaleWidth - TextLeft.Width - SlidingDivider.Width
+    TextRight.Height = TextLeft.Height
+End Sub
+
+
+Private Sub Form_Resize()
+    'This resizes all controls on the form w
+    '     hen the
+    'form itself is resized.
+    'Set the sliding divider to be at the sa
+    '     me relative
+    'position in the new form size.
+    SlidingDivider.Left = CInt(Me.ScaleWidth * (SlidingDivider.Left / (TextLeft.Width + SlidingDivider.Width + TextRight.Width)))
+    'Set the left text box's height.
+    TextLeft.Height = Me.ScaleHeight
+    'Set the left text box's width.
+    TextLeft.Width = SlidingDivider.Left
+    'Set the sliding divider and the right t
+    '     ext box
+    'height to the the same height as the le
+    '     ft.
+    SlidingDivider.Height = TextLeft.Height
+    TextRight.Height = TextLeft.Height
+    'Set the right text box to fill the rema
+    '     inder
+    'of the form.
+    TextRight.Left = TextLeft.Width + SlidingDivider.Width
+    TextRight.Width = Me.ScaleWidth - TextLeft.Width - SlidingDivider.Width
+End Sub
+
+
+Private Sub SlidingDivider_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    'This sets a variable to tell the MouseM
+    '     ove routine
+    'that the user has clicked the sliding d
+    '     ivider.
+
+
+    If Button = vbLeftButton Then
+        SDActive = True
+    End If
+End Sub
+
+
+Private Sub SlidingDivider_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    'This sets the sliding divider position 
+    '     to the mouse
+    'position. I does check to make sure the
+    '     sliding
+    'divider and the objects that adjust to 
+    '     it do not
+    'exceed the legal bounds of the form.
+    'If the divider is clicked and the mouse
+    '     has moved...
+
+
+    If SDActive = True And CLng(X) <> SlidingDivider.Left Then
+        'Set the DividerPosition
+        SlidingDivider.Left = SlidingDivider.Left + (X - (SlidingDivider.Width / 2))
+        'Check the bounds of the divider positio
+        '     n and
+        'correct if nesecary.
+        If SlidingDivider.Left < MinLeftWidth Then SlidingDivider.Left = MinLeftWidth
+        If SlidingDivider.Left + SlidingDivider.Width + MinRightWidth >= Me.ScaleWidth Then SlidingDivider.Left = Me.ScaleWidth - SlidingDivider.Width - MinRightWidth
+        'Resize the text boxes.
+        TextLeft.Width = SlidingDivider.Left
+        TextRight.Left = TextLeft.Width + SlidingDivider.Width
+        TextRight.Width = Me.ScaleWidth - TextLeft.Width - SlidingDivider.Width
+    End If
+End Sub
+
+
+Private Sub SlidingDivider_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    'This calls the MouseMove routine to set
+    '     the final
+    'sliding divider position the sets a var
+    '     iable to
+    'tell the MouseMove routine that the sli
+    '     ding
+    'divider is no longer clicked.
+    SlidingDivider_MouseMove Button, Shift, X, Y
+    SDActive = False
+End Sub
+

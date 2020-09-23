@@ -1,0 +1,38 @@
+A To Z a listbox
+--------------------------------
+ Dim iCount As Integer
+ Dim i As Integer
+ Dim j As Integer
+ Dim temp As String
+ iCount = List1.ListCount
+ For j = 0 To iCount - 2
+   For i = 0 To iCount - 2
+     With List1
+        If .List(i) > .List(i + 1) Then
+            temp = .List(i + 1)
+            .List(i + 1) = .List(i)
+            .List(i) = temp
+        End If
+     End With
+    Next i
+Next j
+
+
+Z To A a listBox
+-----------------------------------
+Dim iCount As Integer
+ Dim i As Integer
+ Dim j As Integer
+ Dim temp As String
+ iCount = List1.ListCount
+ For j = 0 To iCount - 2
+   For i = 0 To iCount - 2
+     With List1
+        If .List(i) < .List(i + 1) Then
+            temp = .List(i + 1)
+            .List(i + 1) = .List(i)
+            .List(i) = temp
+        End If
+     End With
+    Next i
+Next j 

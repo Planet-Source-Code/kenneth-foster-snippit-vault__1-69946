@@ -1,0 +1,133 @@
+'Put in a Class module named cTextBoxEdit
+
+Option Explicit
+
+Private Declare Function SendMessageLong Lib "USER32" Alias _
+        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
+        ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SendMessageString Lib "USER32" Alias _
+        "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, _
+        ByVal wParam As Long, ByVal lParam As String) As Long
+
+Private Const WM_COMMAND = &H111
+Private Const WM_CUT = &H300
+Private Const WM_COPY = &H301
+Private Const WM_PASTE = &H302
+Private Const EM_UNDO = &HC7
+Private Const EM_CANUNDO = &HC6
+Private Const EM_REPLACESEL = &HC2
+Private Declare Function IsClipboardFormatAvailable Lib "USER32" _
+        (ByVal wFormat As Long) As Long
+
+Private Const CF_TEXT = 1
+Private Const CF_UNICODETEXT = 13
+Private Const CF_OEMTEXT = 7
+
+Private m_txtThis As TextBox
+
+Public Property Let TextBox(ByRef txtThis As TextBox)
+   Set m_txtThis = txtThis
+End Property
+
+Public Sub Cut()
+   SendMessageLong m_txtThis.hWnd, WM_CUT, 0, 0
+End Sub
+
+Public Sub Copy()
+   SendMessageLong m_txtThis.hWnd, WM_COPY, 0, 0
+End Sub
+
+Public Sub Paste()
+   SendMessageLong m_txtThis.hWnd, WM_PASTE, 0, 0
+End Sub
+
+Public Sub Undo()
+   If (SendMessageLong(m_txtThis.hWnd, EM_CANUNDO, 0, 0) <> 0) Then
+      SendMessageLong m_txtThis.hWnd, EM_UNDO, 0, 0
+   End If
+End Sub
+
+Public Property Get CanCut() As Boolean
+   CanCut = (Not (m_txtThis.Locked) And m_txtThis.SelLength > 0)
+End Property
+
+Public Property Get CanCopy() As Boolean
+   CanCopy = (m_txtThis.SelLength > 0)
+End Property
+
+Public Property Get CanPaste() As Boolean
+   If IsClipboardFormatAvailable(CF_TEXT) Then
+      CanPaste = True
+   ElseIf IsClipboardFormatAvailable(CF_UNICODETEXT) Then
+      CanPaste = True
+   ElseIf IsClipboardFormatAvailable(CF_OEMTEXT) Then
+      CanPaste = True
+   End If
+End Property
+
+Public Property Get CanUndo() As Boolean
+   CanUndo = (SendMessageLong(m_txtThis.hWnd, EM_CANUNDO, 0, 0) <> 0)
+End Property
+
+Public Sub ReplaceSelection(ByRef sText As String, _
+           Optional ByVal bAllowUndo = True)
+   Dim lR As Long
+   If (m_txtThis.SelLength > 0) Then
+      lR = Abs(bAllowUndo)
+      SendMessageString m_txtThis.hWnd, EM_REPLACESEL, lR, sText
+   End If
+End Sub
+
+Public Sub Delete(Optional ByVal bAllowUndo = True)
+   Dim lR As Long
+   SendMessageString m_txtThis.hWnd, EM_REPLACESEL, lR, vbNullChar
+End Sub
+
+'==========================================================
+To test out the code, add a TextBox To your project's form. 
+Set the MultiLine Property To True And Then Set up an Edit menu As follows:
+After &Edit offset (....) rest of the lines of code
+
+ Caption	Name	Index	Shortcut	
+&Edit	mnuEditTop			
+&Undo	mnuEdit	0	Ctrl + Z	
+-	mnuEdit	1		
+Cu&t	mnuEdit	2	Ctrl + X	
+&Copy	mnuEdit	3	Ctrl + C	
+&Paste	mnuEdit	4	Ctrl + V	
+&Delete	mnuEdit	5	Del	
+				
+
+
+
+Option Explicit
+
+Private m_c As cTextBoxEdit
+
+Private Sub Form_Load()
+Set m_c = New cTextBoxEdit
+   m_c.TextBox = Text1
+End Sub
+Private Sub mnuEdit_Click(Index As Integer)
+   Select Case Index
+   Case 0
+      m_c.Undo
+   Case 2
+      m_c.Cut
+   Case 3
+      m_c.Copy
+   Case 4
+      m_c.Paste
+   Case 5
+      m_c.Delete
+   End Select
+End Sub
+
+Private Sub mnuEditTOP_Click()
+   mnuEdit(0).Enabled = m_c.CanUndo
+   mnuEdit(2).Enabled = m_c.CanCut
+   mnuEdit(3).Enabled = m_c.CanCopy
+   mnuEdit(4).Enabled = m_c.CanPaste
+   mnuEdit(5).Enabled = m_c.CanCut
+End Sub
+

@@ -1,0 +1,29 @@
+To display an animated cursor requires only two API declarations and one constant.
+Declare Function LoadCursorFromFile Lib "user32" _
+Alias "LoadCursorFromFileA" _
+(ByVal lpFileName As String) As Long
+
+Declare Function SetClassLong Lib "user32" _
+Alias "SetClassLongA" _
+(ByVal hwnd As Long, _
+ByVal nIndex As Long, _
+ByVal dwNewLong As Long) As Long
+
+Public Const GCL_HCURSOR = (-12)
+'--end code block
+To show the cursor you first need to call the LoadCursorFromFile API. This will open the .ANI file and return a handle to the cursor. After that we call the SetClassLong API to assign the new cursor to a Window. The SetClassLong function returns the handle of the current cursor. We want to store that so we can restore the old cursor later.
+Here is the code to do this:
+Dim sCursorFile As String
+Dim hCursor As Long
+Dim hOldCursor As Long
+Dim lReturn As Long
+
+sCursorFile = App.Path & "\Globe.ani"
+hCursor = LoadCursorFromFile(sCursorFile)
+
+hOldCursor = SetClassLong(Form1.hwnd, GCL_HCURSOR, hCursor)
+'--end code block
+To restore the cursor just call the SetClassLong again, this time setting it to the value in hOldCursor.
+lReturn = SetClassLong(Form1.hWnd, GCL_HCURSOR, hOldCursor)
+'--end code block
+

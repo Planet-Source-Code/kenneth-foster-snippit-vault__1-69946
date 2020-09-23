@@ -1,0 +1,21 @@
+
+
+
+
+Public Function FontExists(FontName As String) As String
+Dim oFont As New StdFont
+Dim bAns As String
+oFont.Name = FontName
+bAns = StrComp(FontName, oFont.Name, vbTextCompare) = 0
+If bAns = True Then
+   bAns = "Yes " & FontName & " exists."
+Else
+   bAns = "No " & FontName & " does not exist."
+End If
+FontExists = bAns
+End Function
+
+Private Sub Form_Load()
+MsgBox FontExists("Arial")
+Unload Me
+End Sub

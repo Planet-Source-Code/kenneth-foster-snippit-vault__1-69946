@@ -1,0 +1,69 @@
+Option Explicit
+Dim ShowExtension As Boolean
+Dim Quit As Boolean
+
+
+'Load all file from directory into a listbox
+'need cmdAdd, cmdExit,chkExtension(check1),lstMusic(List1box),Text1box
+
+
+
+
+Private Sub cmdAdd_Click()
+Dim FileName As String
+Dim tmpStrg As String
+
+    If chkExtension.Value = vbChecked Then
+        ShowExtension = True
+    Else
+        ShowExtension = False
+    End If
+
+lstMusic.Clear
+    tmpStrg = Dir$(Text1.text & "\*.txt") 'Look for mp3 files (If you want to change to any other type,
+    ' just replace *.mp3 with another extension (E.g *.bmp)
+    If tmpStrg <> "" Then 'have mp3s in the directory
+        If ShowExtension = False Then 'They don't want extension
+            FileName = Left$(tmpStrg, Len(tmpStrg) - 4) 'Take four of the left because
+            'If you don't the file extenstion ( 4 because .mp3   That's four letters right?)
+        Else 'They want extension
+            FileName = tmpStrg
+        End If
+        lstMusic.AddItem FileName 'Add the mp3's to the list box
+        tmpStrg = Dir$ 'Go back to the directory to add more mp3s
+        While Len(tmpStrg) > 0 'While there is still more unadded mp3s
+            If ShowExtension = False Then 'They don't want extension
+                FileName = Left$(tmpStrg, Len(tmpStrg) - 4) 'Take off the .mp3
+            Else 'They want extension
+                FileName = tmpStrg
+            End If
+            lstMusic.AddItem FileName 'Add the mp3
+            tmpStrg = Dir$ 'Go back to the directory to add more mp3s
+        Wend
+    Else 'There isn't any mp3's in the directory
+        MsgBox "This directory is empty. " & Chr(13) & App.Path & "\mp3", vbExclamation, "Select another directory."
+    End If
+End Sub
+
+Private Sub cmdExit_Click()
+    'MsgBox "Thank you for viewing this! If you " & Chr(13) & " don't know how to do this, look at the code", vbInformation, "Thank You"
+    Quit = True
+    Unload Me
+    End
+End Sub
+
+
+Private Sub Form_Load()
+
+chkExtension.Value = 1
+
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+    If Quit = False Then
+        'MsgBox "Thank you for viewing this! If you " & Chr(13) & " don't know how to do this, look at the code", vbInformation, "Thank You"
+        Unload Me
+        End
+    End If
+End Sub
+

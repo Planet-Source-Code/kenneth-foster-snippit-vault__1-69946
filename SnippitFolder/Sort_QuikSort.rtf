@@ -1,0 +1,74 @@
+'**************************************
+' Name: Quick Sort
+' Description:Sorts an array of strings.
+'     Uses the generic quick sort algorithm.
+' By: Matt Baldwin
+'
+' Inputs:Accepts an array of strings and
+'     a boolean value that specifies whether o
+'     r not to sort the array ascending.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=7841&lngWId=1
+'for details.
+'**************************************
+
+
+
+Public Sub SortArray(ByRef Arr() As String, ByVal ascending As Boolean)
+    Dim l As Long
+    Dim r As Long
+    l = 0
+    r = UBound(Arr)
+
+
+    If (ascending) Then
+        Call QuickSort(Arr, l, r, 1)
+    Else
+        Call QuickSort(Arr, l, r, -1)
+    End If
+End Sub
+
+
+Private Sub QuickSort(ByRef Arr() As String, ByVal l As Long, ByVal r As Long, ByVal flag As Integer)
+    If (r <= l) Then Exit Sub
+    Dim i As Long
+    Dim j As Long
+    Dim temp As String
+    Dim ret As Integer
+    i = l - 1
+    j = r
+
+
+    Do While (True)
+
+
+        Do
+            i = i + 1
+            ret = StrComp(Arr(i), Arr(r))
+            ret = ret * flag
+        Loop While (ret < 0)
+
+
+        Do While (j > 0)
+            j = j - 1
+            ret = StrComp(Arr(j), Arr(r))
+            ret = ret * flag
+            If (ret <= 0) Then Exit Do
+        Loop
+        If (i >= j) Then Exit Do
+        temp = Arr(i)
+        Arr(i) = Arr(j)
+        Arr(j) = temp
+    Loop
+    temp = Arr(i)
+    Arr(i) = Arr(r)
+    Arr(r) = temp
+    Call QuickSort(Arr, l, i - 1, flag)
+    Call QuickSort(Arr, i + 1, r, flag)
+End Sub
+
+
+

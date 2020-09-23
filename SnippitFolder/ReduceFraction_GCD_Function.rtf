@@ -1,0 +1,36 @@
+Option Explicit
+
+
+Public Function gcd(ByVal x As Long, ByVal y As Long) As Long
+    If x < 0 Then x = -x 'Euclid's Algorithm
+    If y < 0 Then y = -y 'Returns Greatest Common Divisor of x and y
+    If (x Or y) = 0 Then Err.Raise 1, , "Math Error In GCD" 'If both x and y are zero
+    gcd = y
+
+
+    While x > 0
+        gcd = x
+        x = y Mod x
+        y = gcd
+    Wend
+End Function
+
+
+Private Sub Command1_Click()
+    Dim x As Long
+    Dim y As Long
+    Dim g As Long
+    
+    x = Text1.Text 'Read Numerator
+    y = Text2.Text 'Read Denominator
+    'Display the given fraction
+    MsgBox "Original Fraction: " & CStr(x) & " / " & CStr(y)
+    'Calculate GCD
+    g = gcd(x, y)
+    'Reduce the fraction
+    x = x \ g
+    y = y \ g
+    'Display result
+    MsgBox "Reduced Fraction: " & CStr(x) & " / " & CStr(y)
+End Sub
+

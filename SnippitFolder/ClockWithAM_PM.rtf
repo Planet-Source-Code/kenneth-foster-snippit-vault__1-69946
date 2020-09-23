@@ -1,0 +1,13 @@
+' Description:This shows the time in H:M
+'     M:SS format and puts and AM PM after it,
+'     according to the time of day.
+
+
+' Assumes:MAKE A TIMER (TIMER1) AND A LABEL
+'      (LABEL1) AND THATS ALL. KEEP THE DEFAULT
+'      NAMES AND POP THIS CODE INTO THE TIMER
+'     CODE. BE SURE THE INTERVAL ON THE TIMER IS 1000!
+Private Sub Timer1_Timer()
+    Label1.Caption = Format(Now, "H:MM:SS AMPM")
+End Sub 
+

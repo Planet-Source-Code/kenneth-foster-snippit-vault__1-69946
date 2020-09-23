@@ -1,0 +1,16 @@
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Const EM_GETLINECOUNT = &HBA
+Private Const EM_LINEINDEX = &HBB
+Private Const EM_LINELENGTH = &HC1
+Private Const EM_GETFIRSTVISIBLELINE = &HCE
+
+Dim iLine As Long, cLine As Long, vLine As Long
+'count the lines
+iLine = SendMessage(RTF.hwnd, EM_GETLINECOUNT, ByVal 0&, ByVal 0&)
+Text1.Text = iLine
+'current line
+cLine = 1 + RTF.GetLineFromChar(RTF.SelStart)
+'first visible line
+vLine = SendMessage(RTF.hwnd, EM_GETFIRSTVISIBLELINE, ByVal 0&, ByVal 0&)
+
+

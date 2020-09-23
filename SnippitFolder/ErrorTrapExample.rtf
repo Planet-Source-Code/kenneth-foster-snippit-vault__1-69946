@@ -1,0 +1,39 @@
+Option Explicit
+
+Dim MyTrap As String 'This Holds curent Error number
+Dim OldTrap As String 'This Holds the Last Loop Error Before of the current error number.
+'So I know where it was the user before
+'     this error happen A little History if yo
+'     u wont
+'Of course you can make more like the ol
+'     dtrap to trap more loops in one error me
+'     ssage
+
+
+Private Sub Command1_Click()
+    Dim A As String, B As StdPicture
+    On Error GoTo Trap
+    OldTrap = MyTrap
+    MyTrap = "2.1"
+    A = B ' This is an Error
+    Exit Sub
+Trap:
+    RaiseError MyTrap, OldTrap
+End Sub
+
+
+Private Sub Form_Load()
+    On Error GoTo Trap
+    OldTrap = MyTrap
+    MyTrap = "1.1"
+    Picture1.Picture = Picture ' This is an Error
+    Exit Sub
+Trap:
+    RaiseError MyTrap, OldTrap
+End Sub
+
+
+Private Sub RaiseError(MyTraps As String, LastTrap As String)
+    MsgBox Err.Description & Chr(10) & Chr(13) & "Error Number " & MyTraps & " " & LastTrap, vbOKOnly, "Error " & Err.Number
+End Sub
+

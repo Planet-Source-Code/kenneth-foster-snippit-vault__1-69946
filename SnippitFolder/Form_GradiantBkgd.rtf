@@ -1,0 +1,34 @@
+'No Declarations
+'Call GradientForm(Form1, 3)
+'whereas [color] = 1 For red, 2 for green, and 3 for blue
+
+Function GradientForm(ByVal frmIn As Form, iColor As Integer) 
+    Dim I As Integer
+    Dim Y As Integer
+
+
+    With frmIn
+        .AutoRedraw = True
+        .DrawStyle = 6
+        .DrawMode = 13
+        .DrawWidth = 2
+        .ScaleMode = 3
+        .ScaleHeight = (256 * 2)
+    End With
+
+
+    For I = 0 To 255
+
+
+        Select Case iColor
+            Case 1 'Black To Red
+            frmIn.Line (0, Y)-(frmIn.Width, Y + 2), RGB(I, 0, 0), BF
+            Case 2 'Black To Green
+            frmIn.Line (0, Y)-(frmIn.Width, Y + 2), RGB(0, I, 0), BF
+            Case 3 'Black To Blue
+            frmIn.Line (0, Y)-(frmIn.Width, Y + 2), RGB(0, 0, I), BF
+        End Select
+    Y = Y + 2
+Next I
+End Function
+

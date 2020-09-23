@@ -1,0 +1,105 @@
+' txtR, txtG, txtB, txtVBColor, cmdConvert, Command1
+ 
+
+Private Sub Form_Unload(Cancel As Integer)
+   Unload Me
+End Sub
+
+Private Sub cmdConvert_click()
+Dim e As Integer
+Dim msgE, ss, hexR, hexG, hexB As String
+Dim clr As OLE_COLOR
+ss = ""
+If txtB.Text <> "" And txtG.Text <> "" And txtR.Text <> "" Then
+    e = 0
+    msgE = ""
+    If Not (IsNumeric(txtR.Text)) Then
+        msgE = "R is invalid."
+        e = e + 1
+    Else
+        If txtR.Text < 0 Or txtR.Text > 255 Or txtR.Text <> CInt(txtR.Text) Then
+            msgE = "R is invalid."
+            e = e + 1
+        Else
+            msgE = ""
+        End If
+    End If
+    If Not (IsNumeric(txtG.Text)) Then
+        If e > 0 Then
+            msgE = msgE & vbCrLf
+        End If
+        msgE = msgE & "G is invalid."
+        e = e + 1
+    ElseIf txtG.Text < 0 Or txtG.Text > 255 Or txtG.Text <> CInt(txtG.Text) Then
+        If e > 0 Then
+            msgE = msgE & vbCrLf
+        End If
+        msgE = msgE & "G is invalid."
+        e = e + 1
+    End If
+    If Not (IsNumeric(txtB.Text)) Then
+        If e > 0 Then
+            msgE = msgE & vbCrLf
+        End If
+        msgE = msgE & "B is invalid."
+        e = e + 1
+    ElseIf txtB.Text < 0 Or txtB.Text > 255 Or txtB.Text <> CInt(txtB.Text) Then
+        If e > 0 Then
+            msgE = msgE & vbCrLf
+        End If
+        msgE = msgE & "B is invalid."
+        e = e + 1
+    End If
+    If e = 0 And IsNumeric(txtR.Text) And IsNumeric(txtG.Text) And IsNumeric(txtB.Text) Then
+        hexR = Hex(txtR.Text)
+        hexG = Hex(txtG.Text)
+        hexB = Hex(txtB.Text)
+        If Len(hexR) = 1 Then
+            hexR = "0" & hexR
+        End If
+        If Len(hexG) = 1 Then
+            hexG = "0" & hexG
+        End If
+        If Len(hexB) = 1 Then
+            hexB = "0" & hexB
+        End If
+        txtVBColor.Text = "&H00" & hexB & hexG & hexR & "&"
+        GoTo afterr
+    End If
+    If e > 1 Then
+        ss = "s"
+    End If
+    MsgBox e & " error" & ss & ":" & vbCrLf & msgE & vbCrLf & vbCrLf & "Please correct the error" & ss & ".", vbCritical, "Error!"
+End If
+afterr:
+txtR.Text = ""
+txtG.Text = ""
+txtB.Text = ""
+txtR.SetFocus
+End Sub
+
+Private Sub Command1_Click()
+   Clipboard.SetText txtVBColor.Text
+End Sub
+
+Private Sub txtB_KeyPress(KeyAscii As Integer)
+   ' Backspace, Tab
+If KeyAscii = 8 Or KeyAscii = 9 Then Exit Sub
+
+If KeyAscii < 48 Or KeyAscii > 57 Then KeyAscii = 0
+End Sub
+
+Private Sub txtG_KeyPress(KeyAscii As Integer)
+   ' Backspace, Tab
+If KeyAscii = 8 Or KeyAscii = 9 Then Exit Sub
+
+If KeyAscii < 48 Or KeyAscii > 57 Then KeyAscii = 0
+End Sub
+
+Private Sub txtR_KeyPress(KeyAscii As Integer)
+   ' Backspace, Tab
+If KeyAscii = 8 Or KeyAscii = 9 Then Exit Sub
+
+If KeyAscii < 48 Or KeyAscii > 57 Then KeyAscii = 0
+End Sub
+

@@ -1,0 +1,58 @@
+'Put label1 on form and set its background color to suit your needs
+
+
+Private Sub Form_Resize()
+
+ Label1.Width = 700
+ Label1.Top = 0
+ Label1.Left = 0
+ Label1.Height = Form1.Height
+ 
+ DrawRotatedText Me, "VB6 Demo", vbRed, 100, Form1.Height - 500, _
+        "GNATFONT", 30, _
+        400, 90 * 10, _
+        False, False, False
+End Sub
+
+'Put in a module
+
+Declare Function CreateFont Lib "gdi32" Alias "CreateFontA" (ByVal H As Long, ByVal W As Long, ByVal E As Long, ByVal O As Long, ByVal W As Long, ByVal I As Long, ByVal u As Long, ByVal S As Long, ByVal C As Long, ByVal op As Long, ByVal CP As Long, ByVal Q As Long, ByVal PAF As Long, ByVal F As String) As Long
+Declare Function SelectObject Lib "gdi32" (ByVal hdc As Long, ByVal hObject As Long) As Long
+Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+
+Public Sub DrawRotatedText(ByVal Frm As Form, ByVal txt As String, ByVal Color As String, _
+    ByVal X As Single, ByVal Y As Single, _
+    ByVal font_name As String, ByVal size As Long, _
+    ByVal weight As Long, ByVal escapement As Long, _
+    ByVal use_italic As Boolean, ByVal use_underline As Boolean, _
+    ByVal use_strikethrough As Boolean)
+
+Const CLIP_LH_ANGLES = 16   ' Needed for tilted fonts.
+Const PI = 3.14159625
+Const PI_180 = PI / 180#
+
+Dim newfont As Long
+Dim oldfont As Long
+
+    newfont = CreateFont(size, 0, _
+        escapement, escapement, weight, _
+        use_italic, use_underline, _
+        use_strikethrough, 0, 0, _
+        CLIP_LH_ANGLES, 0, 0, font_name)
+
+    ' Select the new font.
+    oldfont = SelectObject(Frm.hdc, newfont)
+
+    ' Display the text.
+    Frm.ForeColor = Color
+    Frm.CurrentX = X
+    Frm.CurrentY = Y
+    Frm.Print txt
+
+    ' Restore the original font.
+    newfont = SelectObject(Frm.hdc, oldfont)
+
+    ' Free font resources (important!)
+    DeleteObject newfont
+End Sub
+

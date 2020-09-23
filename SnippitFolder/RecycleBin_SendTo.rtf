@@ -1,0 +1,40 @@
+'Declarations
+'=======================================
+Private Const DELETE=&H3
+Private Const ALLOWUNDO=&H40
+
+Private Declare Function SHFileOperation _
+   Lib "Shell32.dll" _
+   (FileOp As SHFILEOPSTRUCT)As Long
+
+Private Type SHFILEOPSTRUCT
+  hWnd As Long
+  lFunc As Long
+  sForm As String
+  sTo As String
+  iFlags As Integer
+  boolAnyOperationAborted As Boolean
+  lNameMappings As Long
+  sProgressTitle As String
+End Type
+
+'=====================================================
+'You must put one Text box and Command button on the form
+'code wrote by Nedim Sabic
+'e-mail bhnedimtool@bosnia.ba
+'========================================================
+Private Sub SendToBin(sFileName As String)
+    Dim FileStruct As SHFILEOPSTRUCT
+    Dim x As Long
+
+  With FileStruct
+     .iFlags=ALLOWUNDO
+     .sForm=FileName
+     .lFunc=DELETE
+  End With
+ x=SHFileOperation(FileStruct)
+End Sub
+'===========================================================
+Private Sub Command1_Click()
+    SendToBin Text1.Text
+End Sub

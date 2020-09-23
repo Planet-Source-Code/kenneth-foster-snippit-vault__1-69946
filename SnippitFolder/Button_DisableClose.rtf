@@ -1,0 +1,39 @@
+Option Explicit
+
+Private Declare Function GetSystemMenu Lib "user32" _
+    (ByVal hwnd As Long, _
+     ByVal bRevert As Long) As Long
+
+Private Declare Function RemoveMenu Lib "user32" _
+    (ByVal hMenu As Long, _
+     ByVal nPosition As Long, _
+     ByVal wFlags As Long) As Long
+     
+Private Const MF_BYPOSITION = &H400&
+
+Public Function DisableCloseButton(frm As Form) As Boolean
+
+'PURPOSE: Removes X button from a form
+'EXAMPLE: DisableCloseButton Me
+'RETURNS: True if successful, false otherwise
+'NOTES:   Also removes Exit Item from
+'         Control Box Menu
+
+
+    Dim lHndSysMenu As Long
+    Dim lAns1 As Long, lAns2 As Long
+    
+    
+    lHndSysMenu = GetSystemMenu(frm.hwnd, 0)
+
+    'remove close button
+    lAns1 = RemoveMenu(lHndSysMenu, 6, MF_BYPOSITION)
+
+   'Remove seperator bar
+    lAns2 = RemoveMenu(lHndSysMenu, 5, MF_BYPOSITION)
+    
+    'Return True if both calls were successful
+    DisableCloseButton = (lAns1 <> 0 And lAns2 <> 0)
+
+End Function 
+

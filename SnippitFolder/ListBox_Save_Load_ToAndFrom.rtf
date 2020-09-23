@@ -1,0 +1,54 @@
+Private sCurrentLine As String
+Private iFileNumber As Integer
+
+
+Private Sub cmdLoad_Click()
+    
+    iFileNumber = FreeFile
+    
+    If Dir$(txtFileName.Text) = "" Then
+        MsgBox "The file you have specified does not exist!", vbCritical, "Error!"
+      Else
+        lstMain.Clear
+        Open txtFileName.Text For Input As #iFileNumber
+            While Not EOF(iFileNumber)
+                Line Input #iFileNumber, sCurrentLine
+                lstMain.AddItem sCurrentLine
+            Wend
+        Close #iFileNumber
+    End If
+
+End Sub
+
+
+Private Sub cmdSave_Click()
+
+  Dim i As Integer
+    
+    iFileNumber = FreeFile
+    
+Save:
+    If Dir$(txtFileName.Text) = "" Then
+        Open txtFileName.Text For Output As #iFileNumber
+            For i = 0 To lstMain.ListCount - 1
+                Print #iFileNumber, lstMain.List(i)
+            Next i
+        Close #iFileNumber
+      Else
+        If MsgBox("The file you have specified allready exists!" & vbCrLf & "Do you want it to be replaced?", vbQuestion + vbYesNo, "Replace File!") = vbYes Then
+            Kill txtFileName.Text
+            GoSub Save
+          Else
+            Exit Sub
+        End If
+    End If
+
+End Sub
+
+
+Private Sub Form_Unload(Cancel As Integer)
+
+    Set frmMain = Nothing
+
+End Sub
+

@@ -1,0 +1,86 @@
+Option Explicit
+
+'put CommonDialog control on form named " dlgCommon"
+'pick one or all and change textbox  and button names to suit your program
+
+Private Sub cmdColor_Click()
+    On Error GoTo ColorErr 'catches error when user hits cancel
+    'selects black when loads
+    dlgCommon.Flags = cdlCCRGBInit
+    'shows current color
+    dlgCommon.Color = txtEdit.ForeColor
+    '==================
+    dlgCommon.ShowColor
+    '==================
+    'sets the color user selected to textbox
+    txtEdit.ForeColor = dlgCommon.Color
+ColorErr:
+    Exit Sub
+
+End Sub
+
+Private Sub cmdFont_Click()
+    On Error GoTo FontErr 'catches error when user hits cancel
+    'loads the fonts
+    dlgCommon.Flags = cdlCFScreenFonts
+    'shows what the current settings are in in the Commondialog
+    dlgCommon.FontName = txtEdit.FontName
+    dlgCommon.FontBold = txtEdit.FontBold
+    dlgCommon.FontItalic = txtEdit.FontItalic
+    dlgCommon.FontSize = txtEdit.FontSize
+    '=================
+    dlgCommon.ShowFont
+    '=================
+    'changes the settings according to the commondialog changes
+    txtEdit.FontName = dlgCommon.FontName
+    txtEdit.FontBold = dlgCommon.FontBold
+    txtEdit.FontItalic = dlgCommon.FontItalic
+    txtEdit.FontSize = dlgCommon.FontSize
+FontErr:
+    Exit Sub
+    
+End Sub
+
+Private Sub cmdOpen_Click()
+    On Error GoTo OpenErr 'catches error when user hits cancel
+    dlgCommon.Filter = "Text Files (*.txt)|*.txt" 'sets the file type
+    dlgCommon.FileName = "" 'default filename
+    dlgCommon.ShowOpen
+    Open dlgCommon.FileName For Input As #1 'opens file and gets txt of file
+    txtEdit.Text = Input(LOF(1), 1) 'loads txt
+    Close #1 'closes the file
+OpenErr:
+    
+End Sub
+
+Private Sub cmdPrint_Click()
+    On Error GoTo PrintErr 'catches error when user hits cancel
+    dlgCommon.Flags = cdlPDHidePrintToFile + cdlPDNoPageNums 'hides the print to file option and page #
+    dlgCommon.ShowPrinter
+    'centers the txt horizontally to be printed on the paper
+    Printer.ScaleLeft = -((Printer.Width - txtEdit.Width) / 2)
+    '==========================
+    Printer.ForeColor = txtEdit.ForeColor 'sets the color to be printed
+    Printer.Print txtEdit.Text 'prints the one line of text
+    Printer.EndDoc 'tells the printer only to print one line
+PrintErr:
+    
+End Sub
+
+Private Sub cmdSave_Click()
+    On Error GoTo SaveErr 'catches error when user hits cancel
+    dlgCommon.Flags = cdlOFNOverwritePrompt + cdlOFNPathMustExist 'sets flags to overwrite file and pathmustexist
+    dlgCommon.Filter = "Text Files (*.txt)|*.txt" 'sets the file type
+    dlgCommon.ShowSave
+    Open dlgCommon.FileName For Output As #1 'gets and opens the txt file
+    Print #1, txtEdit.Text 'saves file
+    Close #1 'done with file and closes file
+SaveErr:
+    
+End Sub
+
+Private Sub Form_Load()
+    dlgCommon.CancelError = True 'catches errors that occur when the user hits cancel
+
+End Sub
+

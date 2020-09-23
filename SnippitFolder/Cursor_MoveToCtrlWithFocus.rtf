@@ -1,0 +1,32 @@
+Private Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+
+Private Sub focus()
+'moves mouse pointer to control with focus
+Dim x&
+Dim y&
+Dim a&
+
+If Me.BorderStyle = 0 Then
+   x& = Me.ActiveControl.Left \ Screen.TwipsPerPixelX _
+   + ((Me.ActiveControl.Width / 2) / Screen.TwipsPerPixelX) _
+   + (Me.Left / Screen.TwipsPerPixelX)
+   y& = Me.ActiveControl.Top \ Screen.TwipsPerPixelY _
+   + ((Me.ActiveControl.Height / 2) / Screen.TwipsPerPixelY) _
+   + (Me.Top / Screen.TwipsPerPixelY)
+Else
+   x& = Me.ActiveControl.Left \ Screen.TwipsPerPixelX _
+   + ((Me.ActiveControl.Width / 2 + 60) / _
+   Screen.TwipsPerPixelX) + (Me.Left / _
+   Screen.TwipsPerPixelX)
+   ' "+ 60" is for the border"
+   y& = Me.ActiveControl.Top \ Screen.TwipsPerPixelY _
+   + ((Me.ActiveControl.Height / 2 + 360) / _
+   Screen.TwipsPerPixelY) + (Me.Top / _
+   Screen.TwipsPerPixelY)
+   ' "+ 360 " is for the border and the tittle bar"
+End If
+a& = SetCursorPos(x&, y&)
+End Sub
+
+' in the GotFocus of each control put
+'   Call focus

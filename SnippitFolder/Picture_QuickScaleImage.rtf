@@ -1,0 +1,82 @@
+' Name: QuickScale...Scale down pictures
+'     to thumbnail size
+' Description:This code rescales a image
+'     inside a picturebox maintaining the aspe
+'     ct ratio of the image. 
+Easily change The height And Width of The image. This Sub also centers The image  
+If you desire or you can specify The location To place The image. Simpe To use And fast. 
+' By: Harley Neal
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/xq/ASP/txtCode
+'     Id.5885/lngWId.1/qx/vb/scripts/ShowCode.
+'     htm
+'for details.
+'**************************************
+
+'Copy this code into a standard module.
+
+
+Public Sub CreateThumb(PicBox as Object, ByVal ActualPic as StdPicture, ByVal MaxHeight as Integer, ByVal MaxWidth as Integer, Center as Boolean, Optional ByVal PicTop as Integer, Optional ByVal PicLeft as Integer) 
+    'MaxHeight is max. image height allowed
+    'MaxWidth is max. picture width allowed
+    Dim NewH as Integer 'New Height 
+    Dim NewW as Integer 'New Width 
+    'set starting var.
+    NewH = ActualPic.Height 'actual image height 
+    NewW = ActualPic.Width 'actual image width 
+    'do logic
+
+
+    If NewH > MaxHeight or NewW > MaxWidth Then 'picture is too large 
+
+
+        If NewH > NewW Then 'height is greater than width 
+            NewW = Fix((NewW / NewH) * MaxHeight) 'rescale height 
+            NewH = MaxHeight 'set max height 
+        ElseIf NewW > NewH Then 'width is greater than height 
+            NewH = Fix((NewH / NewW) * MaxWidth) 'rescale width 
+            NewW = MaxHeight'set max Width 
+            Debug.Print "Width>" 
+        Else 'image is perfect square 
+            NewH = MaxHeight 
+            NewW = MaxWidth 
+        End If 
+    End If 
+    'check if centered
+
+
+    If Center = True Then 'center picture 
+        PicTop = (PicBox.Height / 2) - (NewH / 2) 
+        PicLeft = (PicBox.Width / 2) - (NewW / 2) 
+    Else 'if Optional variables are missing Then and center=false 
+
+
+        If IsMissing(PicTop) = True or IsMissing(PicLeft) = True Then 
+            PicTop = 0 'Default top position 
+            PicLeft = 0 'Default left position 
+        End If 
+    End If 
+    'Draw newly scaled picture
+
+
+    With PicBox 
+        .AutoRedraw = True 'set needed properties 
+        .Cls 'clear picture box 
+        .PaintPicture ActualPic, PicLeft, PicTop, NewW, NewH 'paint new picture size in picturebox 
+    End With 
+End Sub 
+'Examples of how to call this sub
+'~~~~~~~~~~~~~~~~~~~~~~~
+'this example loads a picture from a .re
+'     s file and centers it in a picturebox.
+CreateThumb Picture1,LoadResPicture(101,vbresbitmap),1000,1000,True 
+'~~~~~~~~~~~~~~~~~~~~~~~
+'this example loads a picture from an im
+'     age control and places it at (x,y) (100,
+'     100).
+ ' Image1.Picture = LoadPicture(Image Pathname)
+ ' CreateThumb Picture1, Image1.Picture, 2000, 2000, True, 100, 100
+
+

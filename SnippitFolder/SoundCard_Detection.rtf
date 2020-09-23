@@ -1,0 +1,13 @@
+Private Declare Function waveOutGetNumDevs Lib "winmm.dll" () As Long
+
+Function SoundCheck() 
+    Dim X As Long
+    X = waveOutGetNumDevs()
+
+    If X > 0 Then
+        MsgBox "Soundcard Found!",0,""
+    Else:
+        MsgBox "No Soundcard Found",0,""
+    End If
+End Function
+

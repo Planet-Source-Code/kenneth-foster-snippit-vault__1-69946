@@ -1,0 +1,15 @@
+Public Declare Function sndPlaySound Lib "winmm.dll" Alias "sndPlaySoundA" (ByVal lpszSoundName As String, ByVal uFlags As Long) As Long
+
+Option Explicit
+Dim Variable As String
+================================================================
+  '  Then To call the API type the following where ever you want sound
+    
+    Variable = sndPlaySound (App.path & "\filename.wav", 1)
+    
+    'So For example To play a .wav file located at C:\Sounds\sound.wav type:
+    'Variable = sndPlaySound ("C:\Sounds\sound.wav, 1)
+    'Variable = sndPlaySound(app.path & "\MyWave.wav", 1)
+    'Thats it!
+ 
+

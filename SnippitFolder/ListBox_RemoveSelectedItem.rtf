@@ -1,0 +1,13 @@
+
+
+Public Sub xListRemoveSelected(listbox As listbox)
+   Dim ListCount As Long
+   
+   ListCount& = listbox.ListCount
+   Do While ListCount& > 0&
+   ListCount& = ListCount& - 1
+   If listbox.Selected(ListCount&) = True Then
+   listbox.RemoveItem (ListCount&)
+   End If
+   Loop
+End Sub

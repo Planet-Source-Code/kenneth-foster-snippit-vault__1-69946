@@ -1,0 +1,55 @@
+Option Explicit
+Enum FormatType
+    Standard = 0
+    Commas = 1
+    Dollars = 2
+    Unformat = 3
+    End Enum
+
+Private Sub Form_Load()
+  Command1.Caption = "&Add Commas"
+  Command2.Caption = "&Make Dollars"
+  Command3.Caption = "&Unformat"
+  Text1 = "123456789"
+
+End Sub
+Function FormatAnyNumber(ByVal cInputNum As String, nFormat As FormatType) As String
+    Dim cNewNum As String
+
+    Select Case nFormat
+        Case Standard
+          cNewNum = Format$(cInputNum, "Standard")
+        Case Commas
+          cNewNum = Format$(cInputNum, "###,###,###,###,##0.##########")
+             If Right$(cNewNum, 1) = "." Then
+                cNewNum = Left$(cNewNum, Len(cNewNum) - 1)
+             End If
+        Case Dollars
+          cNewNum = Format$(cInputNum, "Currency")
+        Case Unformat
+          If Len(cInputNum) Then
+             cNewNum = CDbl(cInputNum)
+          Else
+             cNewNum = ""
+          End If
+        Case Else
+           MsgBox "Unknown Number Format!", vbExclamation, "Format Any Number"
+           cNewNum = cInputNum
+    End Select
+  FormatAnyNumber = cNewNum
+End Function
+
+Private Sub Command1_Click()
+    Text1 = FormatAnyNumber(Text1, Commas)
+End Sub
+
+
+Private Sub Command2_Click()
+    Text1 = FormatAnyNumber(Text1, Dollars)
+End Sub
+
+
+Private Sub Command3_Click()
+    Text1 = FormatAnyNumber(Text1, Unformat)
+End Sub
+

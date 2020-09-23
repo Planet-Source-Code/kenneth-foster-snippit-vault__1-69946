@@ -1,0 +1,38 @@
+Private Declare Function mciSendString Lib "winmm.dll" Alias _
+"mciSendStringA" (ByVal lpszCommand As String, ByVal lpszReturnString As String, _
+ByVal cchReturnLength As Long, ByVal hwndCallBack As Long) As Long
+Dim EOpen As Boolean
+Dim FOpen As Boolean
+
+Private Sub Command1_Click()
+   If Option1.Value = True And EOpen = False Then
+      OpenCDDrive "E"
+      EOpen = True
+      Exit Sub
+   End If
+   If Option1.Value = True And EOpen = True Then
+      CloseCDDrive "E"
+      EOpen = False
+   End If
+      
+   If Option2.Value = True And FOpen = False Then
+      OpenCDDrive "F"
+      FOpen = True
+      Exit Sub
+   End If
+   If Option2.Value = True And FOpen = True Then
+      CloseCDDrive "F"
+      FOpen = False
+   End If
+End Sub
+
+Private Sub OpenCDDrive(Drv As String)
+    mciSendString "Open " & Drv & ": Alias " & "Drive" & Drv & " Type CDAudio", 0&, 0&, 0&      'Once set, is applied to system until restart
+    mciSendString "set Drive" & Drv & " door open", 0&, 0&, 0&
+End Sub
+
+Private Sub CloseCDDrive(Drv As String)
+    mciSendString "Open " & Drv & ": Alias " & "Drive" & Drv & " Type CDAudio", 0&, 0&, 0&      'Once set, is applied to system until restart
+    mciSendString "set Drive" & Drv & " door closed", 0&, 0&, 0&
+End Sub
+

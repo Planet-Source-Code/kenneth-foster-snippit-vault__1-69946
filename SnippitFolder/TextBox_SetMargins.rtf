@@ -1,0 +1,22 @@
+Private Declare Function SendMessageLong Lib "user32" Alias "SendMessageA" _
+   (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+Private Const EM_SETMARGINS = &HD3
+Private Const EC_LEFTMARGIN = &H1
+Private Const EC_RIGHTMARGIN = &H2
+
+
+
+Public Sub LeftMargin(hWnd As Long, n As Integer)
+    SendMessageLong hWnd, EM_SETMARGINS, EC_LEFTMARGIN, n
+End Sub
+
+Private Sub Form_Load()
+    LeftMargin Text1.hWnd, 5
+    RightMargin Text1.hWnd, 5
+End Sub
+
+Public Sub RightMargin(hWnd As Long, n As Integer)
+    SendMessageLong hWnd, EM_SETMARGINS, EC_RIGHTMARGIN, n * &H10000
+End Sub
+

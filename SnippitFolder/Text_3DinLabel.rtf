@@ -1,0 +1,27 @@
+Option Explicit
+
+Private Sub Form_Load()
+  Dim i As Integer
+  'Set lab(0).Index = 0
+  lab(0).AutoSize = True
+  lab(0).BackStyle = 0
+  lab(0).FontSize = 32
+  lab(0).ForeColor = &HFF00FF    'Set Font color here
+  
+For i = 1 To 25
+        Load lab(i)
+        lab(i).AutoSize = True
+        lab(i).Visible = True
+        lab(i).Caption = lab(0).Caption
+        'lab(i).Font.Bold = True
+        lab(i).Font.Size = lab(0).Font.Size
+        lab(i).Font.Name = lab(0).Font.Name
+        'lab(i).fon
+        lab(i).BackStyle = 0
+        lab(i).ForeColor = RGB(i * 10, i * 10, i * 10)
+        lab(i).Left = lab(0).Left + i * 10
+        lab(i).Top = lab(0).Top + i * 10
+    Next i
+
+End Sub
+

@@ -1,0 +1,31 @@
+For Example:
+    S = ChangeFileExt("C:\MyDir\MyFile.Txt","BAK")
+    Returns S As "C:\MyDir\MyFile.BAK"
+' By: Michael Ian Bragg
+
+
+Function ChangeFileExt(FileNa, FileEx As String) As String 
+    Dim FRes As String
+    Dim SLen As Integer
+    SLen = Len(FileNa)
+    LstPos = 0
+
+
+    For i = 1 To SLen
+        SepPos = InStr(i, FileNa, ".", 1)
+
+
+        If SepPos > LstPos And (i + SepPos) < SLen Then
+            LstPos = SepPos
+        Else
+            SepPos = LstPos
+            Exit For
+        End If
+        i = i + SepPos
+    Next i
+    FRes = Right(FileNa, SLen - SepPos)
+    FRes = Left(FileNa, SepPos)
+    FRes = FRes + FileEx
+    ChangeFileExt = FRes
+End Function
+

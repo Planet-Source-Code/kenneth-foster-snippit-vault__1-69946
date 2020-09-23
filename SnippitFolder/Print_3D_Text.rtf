@@ -1,0 +1,25 @@
+
+
+
+Private Sub Command1_Click()
+Dim x As Integer
+Dim y As Integer
+Dim i As Integer
+
+ForeColor = &H4000F
+x = Me.Width \ 4 'CurrentX
+y = 300 'CurrentY
+
+
+    For i = 1 To 100
+        x = x + 1: y = y + 1: CurrentX = x: CurrentY = y
+       Me.Print "3D Heading"
+    Next i
+
+
+    ForeColor = &HFF00FF
+    x = x + 1: y = y + 1: CurrentX = x: CurrentY = y
+       Me.Print "3D Heading"
+
+End Sub
+

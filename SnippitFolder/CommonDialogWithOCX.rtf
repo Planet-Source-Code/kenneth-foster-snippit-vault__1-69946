@@ -1,0 +1,63 @@
+Option Explicit
+'put 6 option buttons on the form make their captions (ShowColor,ShowFont,ShowHelp,ShowOpen,ShowPrinter,ShowSave)and
+'do not forget the commondialog and a command button (cmd show)copy the code and try it.
+Private Sub cmdShow_Click()
+    Dim x As Integer, Which As Integer
+    Which = 0
+    For x = 0 To 5
+        If optWhich(x).Value = True Then Which = x
+    Next x
+    CommonDialog1.CancelError = True
+    On Error GoTo ErrHandler
+    Select Case UCase(Mid(optWhich(Which).Caption, 5, 1))
+        Case "C"
+            CommonDialog1.Flags = cdlCCFullOpen
+            CommonDialog1.ShowColor   'Action = 3
+        Case "F"
+            CommonDialog1.Flags = cdlCFBoth + cdlCFTTOnly
+            CommonDialog1.FontName = "Times New Roman"
+            CommonDialog1.FontSize = 20
+            CommonDialog1.ShowFont    'Action = 4
+        Case "H"
+            CommonDialog1.HelpFile = "VB6.HLP"
+            CommonDialog1.HelpCommand = cdlHelpContents
+            CommonDialog1.ShowHelp   'Action = 6
+        Case "O"
+            CommonDialog1.DialogTitle = "Harold's File Open"
+            CommonDialog1.Filter = _
+             "Visual Basic project files (*.Vbp)|*.vbp|All Files (*.*)|*.*"
+            CommonDialog1.Flags = cdlOFNAllowMultiselect + _
+                cdlOFNExplorer + cdlOFNLongNames + cdlOFNFileMustExist
+            CommonDialog1.ShowOpen  'Action = 1
+        Case "P"
+            CommonDialog1.Flags = cdlPDHidePrintToFile
+            CommonDialog1.ShowPrinter 'Action = 5
+        Case "S"
+            CommonDialog1.DialogTitle = "Harold's File Save"
+            CommonDialog1.Filter = _
+             "Files will rule the world!|*.vbp|I don't think so!|*.*"
+            CommonDialog1.Flags = cdlOFNOverwritePrompt + _
+               cdlOFNHelpButton + cdlOFNPathMustExist
+            'CommonDialog1.Flags = 2066
+            CommonDialog1.ShowSave   'Action = 2
+        Case Else
+            MsgBox "Whoops!"
+    End Select
+    On Error GoTo 0 'Reset error handling
+    'User didn't press cancel.  Take an action with dialog value.
+    Exit Sub
+ErrHandler:
+    If Err = cdlCancel Then
+        MsgBox "User Pressed Cancel - ignore common dialog values!"
+    End If
+End Sub
+
+Public Sub CenterForm(Frm As Form)
+    Frm.Move (Screen.Width - Frm.Width) \ 2, _
+        (Screen.Height - Frm.Height) \ 2
+End Sub
+
+Private Sub Form_Load()
+    CenterForm Me
+End Sub
+

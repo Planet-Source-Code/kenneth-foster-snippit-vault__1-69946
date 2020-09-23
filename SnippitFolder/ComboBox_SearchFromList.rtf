@@ -1,0 +1,102 @@
+'**************************************
+' Name: Combo box like IE Address bar
+' Description:It works like the Internet
+'     Explorer Address Bar. It will search in 
+'     combobox items for the first match and c
+'     hange the ListIndex property.
+create a Form With combo box named Combo1 
+PLEASE VOTE....
+' By: Nohel Hernández
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=44950&lngWId=1
+'for details.
+'**************************************
+
+Option Explicit
+Dim KeyBack As Boolean
+Dim ListPos As Integer
+
+
+Private Sub Form_Load()
+
+
+    With Combo1
+        .AddItem "www.planet-source-code.com"
+        .AddItem "www.google.com"
+        .AddItem "www.hotmail.com"
+        .AddItem "www.mypage.com"
+    End With
+End Sub
+
+
+Private Sub Combo1_Change()
+    Dim Index As Integer
+    Dim StartSel As Long
+    ' First: validate keyback or deletekey
+
+
+    If KeyBack = True Or Combo1.Text = "" Then
+        ListPos = -1
+        KeyBack = False
+        Exit Sub
+    End If
+    'Searh in combo items
+    ListPos = -1
+
+
+    For Index = 0 To Combo1.ListCount - 1
+        If InStr(1, Combo1.List(Index), _
+        Combo1.Text, _
+        vbTextCompare) = 1 Then
+        'Change SelStart and SelLength 
+        'property
+        StartSel = Combo1.SelStart
+        Combo1.Text = Combo1.List(Index)
+        Combo1.SelStart = StartSel
+        Combo1.SelLength = Len(Combo1.Text) - StartSel
+        ListPos = Index
+        Exit For
+    End If
+Next Index
+End Sub
+
+
+Private Sub Combo1_KeyDown(KeyCode As Integer, Shift As Integer)
+    If Combo1.Enabled = False Or _
+    Combo1.Locked = True Then
+    Exit Sub
+End If
+If KeyCode = vbKeyBack Or _
+KeyCode = vbKeyDelete Then
+
+
+If Combo1.Text <> "" Then
+    ' if user press KeyBack or Deletekey
+    ' change event will not execute
+    KeyBack = True
+End If
+End If
+End Sub
+
+
+Private Sub Combo1_KeyPress(KeyAscii As Integer)
+
+
+    If KeyAscii = 13 Then
+        ' leave focus if user press ENTER key
+        SendKeys "{TAB}"
+        KeyAscii = 0
+    End If
+End Sub
+
+
+Private Sub Combo1_LostFocus()
+    MsgBox "Listindex is " & ListPos
+    Combo1.ListIndex = ListPos
+End Sub
+
+
+

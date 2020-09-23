@@ -1,0 +1,9 @@
+
+'Resize textbox to forms size when form is resized
+
+Private Sub Form_Resize()
+If Form1.WindowState = 1 Then Exit Sub
+    'textBox Move left, top, width, height
+    Text1.Move 40, 80, Form1.Width - 200, Form1.Height - 500
+
+End Sub

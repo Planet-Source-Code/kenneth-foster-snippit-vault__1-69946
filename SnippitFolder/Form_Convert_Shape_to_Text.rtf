@@ -1,0 +1,46 @@
+Private Declare Function SelectClipPath Lib "gdi32" (ByVal hDC As Long, ByVal iMode As Long) As Long
+Private Declare Function BeginPath Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function EndPath Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function PathToRegion Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
+
+Private Const RGN_COPY = 5
+
+Private Sub Form_Load()
+Const txt = "Kenneth Foster"
+
+Dim hRgn As Long
+
+    BorderStyle = vbBSNone
+    Caption = ""
+
+    BackColor = vbRed '&H80000001
+
+    ' big font.
+    Font.Name = "Comic Sans MS"
+    Font.Bold = True
+    Font.Size = 70
+
+    ' form big enough.
+    Width = TextWidth(txt)
+    Height = TextHeight(txt)
+
+    '  clipping path.
+    BeginPath hDC
+    CurrentX = 0
+    CurrentY = 0
+    Print txt
+    EndPath hDC
+
+ 
+    hRgn = PathToRegion(hDC)
+
+        SetWindowRgn hwnd, hRgn, False
+
+    ' Position the form.
+   ' Move (Screen.Width - Width) / 2, (Screen.Height - Height) / 2
+
+     Move 600, 600
+   
+End Sub
+

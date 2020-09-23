@@ -1,0 +1,151 @@
+'put on form 2 command buttons,one label, one picturebox
+'name one button Load, name the other on Save
+' name label as Tmp and picturebox as Source
+
+Option Explicit
+Dim Cancel As Boolean ' has the cancel button been pressed?
+
+Private Sub Form_Load()
+ InitDlgs 'initalize save and open dialogs
+End Sub
+
+Private Sub Form_Resize()
+If Form1.Width < 3855 Then Form1.Width = 3855
+
+     'Form1.Width = Source.Width + 225
+
+
+If Form1.Height < 5985 Then Form1.Height = 5985
+ 
+    ' Form1.Height = Source.Height + 1400
+ 
+End Sub
+
+Private Sub Save_Click()
+ Dim File As String ' holds the file name
+ File = Save_File(Me.hWnd) 'show save dlg
+ If Trim(File) = "" Then MsgBox "File Not Saved!", vbCritical, "File Not Saved": Exit Sub ' error in name
+
+ Me.Caption = "Please Wait Saving....."
+ Source.Picture = Source.Image 'set the picture to equal the image
+ Tmp.Caption = File '-- get rid of any unwanted chars (ie chr13, or 0)
+ File = Tmp.Caption '/
+ If LCase(Right(File, 4) <> ".bmp") Then File = File & ".bmp" ' add the bmp on the file
+ Call SavePicture(Source.Picture, File) ' save the picture
+
+ 
+End Sub
+
+Private Sub Load_Click()
+ Dim File As String ' holds the file name
+ File = Open_File(Me.hWnd) 'show the open file dlg
+ If Trim(File) = "" Then Exit Sub ' make sure the file is correct
+ Source.Picture = LoadPicture(File) ' load the file
+ 
+ End Sub
+
+Private Sub Source_Resize()
+If Form1.Width < 3855 Then
+     Form1.Width = 3855
+ Else
+     Form1.Width = Source.Width + 225
+End If
+
+If Form1.Height < 5985 Then
+      Form1.Height = 5985
+ Else
+     Form1.Height = Source.Height + 1400
+ End If
+End Sub
+
+
+'put in module called OpenSaveDlg
+
+
+-------------------------------------------------------'
+' This Code Was Taken From PSC                          '
+' Thanks To: Brand-X Software For The Open_File Sub     '
+' Minor Edits By Arvinder Sehmi & Creation Of Save_File '
+'-------------------------------------------------------'
+'Declare Api Calls
+Public Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameA" (pOpenfilename As OPENFILENAME) As Long
+Public Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameA" (pOpenfilename As OPENFILENAME) As Long
+'Declare Types
+Public Type OPENFILENAME
+  lStructSize As Long
+  hwndOwner As Long
+  hInstance As Long
+  lpstrFilter As String
+  lpstrCustomFilter As String
+  nMaxCustFilter As Long
+  nFilterIndex As Long
+  lpstrFile As String
+  nMaxFile As Long
+  lpstrFileTitle As String
+  nMaxFileTitle As Long
+  lpstrInitialDir As String
+  lpstrTitle As String
+  flags As Long
+  nFileOffset As Integer
+  nFileExtension As Integer
+  lpstrDefExt As String
+  lCustData As Long
+  lpfnHook As Long
+  lpTemplateName As String
+End Type
+'Declare Variables
+Public SaveFileDialog As OPENFILENAME
+Public OpenFileDialog As OPENFILENAME
+Private rv As Long
+Private sv As Long
+Public Function Open_File(hWnd As Long) As String
+   rv& = GetOpenFileName(OpenFileDialog)
+   If (rv&) Then
+      Open_File = Trim$(OpenFileDialog.lpstrFile)
+   Else
+      Open_File = ""
+   End If
+End Function
+Public Function Save_File(hWnd As Long) As String
+   sv& = GetSaveFileName(SaveFileDialog)
+   If (sv&) Then
+      Save_File = Trim$(SaveFileDialog.lpstrFile)
+   Else
+      Save_File = ""
+   End If
+End Function
+Private Sub InitSaveDlg()
+  With SaveFileDialog
+     .lStructSize = Len(SaveFileDialog)
+     .hwndOwner = hWnd&
+     .hInstance = App.hInstance
+     .lpstrFilter = "Bmp Image File,(*.bmp)" '+ Chr$(0) + "*.Bmp"
+     .lpstrFile = Space$(254)
+     .nMaxFile = 255
+     .lpstrFileTitle = Space$(254)
+     .nMaxFileTitle = 255
+     .lpstrInitialDir = App.Path
+     .lpstrTitle = "Save Image..."
+     .flags = 0
+  End With
+End Sub
+Private Sub InitOpenDlg()
+   With OpenFileDialog
+     .lStructSize = Len(OpenFileDialog)
+     .hwndOwner = hWnd&
+     .hInstance = App.hInstance
+     .lpstrFilter = "Image Files(*.bmp;*.jpg;*.pcx;*.gif)"    '+ Chr$(0) + "*.bmp;*.jpg;*.pcx;*.gif"
+     .lpstrFile = Space$(254)
+     .nMaxFile = 255
+     .lpstrFileTitle = Space$(254)
+     .nMaxFileTitle = 255
+     .lpstrInitialDir = App.Path
+     .lpstrTitle = "Load Image..."
+     .flags = 0
+   End With
+End Sub
+Public Sub InitDlgs()
+ Call InitSaveDlg
+ Call InitOpenDlg
+End Sub
+

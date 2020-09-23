@@ -1,0 +1,11 @@
+Directory exists
+
+Private Sub Form_Load() 
+Const ATTR_DIRECTORY = 16 
+If Dir$("c:\winnt", ATTR_DIRECTORY) <> "" Then 
+MsgBox ("The directory exists") 
+Else 
+MsgBox ("The directory does not exist") 
+End If 
+End Sub 
+

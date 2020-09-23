@@ -1,0 +1,17 @@
+Function RemoveString(Entire As String, Word As String, Replace As String)
+    Dim I As Integer
+    I = 1
+    Dim LeftPart
+    Do While True
+        I = InStr(1, Entire, Word)
+        If I = 0 Then
+            Exit Do
+        Else
+            LeftPart = Left(Entire, I - 1)
+            Entire = LeftPart & Replace & Right(Entire, Len(Entire) - Len(Word) - Len(LeftPart))
+        End If
+    Loop
+    
+   MsgBox Entire
+   
+End Function

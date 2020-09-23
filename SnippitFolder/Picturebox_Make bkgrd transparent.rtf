@@ -1,0 +1,58 @@
+
+
+'makes background of picture invisible, uses upper left corner for mask color
+
+Public Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
+Public Declare Function CreateRectRgn Lib "gdi32" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Public Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+Public Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
+Public Declare Function ReleaseCapture Lib "user32" () As Long
+Public Declare Function SetWindowRgn Lib "user32" (ByVal hWnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
+Public Const RGN_OR = 2
+
+Public Sub SkinControl(Frm As PictureBox, MaskPic As PictureBox, Optional TransColor As Long)
+    'example of call  SkinControl Picture1, Picture1
+    Dim Retr As Long
+    Dim RgnFinal As Long
+    Dim RgnTmp As Long
+    
+    Dim hHeight As Long
+    Dim wWidth As Long
+    
+    Dim Col As Long
+    Dim Start As Long
+    Dim RowR As Long
+    
+    MaskPic.AutoSize = True
+    MaskPic.AutoRedraw = True
+    With Frm
+        .Height = MaskPic.Height
+        .Width = MaskPic.Width
+    End With
+    If TransColor < 1 Then
+        TransColor = GetPixel(MaskPic.hdc, 0, 0)
+    End If
+    hHeight = MaskPic.Height / Screen.TwipsPerPixelY
+    wWidth = MaskPic.Width / Screen.TwipsPerPixelX
+    RgnFinal = CreateRectRgn(0, 0, 0, 0)
+    For RowR = 0 To hHeight - 1
+        Col = 0
+        Do While Col < wWidth
+            Do While Col < wWidth And GetPixel(MaskPic.hdc, Col, RowR) = TransColor
+                Col = Col + 1
+            Loop
+            If Col < wWidth Then
+                Start = Col
+                Do While Col < wWidth And GetPixel(MaskPic.hdc, Col, RowR) <> TransColor
+                    Col = Col + 1
+                Loop
+                If Col > wWidth Then Col = wWidth
+                RgnTmp = CreateRectRgn(Start, RowR, Col, RowR + 1)
+                Retr = CombineRgn(RgnFinal, RgnFinal, RgnTmp, RGN_OR)
+                DeleteObject (RgnTmp)
+            End If
+        Loop
+    Next RowR
+    Retr = SetWindowRgn(Frm.hWnd, RgnFinal, True)
+End Sub
+

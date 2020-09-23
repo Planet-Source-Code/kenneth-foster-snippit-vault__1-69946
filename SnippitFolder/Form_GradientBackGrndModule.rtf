@@ -1,0 +1,144 @@
+'To use:
+Private Sub Command1_Click()
+gf_PicGrad Me, False, RGB(200, 255, 205), RGB(0, 255, 0)
+End Sub
+
+Private Sub Form_Load()
+gf_PicGrad Me, True, RGB(0, 0, 205), RGB(200, 150, 255)
+End Sub
+
+'Put in Module
+
+Private Declare Function GradientFill Lib "msimg32" (ByVal hDC As Long, ByRef pVertex As TRIVERTEX, ByVal dwNumVertex As Long, pMesh As Any, ByVal dwNumMesh As Long, ByVal dwMode As Long) As Integer
+Private Type TRIVERTEX
+    X As Long
+    Y As Long
+    Red As Integer
+    Green As Integer
+    Blue As Integer
+    Alpha As Integer
+End Type
+
+Private Type GRADIENT_RECT
+    UpperLeft As Long
+    LowerRight As Long
+End Type
+
+Dim vert(2) As TRIVERTEX
+Dim gRect As GRADIENT_RECT
+
+Private CusR1 As String, CusG1 As String, CusB1 As String, CusR2 As String, CusG2 As String, CusB2 As String
+Private LCol1 As String, Border1 As String, Border2 As String, Top0 As String, Top1 As String
+Private Bottom0 As String, Bottom1 As String, CusBorder1 As String, CusBorder2 As String
+
+Private DefForeColor As OLE_COLOR
+Dim GradientF1 As Integer
+Global gi_Red%, gi_Green%, gi_Blue%
+Function gf_2RGB(ByVal al_Color As Long) As String
+    Dim ls_Color As String
+    ls_Color = Hex$(al_Color)
+    If Len(ls_Color) < 6 Then ls_Color = String(6 - Len(ls_Color), "0") & ls_Color
+    gf_2RGB = "" & CLng("&H" & Mid(ls_Color, 5, 2)) & ", " & CLng("&H" & Mid(ls_Color, 3, 2)) & ", " & CLng("&H" & Mid(ls_Color, 1, 2))
+End Function
+Sub gf_PicGrad(ByVal ao_Pic As Object, ByVal ab_Horizontal As Boolean, ByVal ac_Color1 As Long, ByVal ac_Color2 As Long)
+    
+    Top0 = FixLen(Hex$(ac_Color1), "000000")
+    Top1 = Left(Top0, 4)
+    CusB1 = "&H" & Left(Top1, 2)
+    CusG1 = "&H" & Right(Top1, 2)
+    CusR1 = "&H" & Right(Top0, 2)
+    
+    Bottom0 = FixLen(Hex$(ac_Color2), "000000")
+    Bottom1 = Left(Bottom0, 4)
+    CusB2 = "&H" & Left(Bottom1, 2)
+    CusG2 = "&H" & Right(Bottom1, 2)
+    CusR2 = "&H" & Right(Bottom0, 2)
+
+
+    On Local Error Resume Next
+    DefForeColor = &H0
+    Border1 = CusBorder1
+    Border2 = CusBorder2
+    vert(0).Red = CusR1 + "00": vert(1).Red = CusR2 + "00"
+    vert(0).Green = CusG1 + "00": vert(1).Green = CusG2 + "00"
+    vert(0).Blue = CusB1 + "00": vert(1).Blue = CusB2 + "00"
+
+    ao_Pic.ScaleMode = vbPixels
+    ao_Pic.ScaleMode = vbPixels
+    vert(0).X = 0: vert(1).X = ao_Pic.ScaleWidth
+    vert(0).Y = 0: vert(1).Y = ao_Pic.ScaleHeight
+    gRect.UpperLeft = 1
+    gRect.LowerRight = 0
+    'normal
+    GradientF1 = IIf(ab_Horizontal, 1, 0)
+    GradientFill ao_Pic.hDC, vert(0), 4, gRect, 1, GradientF1
+    ao_Pic.ScaleMode = 1
+    ao_Pic.Refresh
+    On Error GoTo 0
+End Sub
+Public Sub gf_GradientPic(ByVal Pic As PictureBox, colr As Integer)
+    Dim I As Integer
+    Dim Y As Integer
+    Dim X As Integer
+    
+    With Pic
+        .AutoRedraw = True
+        .DrawStyle = 6
+        .DrawMode = 13
+        .DrawWidth = 2
+        .ScaleMode = 3
+        .ScaleHeight = (256 * 2)
+    End With
+    If colr < 7 Then
+      For I = 0 To 255
+          Select Case colr
+              Case 1 'Black To Red Horizonal
+                  Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 0, 0), BF
+              Case 2 'Black To Green Horizonal
+                  Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(0, I, 0), BF
+              Case 3 'Black To Blue Horzonal
+                  Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(0, 0, I), BF
+              Case 4 ' Black to Red Vertical
+                  Pic.Line (X, 0)-(X - 100, Pic.Height + 100), RGB(I, 0, 0), BF
+              Case 5 ' Black to Green Vertical
+                  Pic.Line (X, 0)-(X - 100, Pic.Height + 100), RGB(0, I, 0), BF
+              Case 6 ' Black to Blue Vertical
+                  Pic.Line (X, 0)-(X - 100, Pic.Height + 100), RGB(0, 0, I), BF
+            End Select
+            Y = Y + 2
+            X = X + 2
+        Next I
+    Else
+        For I = 255 To 0 Step -1
+            Select Case colr
+                Case 7 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 255, 255), BF
+                Case 8 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 0, 0), BF
+                Case 9 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 100, 100), BF
+                Case 10 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 200, 200), BF
+                Case 11 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(I, 150, 150), BF
+                Case 12 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(255, I, 255), BF
+                Case 13 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(205, I, 205), BF
+                Case 14 '
+                    Pic.Line (0, Y)-(Pic.Width, Y + 2), RGB(100, I, 100), BF
+            End Select
+            Y = Y + 2
+            X = X + 2
+        Next
+    End If
+End Sub
+'-------------------Start Adding "000000" To HEX(OLE COLOR)-----------------
+Private Function FixLen(ByVal sIn As String, ByVal sMask As String) As String
+    If Len(sIn) < Len(sMask) Then
+        FixLen = Left$(sMask, Len(sMask) - Len(sIn)) & sIn
+    Else
+        FixLen = Right$(sIn, Len(sMask))
+    End If
+End Function
+

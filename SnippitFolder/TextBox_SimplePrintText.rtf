@@ -1,0 +1,12 @@
+'Simple print text, no formating
+
+
+Private Sub Command1_Click()
+PrintTXT Text1
+End Sub
+
+Sub PrintTXT(txt As TextBox)
+'Print Text'
+      Printer.Print txt
+      Printer.EndDoc
+End Sub

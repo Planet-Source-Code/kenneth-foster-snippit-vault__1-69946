@@ -1,0 +1,32 @@
+'need two text boxes And a command button
+'to Call ex:
+ Private Sub Command1_Click()
+Text2.Text = toCapitals(Text1.Text)
+End Sub
+
+
+Function toCapitals(strLowerCase)
+    Dim ii, jj
+    '--- determine how Long the String To be
+    '     converted is
+    ii = Len(strLowerCase)
+    '--- first letter of String will always
+    '     be capitalised
+    toCapitals = UCase(Mid(strLowerCase, 1, 1))
+    '--- Check the rest of the unconverted s
+    '     tring
+    '--- We capitalise the Next letter whene
+    '     ver we find a space Or a break
+
+
+    For jj = 1 To ii - 1
+
+
+        If Mid(strLowerCase, jj, 1) = " " Or Mid(strLowerCase, jj, 1) = "." Then
+            toCapitals = toCapitals & UCase(Mid(strLowerCase, jj + 1, 1))
+        Else
+            toCapitals = toCapitals & Mid(strLowerCase, jj + 1, 1)
+        End If
+    Next
+End Function
+

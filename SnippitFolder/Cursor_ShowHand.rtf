@@ -1,0 +1,22 @@
+
+
+
+Private Declare Function LoadCursor Lib "user32.dll" Alias "LoadCursorA" (ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
+Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
+Private Const IDC_HAND As Long = 32649
+
+Private myHand_handle As Long
+
+Private Sub Command1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+SetCursor myHand_handle
+End Sub
+
+Private Sub Form_Load()
+    ' load the system's hand cursor if it exists
+    myHand_handle = LoadCursor(0, IDC_HAND)
+End Sub
+
+Private Sub Label2_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+SetCursor myHand_handle
+End Sub
+

@@ -1,0 +1,87 @@
+' MODULE CODE
+' Cut and paste the following into your 
+'     new module.
+'=======================================
+Option Explicit 
+' Fraction Type
+
+Public Type Fraction 
+    Numerator as Long 
+    Denominator as Long 
+    End Type 
+
+Public Function SimplifyFraction(ByVal Numerator as Long, ByVal Denominator as Long) as Fraction 
+    ' SimplifyFraction
+    ' Author: Rob Loach
+    ' Purpose: Used to reduce (simplify) a f
+    '     raction.
+    ' Copyright 2002
+
+    Dim dblA as Double ' Temporary double values 
+    Dim x as Long ' Temporary long values 
+
+    For x = 1 To Numerator 
+        ' Divide with the Numerator and use the 
+        '     Double
+            dblA = Numerator / x 
+            ' Find out if it is divisable by both ev
+            '     enly
+            If InStr(1, CStr(dblA), ".") = 0 Then 
+
+
+                If InStr(1, CStr(Denominator / dblA), ".") = 0 Then 
+                    ' Finish with the first one that's divis
+                    '     able by both
+                    x = CLng(dblA) 
+                    Exit For 
+                End If 
+            End If 
+        Next x ' Go onto the next number 
+
+        ' Assign the values
+        SimplifyFraction.Numerator = Numerator / x 
+        SimplifyFraction.Denominator = Denominator / x 
+
+    End Function 
+    '=======================================
+       ' EXAMPLE OF FORM CODE
+
+Private Sub Form_Load() 
+    'Make a new Fraction variable called Fra
+    '     ct
+    Dim Fract as Fraction 
+    Do 'Loop 
+        'Input the numerator into Fract
+        Fract.Numerator = InputBox( _ 
+        "What would you like the numerator to be?", _ 
+        "SimplifyFraction", "25") 
+        'Input the denominator into Fract
+        Fract.Denominator = InputBox( _ 
+        "What would you like the denominator to be?", _ 
+        "SimplifyFraction", "100") 
+
+        'Simplify the fraction by using the func
+        '     tion
+        Fract = SimplifyFraction(Fract.Numerator, Fract.Denominator)   
+        'Display the output
+        MsgBox "The final fraction became " & Fract.Numerator & " / " & Fract.Denominator, vbInformation, "SimplifyFraction"   
+        'Loop if wanted
+    Loop While MsgBox("Would you like To run again?", vbYesNo + vbQuestion, "SimplifyFraction") = vbYes 
+
+    End 'Quit 
+
+End Sub 
+
+'========================================================
+'example code
+
+Dim Fract As Fraction
+
+Private Sub Command1_Click()
+
+Fract.Numerator = Text1.Text
+Fract.Denominator = Text2.Text
+Fract = SimplifyFraction(Fract.Numerator, Fract.Denominator)
+Text3.Text = Fract.Numerator & "/" & Fract.Denominator
+End Sub
+

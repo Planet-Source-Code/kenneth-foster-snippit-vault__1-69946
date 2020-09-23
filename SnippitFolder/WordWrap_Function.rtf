@@ -1,0 +1,16 @@
+'Example
+Private Sub Form_Load() 
+    MsgBox WordWrap("This is a Long testtext that doesn't make any sense really. But I hope you will enjoy my example and I do Not know what I can write any more. This must be enough", 20), vbOKOnly + vbInformation, "WordWrap"
+End Sub
+
+
+Function WordWrap(ByVal Text As String, Optional ByVal MaxLineLen As Integer = 70)
+    Dim i As Integer
+
+
+    For i = 1 To Len(Text) / MaxLineLen
+        Text = Mid(Text, 1, MaxLineLen * i - 1) & Replace(Text, " ", vbCrLf, MaxLineLen * i, 1, vbTextCompare)
+    Next i
+    WordWrap = Text
+End Function
+

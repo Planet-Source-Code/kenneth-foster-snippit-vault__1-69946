@@ -1,0 +1,67 @@
+'Put on form
+
+' Assumes:
+'         Set Form ScaleMode to 3 "Pixel"
+'         Set Form Controlbox to false
+'         Set Form BorderStyle to none
+'         Set autodraw = true
+'Load a Picture To the Form
+'Note:  In Form_Load put
+
+' Me.Show
+'TransParentPic Me, Me.Point(0, 0)
+
+'Side effects...may cause your
+'computer to turn white and look funny (ONLY IF YOU
+'DO NOT USE THE "DeleteObject" Sub)
+
+Option Explicit 
+    Const RGN_AND = 1 
+    Const RGN_COPY = 5 
+    Const RGN_DIFF = 4 
+    Const RGN_OR = 2 
+    Const RGN_XOR = 3 
+
+
+Sub TransParentPic(Frm as Form, Col as Long) 
+    Dim G, X, Y, Rgn, Rgn1 
+    'TransParentPic Me, Me.Point(0, 0)
+    'Point(0, 0) gets the left/top color of
+    '     the form
+    'Create a Main Region
+    Rgn = CreateRectRgn(0, 0, 0, 0) 
+    For Y = 0 To Frm.ScaleHeight 
+        For X = 0 To Frm.ScaleWidth 
+            'If color doesnt = Col then we will star
+            '     t to create a line
+            If Frm.Point(X, Y) <> Col Then 
+                G = X 
+                Do 
+                    X = X + 1 
+                Loop Until Frm.Point(X, Y) = Col or X = Frm.ScaleWidth + 1 
+                'Create a Second Region to add to the Ma
+                '     in
+                Rgn1 = CreateRectRgn(G, Y, X, Y + 1) 
+                'combined them
+                Call CombineRgn(Rgn, Rgn, Rgn1, RGN_OR) 
+                'NOTE: IF YOU DO NOT DELETE THE REGION
+                'IT WILL ERROR WINDOWS
+                Call DeleteObject(Rgn1) 
+            End If 
+        Next 
+    Next 
+    'Set the New Region
+    Call SetWindowRgn(Frm.hWnd, Rgn, True) 
+    'NOTE: IF YOU DO NOT DELETE THE REGION
+    'IT WILL ERROR WINDOWS
+    Call DeleteObject(Rgn) 
+End Sub 
+
+
+'Put in module
+
+Declare Sub CombineRgn Lib "GDI32" (ByVal hDestRgn as Long, ByVal hSrcRgn1 as Long, ByVal hSrcRgn2 as Long, ByVal nCombineMode as Long) 
+Declare Sub DeleteObject Lib "GDI32" (ByVal hWnd as Long) 
+Declare Sub SetWindowRgn Lib "User32" (ByVal hWnd as Long, ByVal hRgn as Long, ByVal bRedraw as Boolean) 
+Declare Function CreateRectRgn Lib "GDI32" (ByVal X1 as Long, ByVal Y1 as Long, ByVal X2 as Long, ByVal Y2 as Long) as Long 
+

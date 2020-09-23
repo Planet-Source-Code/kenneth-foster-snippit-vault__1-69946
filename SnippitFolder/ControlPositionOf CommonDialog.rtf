@@ -1,0 +1,38 @@
+'Form1 is the main app with a command bu
+'     tton to call the dialog with
+'Form2 is the form containing only the c
+'     ommon dialog control.
+
+
+Form1 code:
+
+
+Private Sub Command1_Click()
+    
+    Load Form2
+
+
+    Form2.CommonDialog1.Flags = cdlOFNHideReadOnly
+
+
+        Form2.CommonDialog1.Filter = "All Files (*.*)|*.*|"
+
+
+            Form2.CommonDialog1.FilterIndex = 2
+
+
+                Form2.CommonDialog1.ShowOpen
+                    
+                    Print Form2.CommonDialog1.filename
+                    'do this last
+                    Unload Form2
+                End Sub
+
+
+            Form2 code:
+
+
+Private Sub Form_Load()
+    Me.Move Screen.Width / 4, Screen.Height / 4, 1, 1
+End Sub
+

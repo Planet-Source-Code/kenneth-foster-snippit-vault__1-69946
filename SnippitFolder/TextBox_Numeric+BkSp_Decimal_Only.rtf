@@ -1,0 +1,10 @@
+Private Sub text1_KeyPress(KeyAscii As Integer) 
+    If Not IsNumeric(Chr(KeyAscii)) Then
+        If KeyAscii = 8 Or KeyAscii = 32 Then
+            'Allow Backspace And Space
+        Else
+            KeyAscii = 0
+        End If
+    End If
+End Sub
+

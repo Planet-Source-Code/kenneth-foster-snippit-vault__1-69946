@@ -1,0 +1,53 @@
+Option Explicit
+
+Private Type LOGFONT
+  lfHeight As Long
+  lfWidth As Long
+  lfEscapement As Long
+  lfOrientation As Long
+  lfWeight As Long
+  lfItalic As Byte
+  lfUnderline As Byte
+  lfStrikeOut As Byte
+  lfCharSet As Byte
+  lfOutPrecision As Byte
+  lfClipPrecision As Byte
+  lfQuality As Byte
+  lfPitchAndFamily As Byte
+  lfFacename As String * 33
+End Type
+
+Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectA" (lpLogFont As LOGFONT) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hdc As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+
+Private Sub FontStuff(Pic As PictureBox, ang As Integer, Alpha As String, Fs As Integer)
+'example: FontStuff Picturebox,Angle,Text,Fontsize
+'FontStuff Pic1, 90, "Testing.", 16
+
+  On Error GoTo GetOut
+  Dim F As LOGFONT, hPrevFont As Long, hFont As Long, FontName As String
+  Dim FONTSIZE As Integer
+  FONTSIZE = Fs
+  Pic.Cls
+  F.lfEscapement = 10 * ang
+  FontName = Pic.Font
+  F.lfFacename = FontName
+  F.lfHeight = (FONTSIZE * -20) / Screen.TwipsPerPixelY
+  hFont = CreateFontIndirect(F)
+  hPrevFont = SelectObject(Pic.hdc, hFont)
+  Pic.CurrentX = Pic.Width / 60
+  Pic.CurrentY = Pic.Height - 100
+  Pic.Print Alpha
+'  Clean up, restore original font
+  hFont = SelectObject(Pic.hdc, hPrevFont)
+  DeleteObject hFont
+  Exit Sub
+GetOut:
+  Exit Sub
+End Sub
+
+Private Sub Form_Activate()
+FontStuff Pic1, 90, "Testing", 16
+End Sub
+

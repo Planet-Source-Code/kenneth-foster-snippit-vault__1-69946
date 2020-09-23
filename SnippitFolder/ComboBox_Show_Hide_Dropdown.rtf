@@ -1,0 +1,17 @@
+
+
+Private Declare Function SendMessageLong Lib "user32" Alias "SendMessageA" _ 
+        (ByVal hwnd as Long, _ 
+         ByVal wMsg as Long, _ 
+         ByVal wParam as Long, _ 
+         ByVal lParam as Long) as Long 
+    Private Const CB_SHOWDROPDOWN = &H14F 
+'=========================================
+
+
+'show dropdown
+ SendMessageLong State.hwnd, CB_SHOWDROPDOWN, True, 0 
+'hide dropdown
+ SendMessageLong State.hwnd, CB_SHOWDROPDOWN, False, 0 
+
+

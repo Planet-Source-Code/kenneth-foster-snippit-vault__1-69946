@@ -1,0 +1,41 @@
+Option Explicit
+
+Dim fso As Object
+
+Private Sub Command1_Click()
+
+CopyFolderToFloppy "c:\Program Files\Meals On Wheels\CustomerList", "a:\BackUpCopy"
+
+End Sub
+
+Private Sub CopyFolderToFloppy(PathCopyFrom As String, PathCopyTo As String)
+On Error GoTo here
+  
+    Dim fld As Object
+    
+    If MsgBox("Insert a disk into floppy drive", vbInformation + vbOKCancel, "Insert Disk") = vbCancel Then Exit Sub
+   
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set fld = fso.createfolder(PathCopyTo)
+
+    If fso.folderexists(PathCopyFrom) Then
+
+
+        If Not fso.folderexists(PathCopyTo) Then
+            'Generate Path
+            Set fld = fso.createfolder(PathCopyTo)
+        End If
+        'Copy now
+        fso.copyfolder PathCopyFrom, PathCopyTo, True
+        MsgBox "Save Complete!", vbOKOnly, "Saved"
+    Else
+        MsgBox "Disk Copy Failed!", vbOKOnly, "Copy Failed"
+    End If
+here:
+   MsgBox "Disk Copy Failed!", vbOKOnly, "Copy Failed"
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+ Set fso = Nothing
+End Sub
+

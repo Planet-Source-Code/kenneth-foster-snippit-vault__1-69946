@@ -1,0 +1,39 @@
+Private Sub CmbCode1_Click()
+Text1.Text = CmbCode1.Text
+End Sub
+
+Private Sub CmbCode1_KeyUp(KeyCode As Integer, Shift As Integer)
+    If KeyCode = 8 Then Exit Sub
+    AutoComplete CmbCode1
+End Sub
+
+
+Public Sub AutoComplete(DropBox As Control)
+    Dim Droptext As String
+    Dim Droplen As Integer
+    Dim x As Integer
+    Droptext = DropBox.Text
+    Droplen = Len(DropBox.Text)
+
+
+    For x = 0 To DropBox.ListCount
+
+
+        If UCase(Droptext) = UCase(Left(DropBox.List(x), Droplen)) Then
+            DropBox.ListIndex = x
+            DropBox.SelStart = Droplen
+            DropBox.SelLength = Len(DropBox) - Droplen
+            Exit For
+        End If
+    Next x
+    Text1.Text = CmbCode1.Text
+End Sub
+
+Private Sub Form_Load()
+With CmbCode1
+  .AddItem "Ken"
+  .AddItem "Foster"
+  .AddItem "fog"
+  End With
+End Sub
+

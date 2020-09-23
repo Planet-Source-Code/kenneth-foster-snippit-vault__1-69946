@@ -1,0 +1,75 @@
+'Make form transparent
+'3 command buttons
+'1 image
+' 1 textbox
+
+
+
+Dim FTrans As Integer
+Dim FArea As Long
+Private Declare Function ReleaseCapture Lib "user32" () As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function CreateRectRgn Lib "gdi32" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Private Declare Function CombineRgn Lib "gdi32" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
+Private Declare Function SetWindowRgn Lib "user32" (ByVal hwnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
+Private Const RGN_DIFF = 4
+Private Const RGN_OR = 2
+Private Sub TransPForm(TransPar As Integer)
+    Dim TWidth As Single, THeight As Single
+    Dim Fedge As Single, TEdge As Single
+    Dim outer As Long, inner As Long
+    Dim i As Integer
+    Dim FLeft As Integer
+    Dim FTop As Integer
+    Dim r As String
+    
+    TWidth = ScaleX(Width, vbTwips, vbPixels)
+    THeight = ScaleY(Height, vbTwips, vbPixels)
+    If TransPar = 0 Then
+        FArea = CreateRectRgn(0, 0, TWidth, THeight)
+        SetWindowRgn hwnd, FArea, True
+        Exit Sub
+    End If
+    FArea = CreateRectRgn(0, 0, 0, 0)
+    Fedge = (TWidth - ScaleWidth) / 2
+    TEdge = THeight - Fedge - ScaleHeight
+    If TransPar = 1 Then
+        outer = CreateRectRgn(0, 0, TWidth, THeight)
+        inner = CreateRectRgn(Fedge, TEdge, TWidth - Fedge, THeight - Fedge)
+        CombineRgn FArea, outer, inner, RGN_DIFF
+    End If
+    For i = 0 To Me.Controls.Count - 1
+        If Me.Controls(i).Visible = True Then
+            FLeft = ScaleX(Me.Controls(i).Left, Me.ScaleMode, vbPixels) + Fedge
+            FTop = ScaleX(Me.Controls(i).Top, Me.ScaleMode, vbPixels) + TEdge
+            r = CreateRectRgn(FLeft, FTop, _
+                FLeft + ScaleX(Me.Controls(i).Width, Me.ScaleMode, vbPixels), _
+                FTop + ScaleY(Me.Controls(i).Height, Me.ScaleMode, vbPixels))
+            CombineRgn FArea, r, FArea, RGN_OR
+        End If
+    Next
+    SetWindowRgn hwnd, FArea, True
+End Sub
+Private Sub Command1_Click()
+        FTrans = 2
+    TransPForm FTrans
+End Sub
+Private Sub Command2_Click()
+        FTrans = 1
+    TransPForm FTrans
+End Sub
+Private Sub Command3_Click()
+        FTrans = 0
+    TransPForm FTrans
+End Sub
+
+Private Sub Form_Load()
+Form1.ScaleMode = 3
+Form1.StartUpPosition = 2
+End Sub
+
+Private Sub Image1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+ReleaseCapture
+Call SendMessage(Me.hwnd, &HA1, 2, 0&)
+End Sub
+

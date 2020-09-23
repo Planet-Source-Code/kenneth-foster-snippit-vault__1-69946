@@ -1,0 +1,42 @@
+Function Chkit(strWord As String) As String
+    Dim msWord As Object
+    Dim strSelection As String
+    Set msWord = CreateObject("Word.Basic")
+    msWord.AppMinimize
+    Chkit = strWord
+    msWord.FileNewDefault
+    msWord.EditSelectAll
+    msWord.EditCut
+    msWord.Insert strWord
+    msWord.StartOfDocument
+    On Error Resume Next
+    msWord.ToolsSpelling
+    On Error Goto 0
+    msWord.EditSelectAll
+    strSelection = msWord.Selection$
+     
+If Mid(strSelection, Len(strSelection), 1) = Chr(13) Then
+  strSelection = Mid(strSelection, 1, Len(strSelection) - 1)
+End If
+
+If Len(strSelection) > 1 Then
+  Chkit = strSelection
+End If
+str = strSelection
+
+    msWord.FileCloseAll 2
+    msWord.AppClose
+    Set msWord = Nothing
+End Function
+
+
+'Example To use:Put textbox And command button On form
+
+Option Explicit
+Dim str As String
+
+Private Sub Command1_Click()
+ Call Chkit(Text1.Text)
+Text1.Text = str
+End Sub
+

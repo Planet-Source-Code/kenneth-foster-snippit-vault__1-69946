@@ -1,0 +1,31 @@
+
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+'constants
+Global Const WM_USER = &H400
+Global Const EM_GETLINE = WM_USER + 20
+Private Const EM_GETLINE = &HC4 
+Function TextBoxLine (TB As TextBox, ByVal LineNO As Integer) As String 
+        Dim ret As Long
+    Const BUFLEN = 1028
+    Dim buffer As String * BUFLEN
+    ' Set 1st 2 bytes to Buffer length
+    Mid(buffer, 1, 1) = Chr(BUFLEN And &HFF)
+    Mid(buffer, 2, 1) = Chr(BUFLEN \ &H100)
+
+
+    If Not TB.MultiLine Then
+        TextBoxLine = TB.Text
+    Else
+        ret& = sendmessage(TB.hWnd, EM_GETLINE, LineNO - 1, ByVal buffer)
+
+
+        If ret& Then
+            TextBoxLine = Left$(buffer, ret&)
+        Else
+            TextBoxLine = ""
+        End If
+    End If
+End Function
+

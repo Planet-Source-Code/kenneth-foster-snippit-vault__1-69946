@@ -1,0 +1,58 @@
+'search listbox or combo box
+
+Option Explicit
+
+Declare Function SendMessage Lib "user32" Alias "SendMessageA" _
+        (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, _
+        lParam As Any) As Long
+
+Const CB_FINDSTRING = &H14C
+Const CB_FINDSTRINGEXACT = &H158
+Const LB_FINDSTRING = &H18F
+Const LB_FINDSTRINGEXACT = &H1A2
+
+' This function will search for a match in either a ComboBox or a ListBox
+Private Function FindMatch(objX as Object, sStr as String, _
+        Optional sExact as Boolean = False, _
+        Optional sStart as Long = -1) as Long
+
+   If TypeOf objX Is ListBox Then
+      If sExact = True then
+         FindMatch = SendMessage(objX.hWnd, LB_FINDSTRINGEXACT, sStart, _
+                     ByVal sStr)
+      Else
+         FindMatch = SendMessage(objX.hWnd, LB_FINDSTRING, sStart, _
+                     ByVal sStr)
+      Endif
+   Else
+      If sExact = True then
+         FindMatch = SendMessage(objX.hWnd, CB_FINDSTRINGEXACT, _
+                     sStart, ByVal sStr)
+      Else
+         FindMatch = SendMessage(objX.hWnd, CB_FINDSTRING, sStart, _
+                     ByVal sStr)
+      Endif
+   EndIf
+
+End Function
+'-- End --'
+
+ 
+This is how you use the above Function:
+Dim i as Long
+
+' To find an item that matches exactly.
+' Will find an item if on exists that has the text "Item"
+i = FindMatch(List1, "Item", True)
+
+' To find an item where the search string matches the first letters in 
+' an item:
+' Will find the first item of all items that start with Item fx. Item,
+' Item1, item2, item3 and so on.
+i = FindMatch(List1, "Item") ' Item is found
+' To find the next matching item (here item with index 2 was found)
+' Using the above lineup again Item1 is found
+i = FindMatch(List1, "Item", , 4) ' Item1 is found
+ 
+If no items are found or an error occours the function will return -1.
+

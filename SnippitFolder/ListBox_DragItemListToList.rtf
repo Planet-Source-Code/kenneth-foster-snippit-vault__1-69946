@@ -1,0 +1,44 @@
+Dim TempStr As String
+
+Private Sub Form_Load()
+ List1.AddItem "one"
+ List1.AddItem "two"
+ MsgBox "Press the ""Ctrl"" key to drag a list item from one list to the other."
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+ MsgBox "Made by manavo. If you liked it plz vote"
+End Sub
+
+Private Sub List1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+ If Shift = 2 Then
+  List1.Drag vbBeginDrag
+ End If
+End Sub
+
+Private Sub List2_DragDrop(Source As Control, X As Single, Y As Single)
+ On Error GoTo 5
+ TempStr = Source
+ List1.RemoveItem List1.ListIndex
+ List2.AddItem TempStr
+ List1.Drag vbEndDrag
+
+5 Exit Sub
+End Sub
+
+Private Sub List2_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+ If Shift = 2 Then
+  List2.Drag vbBeginDrag
+ End If
+End Sub
+
+Private Sub List1_DragDrop(Source As Control, X As Single, Y As Single)
+ On Error GoTo 5
+ TempStr = Source
+ List2.RemoveItem List2.ListIndex
+ List1.AddItem TempStr
+ List2.Drag vbEndDrag
+ 
+5 Exit Sub
+End Sub
+

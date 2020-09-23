@@ -1,0 +1,26 @@
+
+
+
+If Dir(Filename)="" Then
+'File doesn't exist
+Else
+'File does exist
+End If
+'==================or use this one========================
+
+
+Public Function FileExists(strPath As String) As Boolean
+FileExists = LenB(Dir$(strPath))
+End Function
+'====================================================
+Not that speed is likely to be relevant to this (unles you are testing 1,000s of filenames) but:
+LenB is slightly faster than Len as long as all you want is 0 or not-0.
+
+Dir$ is slightly faster than Dir (Variant is larger than String)
+
+
+
+'=============================== or =======================
+
+If Dir(filepath) <>"" then ' it exists 
+

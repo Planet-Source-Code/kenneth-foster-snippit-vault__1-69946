@@ -1,0 +1,118 @@
+'Code by Kyro
+
+Public Function ReverseString(TheString as String) as String  
+    ReverseString = "" 
+
+
+    For i = 0 To Len(TheString) - 1 
+        ReverseString = ReverseString & Mid(TheString, Len(TheString) - i, 1) 
+    Next i 
+End Function 
+
+
+Public Function RemoveExtraSpaces(TheString as String) as String 
+    Dim LastChar as String 
+    Dim NextChar as String 
+    LastChar = Left(TheString, 1) 
+    RemoveExtraSpaces = LastChar 
+
+
+    For i = 2 To Len(TheString) 
+    NextChar = Mid(TheString, i, 1) 
+
+
+    If NextChar = " " And LastChar = " " Then 
+    Else 
+        RemoveExtraSpaces = RemoveExtraSpaces &  
+    '     NextChar
+End If 
+LastChar = NextChar 
+Next i 
+End Function 
+
+
+Public Function DelimitString(TheString as String, Delimiter as String) as String 
+    DelimitString = "" 
+
+
+    For i = 1 To Len(TheString) 
+
+
+        If i <> Len(TheString) Then 
+            DelimitString = DelimitString & Mid(TheString, i, 1) & Delimiter 
+        Else 
+            DelimitString = DelimitString & Mid(TheString, i, 1) 
+        End If 
+    Next i 
+End Function 
+
+
+Public Function AltCaps(TheString as String, Optional StartWithFirstCharacter as Boolean = True) as String 
+    Dim LastCap as Boolean 
+    AltCaps = "" 
+    If StartWithFirstCharacter = False Then LastCap = True 
+
+
+    For i = 1 To Len(TheString) 
+
+
+        If LastCap = False Then 
+            AltCaps = AltCaps & UCase(Mid(TheString, i, 1)) 
+            LastCap = True 
+        Else 
+            AltCaps = AltCaps & LCase(Mid(TheString, i, 1)) 
+            LastCap = False 
+        End If 
+    Next i 
+End Function 
+
+
+Public Function Propercase(TheString as String) as String 
+    Propercase = UCase(Left(TheString, 1)) 
+
+
+    For i = 2 To Len(TheString) 
+
+
+        If Mid(TheString, i - 1, 1) = " " Then 
+            Propercase = Propercase & UCase(Mid(TheString, i, 1)) 
+        Else 
+            Propercase = Propercase & LCase(Mid(TheString, i, 1)) 
+        End If 
+    Next i 
+End Function 
+
+
+Public Function CountCharacters(TheString as String, CharactersToCheckFor as String) as Integer 
+    Dim Char as String 
+    Dim ReturnAgain as Boolean 
+    CountCharacters = 0 
+
+
+    For i = 1 To Len(TheString) 
+
+
+        If i < (Len(TheString) + 1 - Len(CharactersToCheckFor)) Then 
+            Char = Mid(TheString, i, Len(CharactersToCheckFor)) 
+            ReturnAgain = True 
+        Else 
+            Char = Mid(TheString, i) 
+            ReturnAgain = False 
+        End If 
+        If Char = CharactersToCheckFor Then CountCharacters = CountCharacters + 1 
+        If ReturnAgain = False Then GoTo NextPos 
+    Next i 
+NextPos: 
+End Function 
+
+'Another example to reverse string
+
+Public Function BackWard(sInStr As String) As String
+    Dim idx As Long
+
+
+    For idx& = Len(sInStr$) To 1 Step -1
+        BackWard$ = BackWard$ & Mid(sInStr$, idx&, 1)
+    Next idx&
+End Function
+

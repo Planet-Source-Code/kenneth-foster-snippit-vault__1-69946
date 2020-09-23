@@ -1,0 +1,29 @@
+Name: Create Dir (Folder) 
+' Description:this code creates folder w
+'     ith any number of subfolders beneath it.
+'     MkDir can't do this!
+' By: Bibikoff Leonid
+'
+' Inputs:Path as string
+Private Function CreateDir(strPath As String) 
+    On Error Resume Next
+    Dim ArrFolders As Variant
+    ArrFolders = Split(strPath, "\")
+    Dim i as Long
+    Dim CurPath As String: CurPath = ArrFolders(0)
+    MkDir CurPath
+
+
+    For i = 1 To UBound(ArrFolders)
+        CurPath = CurPath & "\" & ArrFolders(i)
+        MkDir CurPath
+    Next i
+    MsgBox "Folder successfully created at   " & CurPath
+    On Error Goto 0
+
+
+    If Len(Dir(strPath, vbDirectory)) = 0 Then
+        Err.Raise vbObjectError, , "Can't create dir" & vbCrLf & strPath & vbcrlf & ":(((("
+    End If
+End Function
+

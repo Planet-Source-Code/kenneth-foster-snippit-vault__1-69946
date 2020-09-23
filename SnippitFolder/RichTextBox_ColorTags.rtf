@@ -1,0 +1,32 @@
+Private Sub Command1_Click()
+ColorTags RichTextBox1
+
+End Sub
+
+Private Sub ColorTags(rch As RichTextBox)
+Dim txt As String
+Dim tag_open As Integer
+Dim tag_close As Integer
+
+    txt = rch.Text
+    tag_close = 1
+    Do
+        ' See where the Next tag starts.
+        tag_open = InStr(tag_close, txt, "<")
+        If tag_open = 0 Then Exit Do
+        
+        ' See where the tag ends.
+        tag_close = InStr(tag_open, txt, ">")
+        If tag_open = 0 Then tag_close = Len(txt)
+        
+        ' Color the tag.
+        rch.SelStart = tag_open - 1
+        rch.SelLength = tag_close - tag_open + 1
+        rch.SelColor = vbRed
+    Loop
+End Sub
+
+Private Sub RichTextBox1_GotFocus()
+RichTextBox1.SelColor = vbBlack
+End Sub
+

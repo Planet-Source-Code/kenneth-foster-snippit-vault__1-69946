@@ -1,0 +1,16 @@
+Private Sub Command1_Click()
+FloppyIn ("a:")
+End Sub
+
+Public Function FloppyIn(Drv As String) As Boolean
+    Dim szRet As String
+    On Error Resume Next
+    Drv = IIf(Right$(Drv, 1) = "\", Drv, Drv & "\")
+    szRet = Dir(Drv, vbDirectory)
+    If Err.Number = 0 Then
+        MsgBox "Media in Drive"
+        'FloppyIn = True
+     Else
+        MsgBox "No Media"
+    End If
+End Function

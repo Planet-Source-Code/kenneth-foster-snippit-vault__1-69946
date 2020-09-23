@@ -1,0 +1,26 @@
+   ' This function when called must 
+ ' be passed the value from the commondialog
+ ' colour output. For example: CDColourto
+ '     HexRGB(commondialog1.color)
+
+
+
+
+
+Public Function CDColourtoHexRGB(CDColour)
+    Dim HexColour
+    Dim HexRed
+    Dim HexGreen
+    Dim HexBlue
+    HexColour = CStr(Hex(CDColour))
+
+
+    If Len(HexColour) < 6 Then
+        HexColour = String(6 - Len(HexColour), "0") & HexColour
+    End If
+    HexRed = Mid(HexColour, 5, 2)
+    HexGreen = Mid(HexColour, 3, 2)
+    HexBlue = Mid(HexColour, 1, 2)
+    CDColourtoHexRGB = HexBlue & HexGreen & HexRed
+End Function
+

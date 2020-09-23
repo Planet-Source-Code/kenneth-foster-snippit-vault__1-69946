@@ -1,0 +1,106 @@
+
+
+Private Type MENUITEMINFO
+    cbSize As Long
+    fMask As Long
+    fType As Long
+    fState As Long
+    wID As Long
+    hSubMenu As Long
+    hbmpChecked As Long
+    hbmpUnchecked As Long
+    dwItemData As Long
+    dwTypeData As String
+    cch As Long
+End Type
+
+Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, _
+    ByVal nPos As Long) As Long
+Private Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As _
+    Long
+Private Declare Function GetMenuItemInfo Lib "user32" Alias "GetMenuItemInfoA" _
+    (ByVal hMenu As Long, ByVal un As Long, ByVal b As Long, _
+    lpMenuItemInfo As MENUITEMINFO) As Long
+Private Declare Function SetMenuItemInfo Lib "user32" Alias "SetMenuItemInfoA" _
+    (ByVal hMenu As Long, ByVal un As Long, ByVal bool As Boolean, _
+    lpcMenuItemInfo As MENUITEMINFO) As Long
+
+Private Const MIIM_TYPE = &H10
+Private Const RGB_STARTNEWCOLUMNWITHVERTBAR = &H20&
+Private Const MFT_STRING = 0
+
+' Split a menu with one or more vertical lines
+' Return True if successful
+'
+' HWND is the handle of the parent window
+' ITEMSINSECTION is the max number of items in each
+'       section created by the vertical lines
+' MENUPOS is a list of arguments that point to the menu item to be split
+'    the first argument is the top-level menu
+'       (0 = the left-most top-level menu)
+'    the second argument, if specified, is the position
+'    of the submenu inside the top-level menu
+'       (0 = the submenu is the first item in the top-level menu)
+'    and so on
+'
+' For example, suppose you want to split the File menu
+' (the left-most toplevel menu) in groups of 10 items
+'      SplitSubMenu Me.hWnd, 10, 0
+' the following statement splits the 5th submenu of the
+' Edit menu (which is the 2nd toplevel menu)
+'      SplitSubMenu Me.hWnd, 10, 1, 4
+
+Function SplitSubMenu(ByVal hWnd As Long, ByVal itemsInSection As Long, _
+    ParamArray menuPos() As Variant) As Boolean
+    Dim hMenu As Long
+    Dim itemCount As Long
+    Dim itemInfo As MENUITEMINFO
+    Dim index As Long
+    Dim ret As Long
+    
+    ' get the handle of the menu bar
+    hMenu = GetMenu(hWnd)
+    ' get the handle of the specified menu
+    For index = 0 To UBound(menuPos)
+        hMenu = GetSubMenu(hMenu, menuPos(index))
+    Next
+    
+    ' get the number of items in this submenu
+    itemCount = GetMenuItemCount(hMenu)
+    
+    ' init the MENUITEMINFO structure
+    itemInfo.cbSize = Len(itemInfo)
+    
+    For index = itemsInSection To itemCount Step itemsInSection
+        ' we only want to retrieve the menu type
+        itemInfo.fMask = MIIM_TYPE
+        ' retrieve caption as well
+        itemInfo.fType = MFT_STRING
+        itemInfo.dwTypeData = Space$(128)
+        itemInfo.cch = Len(itemInfo.dwTypeData)
+        ' get information about the specified menu item
+        ' (True means that 2nd arg is the item's position)
+        ret = GetMenuItemInfo(hMenu, index, True, itemInfo)
+        ' exit if unsuccessful
+        If ret = 0 Then Exit Function
+        
+        ' set the new style for this item
+        itemInfo.fType = itemInfo.fType Or RGB_STARTNEWCOLUMNWITHVERTBAR
+        ret = SetMenuItemInfo(hMenu, index, True, itemInfo)
+        ' exit if unsuccessful
+        If ret = 0 Then Exit Function
+    Next
+    
+    ' True if successful
+    SplitSubMenu = True
+    
+End Function
+
+'example
+Private Sub Form_Load()
+SplitSubMenu Me.hWnd, 3, 0  'first menu item (File) ,split at 3rd item
+SplitSubMenu Me.hWnd, 2, 1, 1 'second menu item (Options) ,split at 2nd item and 2nd sub item
+SplitSubMenu Me.hWnd, 2, 2   'third menu item (About),split at 2nd item
+End Sub
+

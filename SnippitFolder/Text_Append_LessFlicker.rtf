@@ -1,0 +1,8 @@
+
+
+The usual way to append text to a TextBox or a RichTextBox control is to concatenate the current contents with the new string: 
+Text1.Text = Text1.Text & newString
+Here is a different approach, which is slightly faster and causes less flickering: 
+Text1.SelStart = Len(Text1.Text)
+Text1.SelText = newString 
+

@@ -1,0 +1,33 @@
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd as Long, ByVal wMsg as Long, ByVal wParam as Integer, ByVal lParam as Any) as Long 
+    Const LB_FINDSTRING = &H18F 
+
+
+'This project needs a ListBox, named List1 And a TextBox, named Text1 
+
+
+Private Sub Form_Load() 
+
+    'Add some items To the listbox
+
+
+    With List1 
+        .AddItem "Computer" 
+        .AddItem "Screen" 
+        .AddItem "Modem" 
+        .AddItem "Printer" 
+        .AddItem "Scanner" 
+        .AddItem "Sound Blaster" 
+        .AddItem "Keyboard" 
+        .AddItem "CD-Rom" 
+        .AddItem "Mouse" 
+    End With 
+End Sub 
+
+
+Private Sub Text1_Change() 
+    'Retrieve the item's listindex
+    List1.ListIndex = SendMessage(List1.hwnd, LB_FINDSTRING, -1, ByVal CStr(Text1.Text)) 
+End Sub 
+
+
+

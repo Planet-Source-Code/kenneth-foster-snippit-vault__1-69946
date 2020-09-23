@@ -1,0 +1,27 @@
+Private Sub Command1_Click() 
+IsLeapYear (Text1.Text) 
+End Sub 
+
+Function IsLeapYear(y as String) as Integer 
+
+
+   IsLeapYear = (y Mod 4 = 0) And (y Mod 100 <> 0 or y Mod 400 = 0) 
+   If IsLeapYear = True Then 
+   Text1.Text = "True" 
+   Else 
+    Text1.Text = "False" 
+    End If 
+End Function 
+
+'Another example
+
+Dim isTrue As Boolean
+
+isTrue = IsDate("02/29/" & Text1.Text)
+
+If isTrue = True Then
+    Text1.Text = "True, this is a leap year."
+Else
+    Text1.Text = "False, this is not a leap year."
+End If
+

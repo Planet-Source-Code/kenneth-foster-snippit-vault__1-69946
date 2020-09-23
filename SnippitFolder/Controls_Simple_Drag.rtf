@@ -1,0 +1,20 @@
+
+
+Option Explicit
+Dim dx As Single, dy As Single
+
+Private Sub Command1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+dx! = X!: dy! = Y!
+    Command1.Drag
+End Sub
+
+Private Sub Form_DragDrop(Source As Control, X As Single, Y As Single)
+ Source.Move X! - dx!, Y! - dy!
+
+End Sub
+
+Private Sub Text1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+  dx! = X!: dy! = Y!
+    Text1.Drag
+
+End Sub

@@ -1,0 +1,11 @@
+
+'simple example to print a picture
+'with a picturebox named picMain
+'If text or whatever it printed to the picturebox ,the first line makes sure the image is a picture we can print
+
+Private Sub cmdPrint_Click()
+   picMain.Picture = picMain.Image
+   picMain.ScaleMode = vbCentimeters
+   Printer.PaintPicture picMain.Picture, 10, 10
+   Printer.EndDoc
+End Sub

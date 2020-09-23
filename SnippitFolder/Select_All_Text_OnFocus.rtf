@@ -1,0 +1,21 @@
+
+
+Private Sub Text1_GotFocus()
+Screen.ActiveControl.SelStart = 0
+Screen.ActiveControl.SelLength = Len(Screen.ActiveControl.Text)
+End Sub
+
+'OR use this sub
+Sub SetSelected() 
+    Screen.ActiveControl.SelStart = 0
+    Screen.ActiveControl.SelLength = Len(Screen.ActiveControl.Text)
+End Sub
+
+
+For Each field, include this text: 
+
+
+Sub txtField_GotFocus()
+    SetSelected
+End Sub
+

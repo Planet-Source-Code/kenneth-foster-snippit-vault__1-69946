@@ -1,0 +1,27 @@
+' need DriveListBox and Command button
+
+Private Declare Function GetVolumeInformation Lib "kernel32" Alias "GetVolumeInformationA" _
+    (ByVal lpRootPathName As String, ByVal lpVolumeNameBuffer As String, ByVal _
+    nVolumeNameSize As Long, lpVolumeSerialNumber As Long, _
+    lpMaximumComponentLength As Long, lpFileSystemFlags As Long, ByVal _
+    lpFileSystemNameBuffer As String, _
+    ByVal nFileSystemNameSize As Long) As Long
+
+
+Private Sub Command1_Click()
+Dim VolName As String
+Dim VolNumber As Long
+Dim MCM As Long
+Dim FSF As Long
+Dim FSys As String
+Dim erg As Long
+
+    erg& = GetVolumeInformation(Drive1.Drive, VolName$, 127&, VolNumber&, MCM&, FSF&, FSys$, 127&)
+
+
+    If erg& = 0 Then
+        MsgBox "There is no media In the drive"
+    Else
+        MsgBox "There is media In the drive"
+    End If
+End Sub

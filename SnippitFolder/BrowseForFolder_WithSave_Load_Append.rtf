@@ -1,0 +1,199 @@
+'needs two textboxes ,four command buttons and two checkboxes.
+
+Private Type BrowseInfo
+    lngHwnd        As Long
+    pIDLRoot       As Long
+    pszDisplayName As Long
+    lpszTitle      As Long
+    ulFlags        As Long
+    lpfnCallback   As Long
+    lParam         As Long
+    iImage         As Long
+End Type
+
+Private Const BIF_RETURNONLYFSDIRS = 1
+Private Const BIF_BROWSEINCLUDEFILES = &H4000
+
+Private Const MAX_PATH = 260
+
+Private Declare Sub CoTaskMemFree Lib "ole32.dll" _
+(ByVal hMem As Long)
+
+Private Declare Function lstrcat Lib "Kernel32" _
+Alias "lstrcatA" (ByVal lpString1 As String, _
+ByVal lpString2 As String) As Long
+
+Private Declare Function SHBrowseForFolder Lib "shell32" _
+(lpbi As BrowseInfo) As Long
+
+Private Declare Function SHGetPathFromIDList Lib "shell32" _
+(ByVal pidList As Long, ByVal lpBuffer As String) As Long
+Private Sub Command1_Click()
+    'Save
+    Dim Success As Boolean
+    Dim iResponse As Integer
+    Dim xtens As String
+    
+    Success = FileExists(Text1.Text)
+    If Success = False Then
+       If Check1.Value = 0 Then  'append option
+           SaveFile Text2, Text1.Text & ".txt", False  'no append
+        Else
+           SaveFile Text2, Text1.Text & ".txt", True   'append file
+        End If
+    End If
+    
+    If Success = True Then
+       iResponse = MsgBox("This file already exists, OverWrite anyways?", vbYesNo, "File Overwrite")
+          If iResponse = 6 Then
+              If Check1.Value = 0 Then  'append option
+                  SaveFile Text2, Text1.Text, False
+              Else
+                  SaveFile Text2, Text1.Text, True
+              End If
+         End If
+    End If
+    'checks filename for .txt extension,if not there, add it
+    xtens = Right$(Text1.Text, 4)
+    If xtens = ".txt" Then
+       Exit Sub
+    Else
+       Text1.Text = Text1.Text & ".txt"
+    End If
+End Sub
+    
+Private Sub Command2_Click()
+    'Load
+    If Check1.Value = 0 Then
+        LoadFile Text2, Text1.Text, False  'no append file
+    Else
+        LoadFile Text2, Text1.Text, True  'append file
+    End If
+End Sub
+    
+Private Sub Command3_Click()
+    'Browse
+    If Check2.Value = 0 Then  'folders or files option
+       Text1.Text = BrowseForFolder(Me.hWnd, "Select a folder", False) & "\"  'folders only
+    Else
+       Text1.Text = BrowseForFolder(Me.hWnd, "Select a folder", True)  'show the files too
+    End If
+End Sub
+Private Sub Command4_Click()
+'clears textbox
+Text2.Text = ""
+End Sub
+Function FileExists(fname As String) As Boolean
+If Dir(fname) <> "" Then FileExists = True
+End Function
+Public Function LoadFile(TxtBox As Object, FilePath As _
+    String, Optional Append As Boolean = False) As Boolean
+    '************************************************************
+    '*If Append = true, then loaded text is appended to existing*
+    '*contents else existing contents are overwritten           *
+    '************************************************************
+    Dim iFile As Integer
+    Dim s As String
+    
+    If Dir(FilePath) = "" Then Exit Function
+    
+    On Error GoTo ErrorHandler:
+    
+    s = TxtBox.Text
+    iFile = FreeFile
+    Open FilePath For Input As #iFile
+    s = Input(LOF(iFile), #iFile)
+    
+    If Append = True Then
+        TxtBox.Text = TxtBox.Text & s
+    Else
+        TxtBox.Text = s
+    End If
+    
+    LoadFile = True
+    
+ErrorHandler:
+    If iFile > 0 Then Close #iFile
+    
+End Function
+    
+Public Function SaveFile(TxtBox As Object, _
+    FilePath As String, Optional Append As Boolean = False) _
+    As Boolean
+    '**********************************************************
+    '*If Append = true, then TxtBox's contents are appended to*
+    '*existing file contents else existing file is overwritten*
+    '**********************************************************
+    Dim iFile As Integer
+    
+    iFile = FreeFile
+    
+    If Append = True Then
+        Open FilePath For Append As #iFile
+    Else
+        Open FilePath For Output As #iFile
+    End If
+    
+    Print #iFile, TxtBox.Text
+    Close #iFile
+    SaveFile = True
+    MsgBox "File Saved" & FilePath
+End Function
+    
+Public Function BrowseForFolder(ByVal lngHwnd As Long, ByVal strPrompt As String, Optional ufileflag As Boolean = False) As String
+    
+    On Error GoTo ehBrowseForFolder 'Trap for errors
+    
+    Dim intNull As Integer
+    Dim lngIDList As Long, lngResult As Long
+    Dim strPath As String
+    Dim udtBI As BrowseInfo
+    
+    'Set API properties (housed in a UDT)
+    With udtBI
+        .lngHwnd = lngHwnd
+        .lpszTitle = lstrcat(strPrompt, "")
+        
+        
+        If ufileflag = False Then
+            .ulFlags = BIF_RETURNONLYFSDIRS  'folders only
+        Else
+            .ulFlags = BIF_BROWSEINCLUDEFILES  'show files
+        End If
+        
+    End With
+    
+    'Display the browse folder...
+    lngIDList = SHBrowseForFolder(udtBI)
+    
+    If lngIDList <> 0 Then
+        'Create string of nulls so it will fill in with the path
+        strPath = String(MAX_PATH, 0)
+        
+        'Retrieves the path selected, places in the null
+        'character filled string
+        lngResult = SHGetPathFromIDList(lngIDList, strPath)
+        
+        'Frees memory
+        Call CoTaskMemFree(lngIDList)
+        
+        'Find the first instance of a null character,
+        'so we can get just the path
+        intNull = InStr(strPath, vbNullChar)
+        'Greater than 0 means the path exists...
+        If intNull > 0 Then
+            'Set the value
+            strPath = Left(strPath, intNull - 1)
+        End If
+    End If
+    
+    'Return the path name
+    BrowseForFolder = strPath
+    Exit Function
+    
+ehBrowseForFolder:
+    
+    'Return no value
+    BrowseForFolder = Empty
+    
+End Function

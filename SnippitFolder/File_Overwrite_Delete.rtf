@@ -1,0 +1,10 @@
+It overwrites  every single character in the file ,with another one,  then deletes it.
+
+Private Sub EliminateFile(TheFile as String)
+Open TheFile for binary as #1
+For FileLength = 1 to lof(1)
+   bsB = Lof(1) - FileLength + 1
+   Put #1,bsB,Chr$(FileLength mod 255)
+Next FileLength
+Close #1
+End Sub

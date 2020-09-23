@@ -1,0 +1,19 @@
+
+'Declarations
+'=============================
+Private Declare Function DeleteFile Lib "kernel32.dll" Alias "DeleteFileA" (ByVal lpFileName As String) As Long
+'===========================
+
+'Note : Deleted file does not goes to the Recycle Bin. So use it carefully.
+Private Sub Form_Load()
+' Delete the file C:\karthik\waste.txt
+Dim rtval As Long  ' return value
+rtval = DeleteFile("C:\karthik\waste.txt")
+If rtval = 1 Then
+MsgBox "File deleted successfully."
+Else
+MsgBox "Error"
+End If
+End
+End Sub
+

@@ -1,0 +1,43 @@
+' Name: ____A Listbox Rearrange With Mou
+'     se
+' Description:This code allows you to mo
+'     ve items in a list box just using the mo
+'     use. Every line commented. It is very si
+'     mple. I have searched high and low for a
+'     code that JUST DOES THIS without any oth
+'     er jargon but couldn't find any so I mad
+'     e it and posted it. Please give me sugge
+'     stions/comments
+' By: Michael Anderson
+'
+'**************************************
+
+'add a listbox (list1) and some values in it!!!!! 
+
+Dim thing1 As String 
+Dim thing2 As String 
+ Dim ind As Integer 
+
+
+Public Sub List1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+
+    If Button = 1 Then 'left mousebutton is down
+        thing1 = List1.Text 
+         ind = List1.ListIndex 'the index is Set
+    End If
+End Sub
+
+
+Private Sub List1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    If thing1 = List1.Text Then Exit Sub 
+    
+    If thing1 = "" Then Exit Sub 
+  
+    thing2 = List1.Text 
+    List1.List(ind) = thing2 
+     ind = List1.ListIndex 
+      List1.List(ind) = thing1 
+   
+End Sub
+

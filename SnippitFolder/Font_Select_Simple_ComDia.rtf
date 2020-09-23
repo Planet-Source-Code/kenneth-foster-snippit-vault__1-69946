@@ -1,0 +1,29 @@
+'Command button and label and common dialog on form
+
+
+Dim FontSelect As Object
+Private Sub Command1_Click()
+With CommonDialog1
+    .Flags = cdlCFBoth Or cdlCFEffects
+    .FontName = FontSelect.FontName
+    .FontItalic = FontSelect.FontItalic
+    .FontSize = FontSelect.FontSize
+    .FontStrikethru = FontSelect.FontStrikethru
+    .FontBold = FontSelect.FontBold
+    .FontUnderline = FontSelect.FontUnderline
+    .ShowFont
+If Not .CancelError Then
+    FontSelect.FontName = .FontName
+    FontSelect.FontItalic = .FontItalic
+    FontSelect.FontSize = .FontSize
+    FontSelect.FontStrikethru = .FontStrikethru
+    FontSelect.FontBold = .FontBold
+    FontSelect.FontUnderline = .FontUnderline
+    FontSelect.ForeColor = .Color
+End If
+End With
+End Sub
+Private Sub Form_Load()
+Set FontSelect = Label1
+End Sub
+

@@ -1,0 +1,88 @@
+'Put on form_resize event
+'=============================
+Private Sub Form_Resize()
+'Don't do anything if the Form Is minimized
+If Me.WindowState = 1 Then Exit Sub
+
+'Change the next two lines if you want to set a minimum height & width
+If Me.Width < 4600 Then Me.Width = 4600
+If Me.Height < 3290 Then Me.Height = 3290
+
+ResizeAll Form1
+'Calls for the ResizeAll function to run
+'Change Form1 to the Form Name
+
+End Sub
+
+'========================
+'put in a module
+'=======================
+Option Explicit
+
+Dim PrevResizeX As Long
+Dim PrevResizeY As Long
+
+
+Public Function ResizeAll(FormName As Form)
+    Dim tmpControl As Control
+    On Error Resume Next
+    'Ignores errors in case the control does
+    '     n't
+    'have a width, height, etc.
+
+
+    If PrevResizeX = 0 Then
+        'If the previous form width was 0
+        'Which means that this function wasn't r
+        '     un before
+        'then change prevresizex and y and exit
+
+
+'     function
+    PrevResizeX = FormName.ScaleWidth
+    PrevResizeY = FormName.ScaleHeight
+    Exit Function
+End If
+
+
+For Each tmpControl In FormName
+    'A loop to make tmpControl equal to ever
+    '     y
+    'control on the form
+
+
+    If TypeOf tmpControl Is Line Then
+        'Checks the type of control, if its a
+        'Line, change its X1, X2, Y1, Y2 values
+        tmpControl.X1 = tmpControl.X1 / PrevResizeX * FormName.ScaleWidth
+        tmpControl.X2 = tmpControl.X2 / PrevResizeX * FormName.ScaleWidth
+        tmpControl.Y1 = tmpControl.Y1 / PrevResizeY * FormName.ScaleHeight
+        tmpControl.Y2 = tmpControl.Y2 / PrevResizeY * FormName.ScaleHeight
+        'These four lines see the previous ratio
+        '
+        'Of the control to the form, and change
+        '     they're
+        'current ratios to the same thing
+    Else
+        'Changes everything elses left, top
+        'Width, and height
+        tmpControl.Left = tmpControl.Left / PrevResizeX * FormName.ScaleWidth
+        tmpControl.Top = tmpControl.Top / PrevResizeY * FormName.ScaleHeight
+        tmpControl.Width = tmpControl.Width / PrevResizeX * FormName.ScaleWidth
+        tmpControl.Height = tmpControl.Height / PrevResizeY * FormName.ScaleHeight
+        'These four lines see the previous ratio
+       tmpControl.FontSize = tmpControl.FontSize * FormName.ScaleHeight / PrevResizeY
+
+        '
+        'Of the control to the form, and change
+        '     they're
+        'current ratios to the same thing
+    End If
+Next tmpControl
+PrevResizeX = FormName.ScaleWidth
+PrevResizeY = FormName.ScaleHeight
+'Changes prevresize x and y to current w
+'     idth
+'and height
+End Function
+

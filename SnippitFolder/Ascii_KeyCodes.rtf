@@ -1,0 +1,18 @@
+'Need 4 labels on form
+
+
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+   lblKeyCode.Caption = KeyCode
+   If Shift = 0 Then
+      lblShift.Caption = ""
+   Else
+      lblShift.Caption = "Shift Key"
+      lblChar.Caption = ""
+      lblKeyAscii.Caption = ""
+   End If
+End Sub
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+   lblKeyAscii.Caption = KeyAscii
+   lblChar.Caption = Chr$(KeyAscii)
+End Sub

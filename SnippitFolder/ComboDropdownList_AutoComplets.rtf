@@ -1,0 +1,49 @@
+Public Sub AutoCompleteList(ByVal cboCtl As ComboBox, ByVal KeyCode As Integer)
+
+  Dim Counter As Integer
+  Dim Length As Integer
+
+  If cboCtl <> "" Then
+       If KeyCode = vbKeyBack Or KeyCode = vbKeyDelete Then
+       KeyCode = 0
+       Exit Sub
+   End If
+
+  For Counter = 0 To cboCtl.ListCount - 1
+  Length = Len(cboCtl.Text)
+    If Mid(cboCtl.List(Counter), 1, Len(cboCtl)) = cboCtl.Text Then
+       cboCtl.Text = cboCtl.List(Counter)
+       cboCtl.SelStart = Length
+       cboCtl.SelLength = Len(cboCtl.Text)
+       cboCtl.ListIndex = Counter
+     Exit For
+    End If
+  Next
+ End If
+
+End Sub
+
+'===========================================
+
+'Typical usage :combo dropdown list
+
+Private Sub cboCategory_Change()
+
+Call AutoCompleteList(cboCategory, mintKeyCode)
+
+End Sub
+
+'Where mintKeyCode is a form variable given by a Form_KeyDown event like :
+
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+mintKeyCode = KeyCode
+
+End Sub
+
+'and the cboCategory is the combo box filled by your own items.
+'Taking into consideration the header of the form should look like this one :
+
+Option Explicit
+Private mintKeyCode As Integer
+

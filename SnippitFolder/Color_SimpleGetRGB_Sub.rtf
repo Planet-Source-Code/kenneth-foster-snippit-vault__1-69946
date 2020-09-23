@@ -1,0 +1,5 @@
+Private Sub GetRGB(ByVal LngCol As Long, R As Long, G As Long, B As Long)
+  R = LngCol Mod 256    'Red
+  G = (LngCol And vbGreen) / 256 'Green
+  B = (LngCol And vbBlue) / 65536 'Blue
+End Sub

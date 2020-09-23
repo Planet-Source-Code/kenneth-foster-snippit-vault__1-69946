@@ -1,0 +1,47 @@
+
+
+
+Function IsAlphaNumeric(Letter as String, Optional AllowSpaces as Boolean = True) as Boolean 
+    ' Filters out non-alphanumeric character
+    '     s. Aphanumeric are:
+    'A-Z, a-z, 0-9, -,_,{Space}
+
+    If Asc(Letter) > 64 And Asc(Letter) < 90 Then 
+        IsAlphaNumeric = True 
+    ElseIf Asc(Letter) > 96 And Asc(Letter) < 122 Then 
+        IsAlphaNumeric = True 
+    ElseIf Asc(Letter) = 45 or Asc(Letter) = 95 Then 
+        IsAlphaNumeric = True 
+    ElseIf Asc(Letter) > 48 And Asc(Letter) < 58 Then 
+        IsAlphaNumeric = True 
+    ElseIf (Letter) = " " And AllowSpaces Then 
+        IsAlphaNumeric = True 
+    End If 
+End Function 
+
+Private Sub Text1_KeyPress(KeyAscii as Integer) 
+   If KeyAscii = 8 Then Exit Sub 
+   If IsAlphaNumeric(Chr$(KeyAscii), True) Then 
+      Exit Sub 
+   Else 
+      KeyAscii = 0 
+   End If 
+End Sub 
+
+
+'Or use this way
+
+Public Function AlphaNumeric(ByVal s As String) As Boolean
+    AlphaNumeric = Not s Like "*[!A-Za-z0-9]*"
+End Function
+
+
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+   If KeyAscii = 8 Then Exit Sub
+   If AlphaNumeric(Chr$(KeyAscii)) = True Then
+      Exit Sub
+   Else
+      KeyAscii = 0
+   End If
+End Sub
+

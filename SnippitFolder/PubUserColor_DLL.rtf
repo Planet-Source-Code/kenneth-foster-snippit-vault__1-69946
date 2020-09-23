@@ -1,0 +1,130 @@
+PubUserColor.dll  
+
+'Put in declares
+Private cClr as clsPubUserColor  
+
+
+'To Call
+Set cClr = New clsPubUserColor  
+Me.BackColor = cClr.ColorDlgRet(BackColor, clrFullOpen)  
+Set cClr = Nothing  
+
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+'##############################
+'make this is the private  class
+'class name = clsColorDialog
+'##############################
+
+Private Type CHOOSECOLOR
+  lStructSize As Long
+  hwndOwner As Long
+  hInstance As Long
+  rgbResult As Long
+  lpCustColors As Long
+  Flags As Long
+  lCustData As Long
+  lpfnHook As Long
+  lpTemplateName As String
+End Type
+
+Public Enum EnumColFlags
+  colEnableHook = &H10
+  colEnableTemplate = &H20
+  colEnableTemplateHandle = &H40
+  colFullOpen = &H2
+  colPreventFullOpen = &H4
+  colRgbinit = &H1
+  colShowHelp = &H8
+End Enum
+
+Private Declare Function ChooseColor_API Lib "comdlg32.dll" Alias "ChooseColorA" (pChoosecolor As CHOOSECOLOR) As Long
+
+Private m_eFlags As EnumColFlags
+Private m_lnghWndParent As Long
+
+Private Sub Class_Initialize()
+  m_eFlags = colFullOpen Or colRgbinit
+End Sub
+
+Public Property Get Flags() As EnumColFlags
+  Flags = m_eFlags
+End Property
+Public Property Let Flags(ByVal eValue As EnumColFlags)
+  m_eFlags = eValue
+End Property
+
+Public Property Get hWndParent() As Long
+  hWndParent = m_lnghWndParent
+End Property
+Public Property Let hWndParent(ByVal lngValue As Long)
+  m_lnghWndParent = lngValue
+End Property
+'------------------------
+'function return = long
+'(color selected)
+'orig color is the color of the
+'object before selecting new color
+'so if cancel is selected or there
+'is an error then the color
+'isnt altered
+'------------------------
+Public Function ShowColor(OrigColor As Long) As Long
+ On Error GoTo ERR_HANDLER:
+'-----VARIABLES----------
+Dim cc As CHOOSECOLOR
+Dim alngColorRef(15) As Long
+'-----START CODE--------
+  With cc ' Initialize the CHOOSECOLOR type
+     .lStructSize = LenB(cc)
+     .hwndOwner = m_lnghWndParent
+     .lpCustColors = VarPtr(alngColorRef(0))
+     .rgbResult = ShowColor
+     .Flags = m_eFlags
+  End With
+  
+  If ChooseColor_API(cc) <> 0 Then ' Display the dialog
+     ShowColor = cc.rgbResult
+  Else
+     ShowColor = OrigColor
+  End If
+'-----END CODE---------
+Exit Function
+ERR_HANDLER:
+  Debug.Print "sub Show " & Err.Number; Err.Description
+End Function
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+'##############################
+'make this is the public class
+'Class name = clsPubUserColor
+'##############################
+
+
+Public Enum enClrFlags
+   clrFullOpen = &H2
+   clrPreventFullOpen = &H4
+   clrShowHelpButton = &H8
+End Enum
+
+'-------------------------------------------
+'show color dialog from clsColorDialog
+'-------------------------------------------
+Function ColorDlgRet(defaultColor&, clrFlags As enClrFlags) As Long
+   Dim clrClass As New clsColorDialog
+   
+   With clrClass
+       .hWndParent = 0
+       .Flags = (clrFlags)
+       ColorDlgRet = .ShowColor(defaultColor&)
+   End With
+   
+   Set clrClass = Nothing
+   
+End Function
+
+
+
+

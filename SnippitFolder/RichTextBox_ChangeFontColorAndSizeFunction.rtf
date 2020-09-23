@@ -1,0 +1,32 @@
+Option Explicit
+
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
+
+Function ColorRtb(ByVal Rtb As RichTextBox, ByVal SelStart As String, ByVal SelLength As Long, ByVal Color As Long, ByVal Size As Long)
+    Dim OldPos As Long
+    Call LockWindowUpdate(Rtb.hWnd)
+    
+    OldPos = Rtb.SelStart
+    Rtb.SelStart = SelStart
+    Rtb.SelLength = SelLength
+    Rtb.SelColor = Color
+    Rtb.SelFontSize = Size
+    Rtb.SelStart = OldPos
+    Rtb.SelLength = 0
+    
+    Call LockWindowUpdate(0)
+End Function
+
+'Example of use========================
+
+Private Sub Form_Load()
+
+Rtb1.Text = "Hello,Ken foster was here again." & vbCrLf
+Rtb1.Text = Rtb1.Text & "There he goes again."
+ColorRtb Rtb1, 6, 3, vbRed, 14
+ColorRtb Rtb1, 25, 6, vbBlue, 12
+ColorRtb Rtb1, 17, 3, vbGreen, 10
+ColorRtb Rtb1, 40, 2, &HFF00FF, 12
+ColorRtb Rtb1, 48, 5, &HDC0000, 14
+End Sub
+

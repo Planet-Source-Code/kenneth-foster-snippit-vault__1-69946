@@ -1,0 +1,78 @@
+'Add To form:
+'Command1 and Text1(MultiLine = True)
+
+' Name: A Non-Repeating Random Number Generator
+'    
+' Description:With this simple, and very
+'     fast, routine you can generate a series 
+'     of non-repeating random numbers. You can
+
+
+'     select a series of 10 numbers, or a seri
+    '     es of a million...It doesn't matter. Can
+    '     be useful for image fades, deck shuffling
+    '     , random tip of the day, etc. - It even
+    '     tells you how long it took to generate the
+    '     series.
+' By: Kevin Lawrence
+'
+'
+' Inputs:None
+'
+' Returns:A popup message stating how many
+'     numbers had been mixed up and how long
+'     it took.
+'
+'Assumes:None
+'
+'Side Effects:The larger the series of numbers
+'     the more RAM required. Uses arrays.
+'    
+'This code is copyrighted and has limited
+'     warranties.
+'Please see http://www.Planet-Source-Code.
+'     com/xq/ASP/txtCodeId.892/lngWId.1/qx/vb
+'     /scripts/ShowCode.htm
+'for details.
+
+'**************************************
+
+Option Explicit
+Dim MaxNumber As Integer
+Dim seq As Integer
+Dim MainLoop As Integer
+Dim ChosenNumber As Integer
+Const N = 10
+
+'-------------------------------------------------------------------
+Private Sub Command1_Click()
+          ' Produces a series of X random numbers 
+    '     without repeating any
+
+            'Results can be used by using array B(X)
+
+        Dim A(N) ' Sets the maximum number to pick
+        Dim B(N) ' Will be the list of new numbers (same as DIM above)
+        Dim x As Integer
+                'Set the original array
+        MaxNumber = N ' Must equal the DIM above
+
+
+        For seq = 0 To MaxNumber
+            A(seq) = seq
+        Next seq
+        'Main Loop (mix em all up)
+      
+
+        For MainLoop = MaxNumber To 0 Step -1
+            ChosenNumber = Int(MainLoop * Rnd)
+            B(MaxNumber - MainLoop) = A(ChosenNumber)
+            A(ChosenNumber) = A(MainLoop)
+        Next MainLoop  
+     
+ For x = 0 To N
+    Text1.Text = B(x) & "   " & Text1.Text
+ Next x
+
+    End Sub
+

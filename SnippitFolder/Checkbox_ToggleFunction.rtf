@@ -1,0 +1,18 @@
+Option Explicit
+
+Public Sub ToggleCheckboxs(ByVal chkbIndex As Integer, chkbArray As Object)
+ Dim chkbox As Control
+
+  If chkbArray(chkbIndex) = vbChecked Then
+        For Each chkbox In chkbArray
+          If chkbox.Index <> chkbIndex Then chkbox = vbUnchecked
+        Next
+  End If
+End Sub
+
+Private Sub Check1_Click(Index As Integer)
+'Check1 is an array of checkboxes
+
+ ToggleCheckboxs Index, Check1
+ Label2.Caption = Index + 1
+End Sub

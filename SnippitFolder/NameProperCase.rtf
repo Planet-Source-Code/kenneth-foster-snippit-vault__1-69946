@@ -1,0 +1,29 @@
+Public Function UpperCaseFirstLetter(ByVal OldString as String) as String 
+    Dim FirstLetter as String 
+    Dim SecondLetter as String 
+    Dim NewString as String 
+    Dim x as Integer 
+    Dim y as Integer 
+    Dim Spa as String 
+
+    x = Len(OldString) 
+    For y = 1 To x 
+
+    FirstLetter = UCase(Left(OldString, 1)) 
+    Mid(OldString, 1, 1) = FirstLetter 
+
+    Spa = Mid(OldString, y, 1) 
+      If Spa = " " Then 
+         SecondLetter = UCase(Mid(OldString, y + 1, 1)) 
+         Mid(OldString, y + 1, 1) = SecondLetter 
+         NewString = OldString 
+      End If 
+    Next y 
+
+    UpperCaseFirstLetter = NewString 
+
+End Function 
+
+or use:
+Example:
+Text1.Text = StrConv(Text1.Text, vbProperCase)

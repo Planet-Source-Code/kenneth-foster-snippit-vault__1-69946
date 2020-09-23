@@ -1,0 +1,16 @@
+Task: A good function that returns a random number within a range. Will not give the same number back-to-back, easy to use. 
+
+
+
+Public Function Rand(Start As Integer, End1 As Integer) As Integer
+ Static rndLastNum As Integer
+ Randomize
+Retry:
+ Do
+   n = Round(Rnd * End1): DoEvents
+ Loop Until (n >= Start) And (n <= End1)
+ If (n = rndLastNum) Then GoTo Retry
+ rndLastNum = n
+ Rand = n
+End Function
+

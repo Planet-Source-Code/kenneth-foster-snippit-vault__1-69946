@@ -1,0 +1,24 @@
+
+Private Sub Shuffle_Deck()
+Dim deck(1 To 52) As Integer 'the array which holds the cards
+'the following are just a few counters
+Dim n As Integer
+Dim temp As Integer
+Dim i As Integer
+Dim temp1 As Integer
+Randomize Timer
+
+For n = 1 To 52
+    deck(n) = n
+Next n
+
+For i = 0 To 9'this llop just repeats the shuffling process 10 times
+
+    For temp = 1 To 52
+        n = Int((52 * Rnd) + 1) this generates a random number in the range 1 To 52
+               temp1 = deck(temp)
+        deck(temp) = deck(n)
+        deck(n) = temp1
+    Next temp
+Next i
+End Sub

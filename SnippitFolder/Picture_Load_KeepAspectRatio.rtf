@@ -1,0 +1,41 @@
+Private Sub Form_Load()
+Dim tmpimg As VB.Image
+
+  Set tmpimg = Controls.Add("VB.Image", "ctlName", Form1)
+
+'==============================================================
+
+  tmpimg.Picture = LoadPicture("D:\Art and Graphics\Photos\Duck.jpg") 'change to your picture path
+
+  '==============================================================
+
+  Dim xImg, yImg As Single
+
+  Dim xPic, yPic As Single
+
+  xImg = tmpimg.Width
+
+  yImg = tmpimg.Height
+
+  xPic = Picture1.Width
+
+  yPic = Picture1.Height
+
+  Dim xRatio, yRatio As Single
+
+  xRatio = xImg / xPic
+
+  yRatio = yImg / yPic
+
+  If xRatio >= yRatio Then
+
+    Picture1.PaintPicture tmpimg.Picture, 0, 0, (tmpimg.Width / xRatio), (tmpimg.Height / xRatio)
+
+  Else
+
+    Picture1.PaintPicture tmpimg.Picture, 0, 0, (tmpimg.Width / yRatio), (tmpimg.Height / yRatio)
+
+  End If
+
+
+End Sub

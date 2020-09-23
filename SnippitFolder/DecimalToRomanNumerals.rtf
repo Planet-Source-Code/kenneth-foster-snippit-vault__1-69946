@@ -1,0 +1,53 @@
+'Put Text1 and Text2 on form
+'Put cmdEnter and cmdClear on form
+'Code by Chris Buckley 
+Option Explicit
+Const sMatrix As String = "I~V~X~L~C~D~M"
+
+
+Private Function ToRoman(ByVal sDecNum As String) As String
+
+
+    If sDecNum <> "0" And sDecNum <> vbNullString Then
+        Dim sNumArray() As String
+        If Len(sDecNum) > 3 Then ToRoman = String(Mid(sDecNum, 1, Len(sDecNum) - 3), "M")
+        If Len(sDecNum) > 2 Then ToRoman = ToRoman & GiveLetters(Mid(sDecNum, Len(sDecNum) - 2, 1), 4)
+        If Len(sDecNum) > 1 Then ToRoman = ToRoman & GiveLetters(Mid(sDecNum, Len(sDecNum) - 1, 1), 2)
+        ToRoman = ToRoman & GiveLetters(Mid(sDecNum, Len(sDecNum), 1), 0)
+    Else: ToRoman = "No Roman value For 0"
+    End If
+End Function
+
+
+Private Function GiveLetters(ByVal sInput As String, ByVal iArrStart As Integer) As String
+    Dim sLetterArray() As String
+    sLetterArray() = Split(sMatrix, "~")
+
+
+    Select Case sInput
+        Case 4: GiveLetters = sLetterArray(iArrStart) & sLetterArray(iArrStart + 1)
+        Case 5: GiveLetters = sLetterArray(iArrStart + 1)
+        Case 9: GiveLetters = sLetterArray(iArrStart) & sLetterArray(iArrStart + 2)
+        Case 6 To 8: GiveLetters = sLetterArray(iArrStart + 1) & String(sInput - 5, sLetterArray(iArrStart))
+        Case Else: GiveLetters = GiveLetters + String(sInput, sLetterArray(iArrStart))
+    End Select
+End Function
+
+Private Sub cmdClear_Click()
+Text1.Text = ""
+Text2.Text = ""
+Text1.SetFocus
+End Sub
+
+Private Sub cmdEnter_Click()
+Dim sRoman As String
+Dim sInput As String
+    sInput = Text1.Text
+    sRoman = ToRoman(sInput)
+Text2.Text = sRoman
+End Sub
+
+Private Sub Form_Load()
+
+End Sub
+

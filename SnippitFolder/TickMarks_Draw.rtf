@@ -1,0 +1,34 @@
+
+
+
+Private Sub Form_Load()
+Me.Show
+DrawTicks
+End Sub
+
+Private Sub DrawTicks()
+Dim x As Integer
+Dim y As Integer
+Dim z As Integer
+   y = 10
+   z = 5
+   Picture1.Line (x, Picture1.ScaleTop)-(x, Picture1.ScaleTop + 300), vbBlack
+   Picture1.CurrentY = 300
+   Picture1.Print "0"
+   
+   For x = 0 To Picture1.Width Step 100
+      Picture1.Line (x, Picture1.ScaleTop)-(x, Picture1.ScaleTop + 100), vbBlack
+         If x / 100 = z Then
+             Picture1.Line (x, Picture1.ScaleTop)-(x, Picture1.ScaleTop + 200), vbBlack
+             z = z + 5
+                If x / 100 = y Then
+                   Picture1.Line (x, Picture1.ScaleTop)-(x, Picture1.ScaleTop + 300), vbBlack
+                   Picture1.CurrentX = Picture1.CurrentX - 125
+                   Picture1.CurrentY = 300
+                   Picture1.Print y
+                   y = y + 10
+                End If
+         End If
+    Next x
+End Sub
+

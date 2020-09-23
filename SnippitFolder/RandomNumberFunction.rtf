@@ -1,0 +1,6 @@
+Public Function RandomNumber(Upper As Integer, _
+     Lower As Integer) As Integer
+    'Generates a Random Number BETWEEN the LOWER and UPPER values
+    Randomize
+    RandomNumber = Int((Upper - Lower + 1) * Rnd + Lower)
+End Function

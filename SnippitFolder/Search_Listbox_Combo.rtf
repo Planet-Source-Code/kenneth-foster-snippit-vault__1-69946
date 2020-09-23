@@ -1,0 +1,73 @@
+Option Explicit
+
+Private Declare Function SendMessage Lib "User32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Integer, ByVal wParam As String, lParam As Any) As Long
+Const LB_FINDSTRING = &H18F
+
+
+Private Sub Form_Load()
+With List1
+    .AddItem "apple"
+    .AddItem "ant"
+    .AddItem "bird"
+    .AddItem "blue"
+    .AddItem "car"
+    .AddItem "cars"
+    .AddItem "Deep"
+    .AddItem "deeper"
+    .AddItem "Garage"
+    .AddItem "greed"
+    .AddItem "jeep"
+    .AddItem "Jail"
+    .AddItem "monitor"
+    .AddItem "melt"
+    .AddItem "rest"
+    .AddItem "risk"
+End With
+
+With Combo1
+    .AddItem "apple"
+    .AddItem "ant"
+    .AddItem "bird"
+    .AddItem "blue"
+    .AddItem "car"
+    .AddItem "cars"
+    .AddItem "Deep"
+    .AddItem "deeper"
+    .AddItem "Garage"
+    .AddItem "greed"
+    .AddItem "jeep"
+    .AddItem "Jail"
+    .AddItem "monitor"
+    .AddItem "melt"
+    .AddItem "rest"
+    .AddItem "risk"
+End With
+
+End Sub
+
+
+Private Sub Text1_Change()
+
+Dim i As Long
+
+For i = 0 To Combo1.ListCount - 1
+Combo1.ListIndex = i
+If LCase(Left(Combo1.Text, Len(Text1.Text))) = LCase(Text1.Text) Then
+Exit For
+End If
+Next i
+
+If LCase(Left(Combo1.Text, Len(Text1.Text))) <> LCase(Text1.Text) Then
+SendKeys "{backspace}"
+End If
+
+If Text1.Text = "" Then Combo1.ListIndex = -1
+
+End Sub
+
+
+Private Sub Text2_Change()
+List1.ListIndex = SendMessage(List1.hWnd, LB_FINDSTRING, Text2, ByVal Text2.Text)
+
+End Sub
+

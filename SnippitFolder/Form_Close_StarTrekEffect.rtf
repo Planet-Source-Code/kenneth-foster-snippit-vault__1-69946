@@ -1,0 +1,41 @@
+Private Sub Command1_Click()
+Dim GotoVal As Long
+Dim Gointo As Long
+
+GotoVal = Me.Height / 2
+
+For Gointo = 1 To GotoVal
+    'NEW ADDITION NEXT LINE
+
+    DoEvents
+        Me.Height = Me.Height - 10
+        Me.Top = (Screen.Height - Me.Height) \ 2
+        If Me.Height <= 11 Then GoTo horiz
+    Next Gointo
+    'This is the width part of the same sequ
+    '     ence above
+horiz:
+    Me.Height = 30
+    GotoVal = Me.Width / 2
+
+    For Gointo = 1 To GotoVal
+        'NEW ADDITION NEXT LINE
+
+        DoEvents
+            Me.Width = Me.Width - 10
+            
+            Me.Left = (Screen.Width - Me.Width) \ 2
+            If Me.Width <= 11 Then End
+        Next Gointo
+ Unload Me
+End Sub
+
+Private Sub Form_Load()
+Center_Form Me
+End Sub
+
+Private Sub Center_Form(frmForm As Form)
+    frmForm.Left = (Screen.Width - frmForm.Width) / 2
+    frmForm.Top = (Screen.Height - frmForm.Height) / 2
+End Sub
+

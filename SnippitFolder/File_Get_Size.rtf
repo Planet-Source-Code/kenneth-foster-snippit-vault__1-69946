@@ -1,0 +1,12 @@
+Function GetFileSize(sPath As String) As String 
+    GetFileSize = FileLen(sPath)
+    GetFileSize = FormatNumber(Val(GetFileSize) / 1024, 0) & "Kb"
+End Function
+
+
+Private Sub Form_Load()
+    Dim sFile As String
+    sFile = "C:\Capture.AVI"
+    MsgBox "The file " & sFile & " is " & GetFileSize(sFile) & " In size.", vbOKOnly + vbInformation, "GetFileSize"
+End Sub
+

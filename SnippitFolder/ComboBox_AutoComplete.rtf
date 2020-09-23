@@ -1,0 +1,84 @@
+
+
+Option Explicit
+
+Private Backspaced As Boolean
+
+Private Sub cboComboBox_Change()
+'Call the function in the Change Event of each ComboBox
+'you may have...  (Preferably, use a Control Array for 3
+'or more of the same controls, in my opinion)
+    
+    AutoComplete cboComboBox
+
+End Sub
+
+Private Sub cboComboBox_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    Select Case KeyCode
+        Case vbKeyBack, vbKeyDelete 'if the Backspace or Delete key is pressed...
+            Select Case Len(cboComboBox.Text)
+                Case Is <> 0 '...and if the cboComboBox has text, then
+                    Backspaced = True  'set this to True
+                    
+            End Select
+    End Select
+
+End Sub
+
+Private Sub cmdByeBye_Click()
+
+    Unload Me
+
+End Sub
+
+Public Function AutoComplete(ctlComboBox As Control)
+'--------- << Called from the _Change event of cboComboBox >> ----------------
+
+
+Dim i%, intSel%  ' % is a "shorthand" for Integers
+
+    'If this fires in response to a Backspace or Delete, then
+    'Exit the function because then you wouldn't be able to backup:
+    Select Case (Backspaced Or Len(ctlComboBox.Text) = 0)
+        Case True: Backspaced = False: Exit Function
+    End Select
+    
+    With ctlComboBox
+        'Run through the available items in a For...Loop and grab
+        'the first one that matches the selection:
+        For i = 0 To .ListCount - 1
+            If InStr(1, .List(i), .Text, vbTextCompare) = 1 Then
+                intSel = .SelStart
+                .Text = .List(i)
+                .SelStart = intSel
+                .SelLength = Len(.Text) - intSel
+                Exit For
+                
+            End If
+        Next i
+    End With
+
+End Function
+
+Private Sub Form_Load()
+
+'the cboComboBox.Sorted property is set to True, BTW
+
+    With cboComboBox
+        .AddItem "Vegetarian"
+        .AddItem "Planet Source Code"
+        .AddItem "Planet Earth"
+        .AddItem "Vegetable"
+        .AddItem "Carrot"
+        .AddItem "Carnivore"
+        .AddItem "Planet Source Code kicks ass!"
+        .AddItem "Thank You, fellow programmers"
+        .AddItem "Thank you, Bill Gates!"
+        
+        .Text = "Drop down for selections..."
+        
+    End With
+
+End Sub
+

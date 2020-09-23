@@ -1,0 +1,26 @@
+Private Sub Form_Resize()
+Call CenterCaption("Ken")
+End Sub
+
+
+
+Private Sub CenterCaption(text)
+ Dim textwid As Long
+ Dim forwid As Long
+ Dim half As Long
+ Dim center As Long
+ Dim lop As Integer
+ Dim a As String
+ 
+  Form1.ScaleMode = 4 'Sets the formscale To characters
+  textwid = TextWidth(text) 'Gets the form captions width
+   forwid = Form1.ScaleWidth 'Gets the forms width
+   half = forwid / 2 'Halfs the form for the center
+   center = Int(half - (textwid / 2)) 'halfs the textwidth
+   Rem Adds the required amount of blank spaces
+   For lop = 1 To half + (center / 2)
+         a = a + " "
+   Next lop
+   Form1.Caption = a & text 'Sets the forms caption
+   Form1.ScaleMode = 1 'Sets the formscale To twips again
+End Sub

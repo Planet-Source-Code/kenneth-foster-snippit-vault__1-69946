@@ -1,0 +1,48 @@
+
+Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+
+'Print an picture------------------------------------------
+Dim Sz as Integer  'determines size of printed picture 
+
+If Image1.Picture = LoadPicture() Then  ' just assumes no pictures at all are loaded 
+    MsgBox "No pictures loaded" 
+    Exit Sub 
+ End If 
+
+BitBlt Picture2.hDC, 0, 0, Picture2.ScaleWidth, Picture2.ScaleHeight, Picture1.hDC, 0, 0, vbSrcCopy 
+Picture2.Picture = Picture2.Image 
+' scales picture to printer
+If Option1.Value = True Then Sz = 6 
+If Option2.Value = True Then Sz = 9 
+If Option3.Value = True Then Sz = 13 
+
+'Printer.Orientation = vbPRORPortrait   ' or 1
+Printer.Orientation = vbPRORLandscape ' or 2 
+
+With Printer 
+      .ScaleMode = 3 
+      .CurrentX = 0 
+      .CurrentY = 0 
+      .PaintPicture Picture2.Picture, 0, 0, Picture2.Width * Sz, Picture2.Height * Sz, , , , , vbSrcCopy 
+      .EndDoc 
+End With 
+
+'Save a picture ------------------------------------------------
+
+If Image1.Picture = LoadPicture() Then   ' assumes no pictures loaded 
+      MsgBox "Please load pictures" 
+      Exit Sub 
+ End If 
+
+ If Text1.Text = "" Then   ' no filename 
+      MsgBox "Enter a filename" 
+      Exit Sub 
+ End If 
+
+BitBlt Picture2.hDC, 0, 0, Picture2.Width, Picture2.Height, Picture1.hDC, 0, 0, vbSrcCopy 
+SavePicture Picture2.Image, App.Path & "\ImageFolder\" & Text1.Text & ".bmp" 
+MsgBox "File saved to  " & App.Path & "\ImageFolder\" & Text1.Text & ".bmp" 
+
+
+
+

@@ -1,0 +1,19 @@
+'add a textbox called text1
+
+Private Sub Form_Load()
+Dim result as integer
+
+result = MsgBox("Thats all you need.", vbOKCancel, Now) 'this will dim result as the msgbox
+If result = 1 Then Text1.Text = "You clicked 'OK'" 'if you clicked OK then this will be shown
+If result = 2 Then Text1.Text = "You clicked 'Cancel'" 'if you clicked Cancel then this will appear
+
+'1 is for vbOK
+'2 is for vbCancel
+'3 is for vbAbort
+'4 is for vbRetry
+'5 is for vbIgnore
+'6 is for vbYes
+'7 is for vbNo
+
+End Sub
+

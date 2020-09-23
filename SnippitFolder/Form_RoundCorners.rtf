@@ -1,0 +1,21 @@
+Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long  'MODULE 1152
+Private Declare Function SetWindowRgn Lib "user32" (ByVal hWnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
+
+'=============================================================
+'v is the size of the top corners and w is the size of the bottom corners...
+
+Sub RoundRect(ByVal uObject As Object, ByVal v As Long, ByVal w As Long)
+    Dim lRight As Long
+    Dim lBottom As Long
+    Dim hRgn As Long
+With uObject
+lRight = .Width / Screen.TwipsPerPixelX
+lBottom = .Height / Screen.TwipsPerPixelY
+hRgn = CreateRoundRectRgn(0, 0, lRight, lBottom, v, w)
+SetWindowRgn .hWnd, hRgn, True
+End With
+End Sub
+Private Sub Form_Load()
+RoundRect Me, 40, 40  'Leave it on 40.
+End Sub
+

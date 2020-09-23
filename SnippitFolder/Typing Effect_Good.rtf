@@ -1,0 +1,19 @@
+
+'Needs command button,timer,text1,label1
+
+Option Explicit
+Dim i As Integer
+Private Sub Command1_Click()
+i = 0: Timer1.Enabled = True: Label1.Caption = ""
+End Sub
+
+Private Sub Form_Load()
+
+End Sub
+
+Private Sub Timer1_Timer()
+i = i + 1
+Label1.Caption = Label1.Caption + Mid(Text1.Text, i, 1)
+If i = Len(Text1.Text) Then Timer1.Enabled = False
+End Sub
+

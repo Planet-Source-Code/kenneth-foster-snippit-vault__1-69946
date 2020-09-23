@@ -1,0 +1,68 @@
+Option Explicit
+
+Dim CO As Integer
+Dim C
+Dim FS
+
+Private Sub Form_Load()
+Timer1.Interval = 100
+    C = Me.Caption
+    CO = Len(C) + 1
+    Me.Caption = ""
+
+
+    If Me.BorderStyle <> 2 Then
+        FS = Me.ScaleWidth + 250
+    Else
+        FS = Me.ScaleWidth + 500
+    End If
+
+End Sub
+
+Private Sub Form_Resize()
+ If Me.WindowState = 1 Then
+        FS = 3500
+    Else
+        FS = Me.ScaleWidth
+    End If
+
+End Sub
+
+Private Sub Timer1_Timer()
+On Error GoTo ATH
+    Static C01 As Integer ' Counter 1
+    Static CO2 As Integer ' Counter 2
+    Static A As String 'To move Caption
+    Dim R As String 'Restore Caption
+    Dim T As String 'Restore Caption
+    
+XX:
+
+
+    If CO > 0 Then
+        C01 = CO
+        T = Mid(C, C01, 1)
+        CO = CO - 1
+        R = " "
+        Mid(R, 1) = T
+        Me.Caption = R & Me.Caption
+    Else
+        A = A & " "
+        R = " "
+        Mid(R, 1) = A
+        Me.Caption = R & Me.Caption
+    End If
+
+
+    If CO2 >= FS Then
+        CO2 = 0
+        CO = Len(C)
+        Me.Caption = ""
+        GoTo XX
+    Else
+        CO2 = CO2 + 50
+    End If
+    Exit Sub
+ATH:
+
+End Sub

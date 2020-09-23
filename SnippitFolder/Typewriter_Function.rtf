@@ -1,0 +1,25 @@
+
+
+Option Explicit
+Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+
+Private Sub Command1_Click()
+typewrite Text1.Text
+End Sub
+
+Public Function typewrite(texttotype As String)
+    Dim letter As String
+    letter = 0
+
+  ' all you need for this is a richtextbox,textbox and command button
+
+    Do Until Len(texttotype) = letter
+        letter = letter + 1
+
+        Form1.RichTextBox1.SelColor = RGB(0, 0, 0)
+
+            Form1.RichTextBox1.SelText = Mid(texttotype, letter, 1)
+            Sleep ((Rnd * 400) + 100)
+            DoEvents
+            Loop
+  End Function

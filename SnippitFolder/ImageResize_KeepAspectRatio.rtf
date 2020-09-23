@@ -1,0 +1,43 @@
+Private Sub Command1_Click() 
+Reset_Image Image1, Picture1 
+Reset_Image Image2, Picture2 
+End Sub 
+
+Private Sub Reset_Image(Image as Image, Picture as PictureBox) 
+
+Image.Visible = False 
+If Image.Picture Then 
+   '~ this is used in case the image change ' s
+   '~ if it's not used, the image control i ' s
+  '~ still the same size as the previous p ' ic
+        Image.Height = Image.Picture.Height 
+        Image.Width = Image.Picture.Width 
+
+                If Image.Picture.Height > Image.Picture.Width Then 
+                    '~ the Pic is taller than wide
+                    Image.Height = Picture.Height 
+                    Image.Width = Image.Width / (Image.Picture.Height / Image.Height)  * 1.5
+                               If Image.Width > Picture.Width Then 
+                                           '~ If the PictureBox isn't square, the p ' ic still may be larger than it
+                                            Image.Width = Picture.Width 
+                                             Image.Height = Image.Picture.Height / (Image.Picture.Width / Image.Width) 
+                                 End If 
+                      End If 
+              If Image.Picture.Width > Image.Picture.Height Then 
+                     '~ Image is wider than tall
+                     Image.Width = Picture.Width 
+                      Image.Height =  Image.Height / (Image.Picture.Width / Image.Width)  * 1.5
+               If Image.Height > Picture.Height Then 
+                    Image.Height = Picture.Height 
+                     Image.Width = Image.Picture.Width / (Image.Picture.Height / Image.Height) 
+              End If 
+       End If 
+       '~ Center Image1 within Picture1
+  Image.Left = (Picture.Width / 2) - (Image.Width / 2) 
+ Image.Top = (Picture.Height / 2) - (Image.Height / 2) 
+Image.Visible = True 
+End If 
+End Sub 
+
+
+

@@ -1,0 +1,57 @@
+'Note:If command button.style is set to 1 = graphical the
+'     caption position (align and style) does not function
+'     but focus rect will
+
+'examples of sync"
+'CommandButton Command1, False, True, BS_TOP
+'CommandButton Command2, True, True, BS_LEFT
+'CommandButton Command3, False, True, BS_CENTER
+'CommandButton Command4, True, True, BS_RIGHT
+
+Public Enum BUTTON_STYLE
+    BS_CENTER = &H300&
+    BS_LEFT = &H100&
+    BS_RIGHT = &H200&
+    BS_TOP = &H400&
+End Enum
+Private Const GWL_STYLE& = (-16)
+
+Private Const GWL_WNDPROC         As Long = (-4)
+Private Const WM_SETFOCUS         As Long = &H7
+Private StandardButtonProc        As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal HWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+Private Function ButtonProc(ByVal HWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+    On Error Resume Next
+        Select Case uMsg&
+        Case WM_SETFOCUS
+            Exit Function
+        End Select
+        ButtonProc = CallWindowProc(StandardButtonProc, HWnd&, uMsg&, wParam&, lParam&)
+
+End Function
+
+Public Sub CommandButton(Button As Object, Optional bfocus As Boolean = False, Optional balign As Boolean = False, Optional style As BUTTON_STYLE = BS_CENTER)
+Dim lHwnd As Long
+Dim lWnd As Long
+Dim lRet As Long
+
+    If bfocus = True Then
+        StandardButtonProc = GetWindowLong(Button.HWnd, GWL_WNDPROC)
+        SetWindowLong Button.HWnd, GWL_WNDPROC, AddressOf ButtonProc
+    Else
+        SetWindowLong Button.HWnd, GWL_WNDPROC, StandardButtonProc
+    End If
+    
+    If balign = True Then
+       lHwnd = Button.HWnd
+          If lHwnd = 0 Then Exit Sub
+       lWnd = GetWindowLong(lHwnd, GWL_STYLE)
+       lRet = SetWindowLong(Button.HWnd, GWL_STYLE, style Or lWnd)
+       Button.Refresh
+     End If
+End Sub
+

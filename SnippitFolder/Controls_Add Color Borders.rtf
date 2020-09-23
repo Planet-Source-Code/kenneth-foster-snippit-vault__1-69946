@@ -1,0 +1,12 @@
+Private Sub cmdCtl_Click()
+Call ColorControlBorder(Me, txtCtl, 9)
+End Sub
+'=====================================================
+Public Sub ColorControlBorder(ByRef frmName As Form, ByRef ctlName As Control, ByVal intQBColor As Integer)
+Dim intScaleMode As Integer
+intScaleMode = frmName.ScaleMode
+frmName.ScaleMode = 3
+frmName.Line (ctlName.Left - 1, ctlName.Top - 1)-(ctlName.Left + ctlName.Width, ctlName.Top + ctlName.Height), QBColor(intQBColor), B
+frmName.ScaleMode = intScaleMode
+End Sub
+

@@ -1,0 +1,6 @@
+Public Sub ClearAllText(frm As Form, ctl As Control)
+ For Each ctl In frm
+       If TypeOf ctl Is TextBox Then ctl.Text="" 
+    Next ctl 
+End Sub 
+

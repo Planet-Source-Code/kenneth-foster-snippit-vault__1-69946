@@ -1,0 +1,71 @@
+Option Explicit
+'These are the variables for Undo and Redo
+Dim gblnIgnoreChange As Boolean
+Dim gintIndex As Integer
+Dim gstrStack(1000) As String
+
+Private Sub cmdRedo_Click()
+    'This is the basic redo stuff.
+    gblnIgnoreChange = True
+    gintIndex = gintIndex + 1
+    On Error Resume Next
+    rtfText.TextRTF = gstrStack(gintIndex)
+    gblnIgnoreChange = False
+End Sub
+
+Private Sub cmdUndo_Click()
+    'This says that if the Index is = to 0, then It shouldn't undo anymore
+    If gintIndex = 0 Then Exit Sub
+    
+    'This is the basic undo stuff.
+    gblnIgnoreChange = True
+    gintIndex = gintIndex - 1
+    On Error Resume Next
+    rtfText.TextRTF = gstrStack(gintIndex)
+    gblnIgnoreChange = False
+End Sub
+
+Private Sub rtfText_Change()
+    'Basically this updates the Undo and Redo
+    If Not gblnIgnoreChange Then
+        gintIndex = gintIndex + 1
+        gstrStack(gintIndex) = rtfText.TextRTF
+    End If
+End Sub
+
+Private Sub cmdCut_Click()
+    'Clears the Clipboard to put text on it
+    Clipboard.Clear
+    'Sets the Text from rtfText onto the Clipboard
+    Clipboard.SetText rtfText.SelText
+    'Deletes the Selected Text on rtfText
+    rtfText.SelText = ""
+    'Sets the Focus to rtfText
+    rtfText.SetFocus
+End Sub
+
+Private Sub cmdCopy_Click()
+    'Clears the Clipboard to put text on it
+    Clipboard.Clear
+    'Sets the Text from rtfText onto the Clipboard
+    Clipboard.SetText rtfText.SelText
+    'Sets the Focus to rtfText
+    rtfText.SetFocus
+End Sub
+
+Private Sub cmdPaste_Click()
+    'Puts the Text from the clipboard into rtfText
+    rtfText.SelText = Clipboard.GetText
+    'Sets the Focus to rtfText
+    rtfText.SetFocus
+End Sub
+
+Private Sub cmdSelectAll_Click()
+    'Sets the cursors position to zero
+    rtfText.SelStart = 0
+    'Selects the full length of rtfText
+    rtfText.SelLength = Len(rtfText.Text)
+    'Sets the Focus to rtfText
+    rtfText.SetFocus
+End Sub
+

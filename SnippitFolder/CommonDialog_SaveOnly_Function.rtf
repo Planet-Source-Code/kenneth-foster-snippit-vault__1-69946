@@ -1,0 +1,40 @@
+Private Type OPENFILENAME 
+    lStructSize as Long 
+    hwndOwner as Long 
+    hInstance as Long 
+    lpstrFilter as String 
+    lpstrCustomFilter as String 
+    nMaxCustFilter as Long 
+    nFilterIndex as Long 
+    lpstrFile as String 
+    nMaxFile as Long 
+    lpstrFileTitle as String 
+    nMaxFileTitle as Long 
+    lpstrInitialDir as String 
+    lpstrTitle as String 
+    flags as Long 
+    nFileOffset as Integer 
+    nFileExtension as Integer 
+    lpstrDefExt as String 
+    lCustData as Long 
+    lpfnHook as Long 
+    lpTemplateName as String 
+End Type 
+Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameA" (pOpenfilename as OPENFILENAME) as Long 
+Const MAX_PATH = 260 
+
+Private Sub Command1_Click() 
+    Dim l as Long, O as OPENFILENAME 
+    O.hInstance = App.hInstance 
+    O.hwndOwner = hWnd 
+    O.lpstrFilter = "Text Files (*.txt) *.txt" 
+    O.lpstrFile = Chr$(0) & Space$(MAX_PATH - 1) 
+    O.nMaxFile = MAX_PATH 
+    O.lStructSize = Len(O) 
+    l = GetSaveFileName(O) 
+    Label1.Caption = O.lpstrFile 
+    Label1.Caption = Label1.Caption & ".txt" 
+End Sub 
+
+
+

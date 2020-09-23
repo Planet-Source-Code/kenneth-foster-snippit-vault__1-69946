@@ -1,0 +1,24 @@
+Public Function Get_LastDayOfTheMonth(ByVal vDate As Variant) As Date
+    Dim sMonth As Integer
+    Dim sYEAR As Integer
+    Dim iNum As Integer
+    Dim sDate As String
+    Dim iMonth As Integer
+    Dim iYear As Integer
+
+    If Not IsDate(vDate) Then
+        Err.Raise 9999, , "Invalid Date value"
+    Else
+        iNum = 31
+        iMonth = DatePart("M", vDate)
+        iYear = DatePart("YYYY", vDate)
+        sDate = iMonth & "/" & iNum & "/" & iYear
+
+
+        Do While Not IsDate(sDate)
+            iNum = iNum - 1
+            sDate = iMonth & "/" & iNum & "/" & iYear
+        Loop
+        Get_LastDayOfTheMonth = sDate
+    End If
+End Function

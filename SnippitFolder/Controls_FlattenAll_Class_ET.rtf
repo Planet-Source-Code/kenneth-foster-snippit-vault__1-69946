@@ -1,0 +1,118 @@
+'Put in a class and name it "clsFlatten"
+
+' on form under declarations put
+' Private c as New clsFlatten
+'to call use        c.ControlVisual More3D, Command1, Text1, List1, Combo1
+
+'###################################################################
+'  HOW ITS DONE
+'
+' to create the flat effect we clip 1 pixel of off each of the
+' controls 4 edges using createRectRgn and SetWindowRgn
+' I have found this is 100% reliable at creating the flat effect
+' whereas the constants used in getWindowLong and SetWindowLong
+' produce differeing effects with different controls
+'
+' to create the normal effect..we simply unclip the 1 pixel that
+' was clipped off as described above
+'
+' to create the more 3D effect, we use setWindowLong and GetWindowLong
+' in conjunction with the contsant  WS_EX_DLGMODALFRAME which does
+' seem produce the desired effect reliably with all controls
+'####################################################################
+
+
+Private Const SWP_REFRESH = (&H1 or &H2 or &H4 or &H20) 
+Private Const GWL_EXSTYLE = -20 
+Private Const WS_EX_DLGMODALFRAME as Long = &H1& 
+
+
+'control visual fx
+Public Enum enVisFx 
+   Flatten = 0 
+   Regular = 1 
+   More3D = 2 
+End Enum 
+
+Private Declare Function CreateRectRgn Lib "gdi32" (ByVal X1 as Long, ByVal Y1 as Long, ByVal X2 as Long, ByVal Y2 as Long) as Long 
+Private Declare Function SetWindowRgn Lib "user32" (ByVal hWnd as Long, ByVal hRgn as Long, ByVal bRedraw as Boolean) as Long 
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd as Long, ByVal nIndex as Long) as Long 
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd as Long, ByVal nIndex as Long, ByVal dwNewLong as Long) as Long 
+Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd as Long, ByVal hWndInsertAfter as Long, ByVal x as Long, ByVal y as Long, ByVal cx as Long, ByVal cy as Long, ByVal wFlags as Long) as Long 
+
+
+Sub ControlVisual(visEffect as enVisFx, ParamArray Controls()) 
+'--------------------------------------
+' flatten control or form
+'--------------------------------------
+ on Error GoTo Err_Handler: 
+
+'VARIABLES:
+  Dim lngStyle&, lng_cnt&, lStyle& 
+
+'CODE:
+   For lng_cnt = 0 To UBound(Controls) 
+         '----------------------------------------------
+         'define the windows style first as this effects
+         'how controls are clipped
+         lStyle = GetWindowLong(Controls(lng_cnt).hWnd, GWL_EXSTYLE) 
+
+         If visEffect = Flatten or visEffect = Regular Then 
+           lStyle = (lStyle And Not WS_EX_DLGMODALFRAME) 
+         ElseIf visEffect = More3D Then 
+           lStyle = (lStyle or WS_EX_DLGMODALFRAME) 
+         End If 
+
+         SetWindowLong Controls(lng_cnt).hWnd, GWL_EXSTYLE, lStyle 
+         '------------------------------------------------
+
+         '------------------------------------------------
+         'create effect depending on selection of visEffect
+         If visEffect = Flatten Then 
+            CutRegion Controls(lng_cnt), True 
+         ElseIf visEffect = Regular Then 
+            CutRegion Controls(lng_cnt), False 
+         ElseIf visEffect = More3D Then 
+            CutRegion Controls(lng_cnt), False 
+         End If 
+         '-------------------------------------------------
+  Next lng_cnt 
+
+'END CODE:
+Exit Sub 
+Err_Handler: 
+    Err.Source = Err.Source & "." & VarType(Me) & ".Sub ControlVisual" 
+    MsgBox Err.Number & vbTab & Err.Source & Err.Description 
+    Err.Clear 
+    Resume Next 
+End Sub 
+
+
+Private Sub CutRegion(Control as Variant, bCut as Boolean) 
+  Dim hRgn  as Long 
+'-------------------------------------------
+' this is used for comboboxes to create/remove
+'flattened appearance from all controls by
+' clipping a 1 pixel margin from all edges or
+' placeing that clipping back
+'-------------------------------------------
+ on Error Resume Next 
+
+With Control 
+
+  If bCut = True Then 
+    hRgn = CreateRectRgn(1, 1, ((.Width / Screen.TwipsPerPixelX) - 1), _ 
+                               ((.Height / Screen.TwipsPerPixelY) - 1)) 
+  Else 
+    hRgn = CreateRectRgn(0, 0, (.Width / Screen.TwipsPerPixelX), _ 
+                             (.Height / Screen.TwipsPerPixelY)) 
+  End If 
+
+  SetWindowRgn .hWnd, hRgn, True 
+
+End With 
+
+End Sub 
+
+
+

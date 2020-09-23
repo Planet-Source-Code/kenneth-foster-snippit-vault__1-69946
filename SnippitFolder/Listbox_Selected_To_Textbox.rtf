@@ -1,0 +1,12 @@
+
+Dim N as Integer
+
+Private Sub List1_Click()
+
+For N = 0 To List1.ListCount - 1
+
+    If List1.Selected(N) = True Then Text1.Text = List1.List(N)
+        
+Next
+
+End Sub

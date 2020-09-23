@@ -1,0 +1,17 @@
+
+
+
+Private Sub Text1_Change()
+If Not ValidateNumeric(Text1.Text) Then
+   On Error Resume Next
+   Text1 = Left(Text1.Text, Len(Text1) - 1)
+End If
+Text1.SelStart = Len(Text1)
+End Sub
+
+Private Function ValidateNumeric(strText As String) _
+    As Boolean
+ValidateNumeric = CBool(strText = "" Or strText = "-" _
+    Or strText = "-." Or strText = "." Or IsNumeric(strText))
+End Function
+

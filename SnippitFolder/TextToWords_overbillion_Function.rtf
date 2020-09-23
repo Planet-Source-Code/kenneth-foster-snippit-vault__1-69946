@@ -1,0 +1,142 @@
+Private Sub Command1_Click()
+numtoword (Text1.Text)
+Text2.Text = numtoword(Text1.Text)
+End Sub
+
+Public Function numtoword(numstr As Variant) As String
+' The best data type to feed in is
+' Decimal, but it is up to you
+
+Dim tempstr As String
+Dim newstr As String
+numstr = CDec(numstr)
+
+If numstr = 0 Then
+  numtoword = "zero "
+  Exit Function
+End If
+
+If numstr > 10 ^ 24 Then
+  numtoword = "Too big"
+  Exit Function
+End If
+
+If numstr >= 10 ^ 12 Then
+  newstr = numtoword(Int(numstr / 10 ^ 12))
+  numstr = ((numstr / 10 ^ 12) - _
+  Int(numstr / 10 ^ 12)) * 10 ^ 12
+  If numstr = 0 Then
+    tempstr = tempstr & newstr & "billion "
+  Else
+    tempstr = tempstr & newstr & "billion, "
+  End If
+End If
+
+If numstr >= 10 ^ 6 Then
+  newstr = numtoword(Int(numstr / 10 ^ 6))
+  numstr = ((numstr / 10 ^ 6) - _
+  Int(numstr / 10 ^ 6)) * 10 ^ 6
+  If numstr = 0 Then
+    tempstr = tempstr & newstr & "million "
+  Else
+    tempstr = tempstr & newstr & "million, "
+  End If
+End If
+
+If numstr >= 10 ^ 3 Then
+  newstr = numtoword(Int(numstr / 10 ^ 3))
+  numstr = ((numstr / 10 ^ 3) - _
+  Int(numstr / 10 ^ 3)) * 10 ^ 3
+  If numstr = 0 Then
+    tempstr = tempstr & newstr & "thousand "
+  Else
+    tempstr = tempstr & newstr & "thousand, "
+  End If
+End If
+
+If numstr >= 10 ^ 2 Then
+  newstr = numtoword(Int(numstr / 10 ^ 2))
+  numstr = ((numstr / 10 ^ 2) - _
+  Int(numstr / 10 ^ 2)) * 10 ^ 2
+  If numstr = 0 Then
+    tempstr = tempstr & newstr & "hundred "
+  Else
+    tempstr = tempstr & newstr & "hundred and "
+  End If
+End If
+
+If numstr >= 20 Then
+  Select Case Int(numstr / 10)
+  Case 2
+  tempstr = tempstr & "twenty "
+  Case 3
+  tempstr = tempstr & "thirty "
+  Case 4
+  tempstr = tempstr & "forty "
+  Case 5
+  tempstr = tempstr & "fifty "
+  Case 6
+  tempstr = tempstr & "sixty "
+  Case 7
+  tempstr = tempstr & "seventy "
+  Case 8
+  tempstr = tempstr & "eighty "
+  Case 9
+  tempstr = tempstr & "ninety "
+  End Select
+  numstr = ((numstr / 10) - _
+  Int(numstr / 10)) * 10
+End If
+
+If numstr > 0 Then
+  Select Case numstr
+  Case 1
+  tempstr = tempstr & "one "
+  Case 2
+  tempstr = tempstr & "two "
+  Case 3
+  tempstr = tempstr & "three "
+  Case 4
+  tempstr = tempstr & "four "
+  Case 5
+  tempstr = tempstr & "five "
+  Case 6
+  tempstr = tempstr & "six "
+  Case 7
+  tempstr = tempstr & "seven "
+  Case 8
+  tempstr = tempstr & "eight "
+  Case 9
+  tempstr = tempstr & "nine "
+  Case 10
+  tempstr = tempstr & "ten "
+  Case 11
+  tempstr = tempstr & "eleven "
+  Case 12
+  tempstr = tempstr & "twelve "
+  Case 13
+  tempstr = tempstr & "thirteen "
+  Case 14
+  tempstr = tempstr & "fourteen "
+  Case 15
+  tempstr = tempstr & "fifteen "
+  Case 16
+  tempstr = tempstr & "sixteen "
+  Case 17
+  tempstr = tempstr & "seventeen "
+  Case 18
+  tempstr = tempstr & "eighteen "
+  Case 19
+  tempstr = tempstr & "nineteen "
+  End Select
+  numstr = ((numstr / 10) - Int(numstr / 10)) * 10
+End If
+numtoword = tempstr
+End Function
+
+=====================================================
+
+Private Sub Form_Load()
+'Place text1 and text2 and command1 on form
+End Sub
+

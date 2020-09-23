@@ -1,0 +1,37 @@
+'**************************************
+'Windows API/Global Declarations for :Te
+'     xtLineCount
+'**************************************
+Const WM_USER = &H400
+Const EM_GETLINECOUNT = WM_USER + 10
+
+
+#If Win32 Then
+
+
+ Private Declare Function SendMessage Lib "user32" _
+    Alias "SendMessageA" _
+    (ByVal hWnd As Long, _
+    ByVal wMsg As Long, _
+    ByVal wParam As Integer, _
+    lParam As Any) As Long
+ Else
+
+
+ Private Declare Function SendMessage Lib "user" _
+    (ByVal hWnd As Integer, _
+    ByVal wMsg As Integer, _
+    ByVal wParam As Integer, _
+    lParam As Any) As Long
+  End If
+
+Function TextLineCount(txtObj As TextBox) As Long 
+
+
+    If txtObj.MultiLine = True Then
+        TextLineCount = SendMessage(txtObj.hWnd,  EM_GETLINECOUNT, 0, 0&)
+    Else
+        TextLineCount = 1
+    End If
+End Function
+

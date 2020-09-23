@@ -1,0 +1,39 @@
+
+
+
+
+Private Sub Command1_Click()
+    Dim A As Variant
+    Dim i As Integer
+    i = 1
+    A = Parse("Hello To you Ken Foster .", " ")
+    
+    Do While A(i) <> " "
+        MsgBox A(i)
+        i = i + 1
+        If A(i) = "." Then Exit Sub
+    Loop
+End Sub
+
+Public Function Parse(sIn As String, sDel As String) As Variant
+    Dim i As Integer, x As Integer, s As Integer, t As Integer
+    i = 1: s = 1: t = 1: x = 1
+    ReDim tArr(1 To x) As Variant
+
+    If InStr(1, sIn, sDel) <> 0 Then
+
+        Do
+            ReDim Preserve tArr(1 To x) As Variant
+            tArr(i) = Mid(sIn, t, InStr(s, sIn, sDel) - t)
+            t = InStr(s, sIn, sDel) + Len(sDel)
+            s = t
+            If tArr(i) <> "" Then i = i + 1
+            x = x + 1
+        Loop Until InStr(s, sIn, sDel) = 0
+        ReDim Preserve tArr(1 To x) As Variant
+        tArr(i) = Mid(sIn, t, Len(sIn) - t + 1)
+    Else
+        tArr(1) = sIn
+    End If
+    Parse = tArr
+End Function

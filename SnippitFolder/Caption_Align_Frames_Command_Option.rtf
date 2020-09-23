@@ -1,0 +1,67 @@
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+
+Private Const BS_LEFT As Long = &H100
+Private Const BS_RIGHT As Long = &H200
+Private Const BS_CENTER As Long = &H300
+Private Const BS_TOP As Long = &H400
+Private Const BS_BOTTOM As Long = &H800
+Private Const BS_VCENTER As Long = &HC00
+
+Private Const BS_ALLSTYLES = BS_LEFT Or BS_RIGHT Or BS_CENTER Or BS_TOP Or BS_BOTTOM Or BS_VCENTER
+Private Const GWL_STYLE& = (-16)
+
+Public Enum bsHorizontalAlignments
+    bsleft = BS_LEFT
+    bsright = BS_RIGHT
+    bscenter = BS_CENTER
+End Enum
+
+Public Enum bsVerticalAlignments
+    bsTop = BS_TOP
+    bsBottom = BS_BOTTOM
+    bsVcenter = BS_VCENTER
+End Enum
+
+Public Sub AlignButtonText(cmd As Control, _
+Optional ByVal HStyle As bsHorizontalAlignments = _
+bscenter, Optional ByVal VStyle As _
+bsVerticalAlignments = bsVcenter)
+
+    Dim oldStyle As Long
+    ' retrieve the current style of the control
+    oldStyle = GetWindowLong(cmd.hWnd, GWL_STYLE)
+    ' change the style
+    oldStyle = oldStyle And (Not BS_ALLSTYLES)
+    ' set the style of the control to the new style
+    Call SetWindowLong(cmd.hWnd, GWL_STYLE, _
+    oldStyle Or HStyle Or VStyle)
+    cmd.Refresh
+End Sub
+
+Private Sub Form_Load()
+    Call AlignButtonText(Command1, bscenter, bsTop)
+    Call AlignButtonText(Command2, bscenter, bsBottom)
+    Call AlignButtonText(Command3, bscenter, bsVcenter)
+    Call AlignButtonText(Command4, bsleft, bsTop)
+    Call AlignButtonText(Command5, bsleft, bsBottom)
+    Call AlignButtonText(Command6, bsleft, bsVcenter)
+    Call AlignButtonText(Command7, bsright, bsTop)
+    Call AlignButtonText(Command8, bsright, bsBottom)
+    Call AlignButtonText(Command9, bsright, bsVcenter)
+    Call AlignButtonText(Command10, , bsTop)
+    Call AlignButtonText(Command11, , bsBottom)
+    Call AlignButtonText(Command12, , bsVcenter)
+    Call AlignButtonText(Command13, bscenter)
+    Call AlignButtonText(Command14, bsleft)
+    Call AlignButtonText(Command15, bsright)
+    Call AlignButtonText(Frame2, bscenter)
+    Call AlignButtonText(Command19, bsleft)
+    
+    Call AlignButtonText(Frame1, bsright, bsTop)
+    Call AlignButtonText(Check1, bsleft, bsBottom)
+    Call AlignButtonText(Option1, bsright, bsTop)
+    
+    
+End Sub
+

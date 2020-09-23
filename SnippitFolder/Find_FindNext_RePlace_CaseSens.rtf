@@ -1,0 +1,83 @@
+'Put in module
+
+Public Function FindAndHighlight(txt1 As TextBox, SearchString As String, CaseSensitive As Boolean, Optional StartIndex As Integer)
+Dim x As Integer
+On Error GoTo err
+Dim xSelStart As Integer
+Dim xSelLength As Integer
+
+If StartIndex <= 0 Then x = 1 Else x = StartIndex
+
+    If CaseSensitive = True Then
+        xSelStart = InStr(x, txt1.Text, SearchString & Space(1)) - 1
+    Else
+        xSelStart = InStr(x, LCase(txt1.Text), LCase(SearchString & Space(1))) - 1
+    End If
+
+xSelLength = Len(SearchString & Space(1))
+
+txt1.SelStart = xSelStart
+txt1.SelLength = xSelLength
+err:
+End Function
+
+Public Function FindNextAndHighlight(txt1 As TextBox, SearchString As String, CaseSensitive As Boolean)
+Dim x As Integer
+On Error GoTo err
+Dim xSelStart As Integer
+Dim xSelLength As Integer
+
+If txt1.SelStart <= 0 Then
+    x = 1 + txt1.SelLength
+Else
+    x = txt1.SelStart + txt1.SelLength
+End If
+
+    If CaseSensitive = True Then
+        xSelStart = InStr(x, txt1.Text, SearchString & Space(1))
+    Else
+        xSelStart = InStr(x, LCase(txt1.Text), LCase(SearchString & Space(1)))
+    End If
+
+xSelLength = Len(SearchString & Space(1))
+
+txt1.SelStart = xSelStart - 1
+txt1.SelLength = xSelLength
+err:
+End Function
+
+Public Function ReplaceAndHighLight(txt1 As TextBox, ReplaceWith As String)
+Dim xSelStart As Integer
+Dim xSelLength As Integer
+On Error GoTo err
+
+xSelStart = txt1.SelStart
+xSelLength = Len(ReplaceWith & Space(1))
+
+txt1.SelText = ReplaceWith & Space(1)
+txt1.SelStart = xSelStart
+txt1.SelLength = xSelLength
+err:
+End Function
+
+'put on form
+'three textboxes or RTB,three command buttons
+
+Private Sub Command1_Click()
+FindMOD.FindAndHighlight Text1, Text2.Text, True
+End Sub
+
+Private Sub Command2_Click()
+FindMOD.FindNextAndHighlight Text1, Text2.Text, True
+End Sub
+
+Private Sub Command3_Click()
+FindMOD.ReplaceAndHighLight Text1, Text3.Text
+End Sub
+
+Private Sub Form_Load()
+'text1.HideSelection = false  'make sure this is set to false
+Command1.caption = "Find"
+Command2.caption = "Find Next"
+Command3.caption = "Replace"
+End Sub

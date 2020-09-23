@@ -1,0 +1,17 @@
+Option Explicit
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+Dim x As String
+Dim a As String
+
+If KeyAscii = 8 Then
+x = Len(a) - 1
+a = Left(a, x)
+Else
+a = a + Chr(KeyAscii)
+End If
+
+Cls
+Print a
+
+End Sub

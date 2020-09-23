@@ -1,0 +1,4 @@
+Public Function DaysInMonth (mMonth As Integer, yYear As Integer) As Integer 
+    DaysInMonth = Day(-1 + DateAdd("m", 1, DateSerial(yYear, mMonth, 1))) 
+End Function
+

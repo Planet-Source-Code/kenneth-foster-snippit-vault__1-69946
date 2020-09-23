@@ -1,0 +1,18 @@
+Private Sub Remove_Dupes()
+Dim j As Integer
+j = 0
+
+
+Do While j < List1.ListCount
+    
+    List1.Text = List1.List(j)
+
+
+    If List1.ListIndex <> j Then
+        List1.RemoveItem j
+    Else
+        j = j + 1
+    End If
+Loop
+
+End Sub

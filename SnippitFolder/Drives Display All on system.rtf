@@ -1,0 +1,23 @@
+
+
+
+Option Explicit
+' Make sure you add a reference to the Microsoft Scripting library.
+
+Private Sub Combo1_Click()
+ Me.Cls
+ Me.Print Combo1.Text
+End Sub
+
+Private Sub Form_Load()
+
+Dim objfso As Scripting.FileSystemObject
+Dim drives As drives, drive As drive
+
+ Set objfso = CreateObject("Scripting.FileSystemObject")
+ Set drives = objfso.drives
+ For Each drive In drives
+    Combo1.AddItem drive.DriveLetter
+ Next
+End Sub
+

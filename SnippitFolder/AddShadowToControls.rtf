@@ -1,0 +1,34 @@
+Public Sub Shadow(f As Form, c As Control, clr As Long)
+'This SubRoutine draws a shadow below And To the
+'the right of a control.It's quite a simple exmpl
+'of drawing in form !
+
+'Example : Shadow Me,Text1,vbBlack
+
+'Contact me at ehasan@citechco.net
+
+Const shWidth = 3       'Width of the shadow
+Dim oldWidth As Integer 'Save old DrawWidth
+Dim oldScale As Integer 'Save old ScaleMode
+
+f.AutoRedraw = True 'optional, but otherwise
+'shadow won't remain when form is repainted
+'or Call from the Form_Paint() Sub
+
+
+oldWidth = f.DrawWidth  'Remember current DrawWidth
+oldScale = f.ScaleMode  'Remember current ScaleMode
+
+f.ScaleMode = 3         'Set To pixel scaling
+f.DrawWidth = 1         '1 pixel width lines
+
+'Draws the shadow by drawing a box behind the control
+f.Line (c.Left + shWidth, c.Top + shWidth)- _
+ Step(c.Width - 1, c.Height - 1), clr, BF
+
+
+f.DrawWidth = oldWidth  'Restore old DrawWidth
+f.ScaleMode = oldScale  'Restore old ScaleMode
+
+End Sub
+

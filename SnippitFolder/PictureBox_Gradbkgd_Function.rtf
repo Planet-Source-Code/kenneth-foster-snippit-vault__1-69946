@@ -1,0 +1,62 @@
+Public Function GradientPic(ByVal pic As PictureBox, colr As Integer, Optional Rever As Boolean)
+    Dim I As Integer
+    Dim Y As Integer
+    Dim X As Integer
+    
+    With pic
+        .AutoRedraw = True
+        .DrawStyle = 6
+        .DrawMode = 13
+        .DrawWidth = 2
+        .ScaleMode = 3
+        .ScaleHeight = (256 * 2)
+    End With
+    
+    Dim St As Integer
+    Dim Ts As Integer
+    Dim SP As Integer
+
+    'Reverses gradient direction
+    If Rever = True Then
+    St = 0
+    Ts = 255
+    SP = 1
+    Else
+    St = 255
+    Ts = 0
+    SP = -1
+    End If
+    
+    For I = St To Ts Step SP
+        Select Case colr
+            Case 1 'Black To Red Horizonal
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(I, 0, 0), BF
+            Case 2 'Black To Green Horizonal
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(0, I, 0), BF
+            Case 3 'Black To Blue Horzonal
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(0, 0, I), BF
+            Case 4 ' Black to Red Vertical
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(I, 0, 0), BF
+            Case 5 ' Black to Green Vertical
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(0, I, 0), BF
+            Case 6 ' Black to Blue Vertical
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(0, 0, I), BF
+            Case 7
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(I, 0, I), BF
+            Case 8
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(I, 0, I), BF
+             Case 9
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(0, I, I), BF
+            Case 10
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(0, I, I), BF
+             Case 11
+            pic.Line (0, Y)-(pic.Width, Y + 2), RGB(I, I, 0), BF
+            Case 12
+            pic.Line (X, 0)-(X - 100, pic.Height + 100), RGB(I, I, 0), BF
+        End Select
+    Y = Y + 2
+    X = X + 2
+  Next I
+ 
+End Function
+

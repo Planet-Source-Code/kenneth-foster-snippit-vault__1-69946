@@ -1,0 +1,373 @@
+
+'example form1 code
+'Set form1 Autoredraw = true
+'============================================
+Option Explicit 
+
+Private Gradient as New ColorGradient 
+
+Private Sub Form_Load() 
+
+   Gradient.SetColor 1, vbBlue 
+   Gradient.SetColor 2, vbRed 
+   Gradient.SetColor 3, vbBlue 
+   Gradient.SetColor 4, vbYellow 
+   Gradient.SetColor 5, vbBlue 
+   Gradient.SetColor 6, vbRed 
+   Gradient.SetColor 7, vbGreen 
+   Gradient.SetColor 8, vbRed 
+   Gradient.SetColor 9, vbBlue 
+   Gradient.SetColor 10, vbRed 
+
+   Gradient.PaintObject Form1, 5 
+End Sub 
+
+'============================================
+
+'put in a class module called "ColorGradient"
+
+Option Explicit 
+
+Private Type FadeColorType 
+    fColor      as Long 
+    fExplicit   as Boolean 
+End Type 
+Private Fade(0 To 10) as FadeColorType 
+
+Private Type RGBType 
+    cRed        as Integer 
+    cGreen      as Integer 
+    cBlue       as Integer 
+End Type 
+
+Public Enum ColorFadeGradientConstants 
+    gTopLeft = 0 
+    gTopCenter = 1 
+    gTopRight = 2 
+    gCenterRight = 3 
+    gLowerRight = 4 
+    gLowerCenter = 5 
+    gLowerLeft = 6 
+    gCenterLeft = 7 
+    gCenterCenter = 8 'Radial (doesn't work yet) 
+End Enum 
+
+Private Sub Class_Initialize() 
+
+   Fade(0).fColor = RGB(0, 0, 0) 
+   Fade(0).fExplicit = True 
+
+   Fade(10).fColor = RGB(255, 255, 255) 
+   Fade(10).fExplicit = True 
+
+   UpdateColors 
+
+End Sub 
+
+Private Sub UpdateColors() 
+
+   Dim Explicits() as Integer 
+   Dim iLoop as Integer 
+   Dim jLoop as Integer 
+   Dim ExplicitCount as Integer 
+
+   Dim Distance as Integer 
+   Dim CurPercent as Integer 
+
+   Dim Colors(0 To 2) as RGBType 
+
+   For iLoop = 0 To 10 
+      If Fade(iLoop).fExplicit Then 
+         ExplicitCount = ExplicitCount + 1 
+
+         ReDim Preserve Explicits(ExplicitCount) 
+         Explicits(ExplicitCount) = iLoop 
+      End If 
+   Next iLoop 
+
+   If Not Fade(0).fExplicit Then Fade(0).fExplicit = True: ExplicitCount = ExplicitCount + 1 
+   If Not Fade(10).fExplicit Then Fade(10).fExplicit = True: ExplicitCount = ExplicitCount + 1 
+
+   For iLoop = 1 To ExplicitCount - 1 
+      Call DetermineRGB(Fade(Explicits(iLoop)).fColor, Colors(0).cRed, Colors(0).cGreen, Colors(0).cBlue) 
+      Call DetermineRGB(Fade(Explicits(iLoop + 1)).fColor, Colors(2).cRed, Colors(2).cGreen, Colors(2).cBlue) 
+
+      Distance = Explicits(iLoop + 1) - Explicits(iLoop) 
+
+      'Stop
+      For jLoop = Explicits(iLoop) + 1 To Explicits(iLoop + 1) - 1 Step 1 
+
+         CurPercent = 100 - (((Explicits(iLoop + 1) - jLoop) * (100 / (Distance * 10))) * 10) 
+
+         Fade(jLoop).fColor = DetermineFade(Colors(0).cRed, _ 
+         Colors(0).cGreen, _ 
+         Colors(0).cBlue, _ 
+         Colors(2).cRed, _ 
+         Colors(2).cGreen, _ 
+         Colors(2).cBlue, _ 
+         CurPercent) 
+         'Stop
+      Next jLoop 
+   Next iLoop 
+
+End Sub 
+
+Public Sub SetColor(ColorIndex as Integer, ColorValue as Long) 
+
+   If ColorIndex < 0 or ColorIndex > 10 Then Exit Sub 
+
+   If ColorValue < 0 Then 
+      Fade(ColorIndex).fExplicit = False 
+   Else 
+      Fade(ColorIndex).fColor = ColorValue 
+      Fade(ColorIndex).fExplicit = True 
+   End If 
+
+   UpdateColors 
+
+End Sub 
+
+Public Sub SetColorRGB(ColorIndex as Integer, ReD as Integer, Green as Integer, Blue as Integer) 
+   SetColor ColorIndex, RGB(Red, Green, Blue) 
+End Sub 
+
+Public Function GetColor(ColorIndex as Integer) as Long 
+
+   If ColorIndex < 0 or ColorIndex > 10 Then Exit Function 
+
+   GetColor = Fade(ColorIndex).fColor 
+
+End Function 
+
+Public Sub PaintObject(obj as Object, Gradient as ColorFadeGradientConstants) 
+   '
+   ' Wrapper function for the private PaintObject function.  You can
+   ' specify other types of paintable objects here.  The only actual
+   ' requirement is that the object MUST support the Line method using
+   ' VBs syntax.
+   '
+   If (TypeOf Obj Is Form) or (TypeOf Obj Is PictureBox) Then 
+      ' We only support forms and picture boxes for now.
+      DoPaintObject obj, Gradient 
+   End If 
+
+End Sub 
+
+Private Sub DoPaintObject(obj as Object, Gradient as ColorFadeGradientConstants) 
+   ' This is the gradient method for objects.  Use this to automate the
+   ' drawing of gradients using VBs Line method.  This function does almost
+   ' no error checking so make sure that you keep it private and wrap it
+   ' with a public function instead.
+
+   Dim ScreenX as Long     'Screen dimension 
+   Dim ScreenY as Long     'Screen dimension 
+   ScreenX = Screen.TwipsPerPixelX 'Determine the horizontal screen dimension 
+   ScreenY = Screen.TwipsPerPixelY 'Determine the vertical screen dimension 
+
+   Dim ObjectWidth as Long 
+   Dim ObjectHeight as Long 
+   ObjectWidth = obj.Width / ScreenX 
+   ObjectHeight = obj.Height / ScreenY 
+
+   Dim HorizontalOffset as Long '45 degrees equals height/2 
+   HorizontalOffset = ObjectHeight / 2 
+
+   Dim iLoop as Long 
+   Dim jLoop as Long 
+
+   Dim CurPercent as Single 
+
+   Dim Radius as Long 
+   Dim hCenter as Long 
+   Dim vCenter as Long 
+
+   Select Case Gradient 
+      Case gCenterLeft 'Vertical Lines, left to right 
+         For iLoop = 0 To ObjectWidth 
+
+            CurPercent = CSng((iLoop / ObjectWidth) * 100) 
+            obj.Line (iLoop * ScreenX, 0)-(iLoop * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gCenterRight 'Vertical lines, right to left 
+         For iLoop = ObjectWidth To 0 Step -1 
+
+            CurPercent = 100 - (CSng((iLoop / ObjectWidth) * 100)) 
+            obj.Line (iLoop * ScreenX, 0)-(iLoop * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gTopCenter 'Horizontal Lines, top to bottom 
+         For iLoop = 0 To ObjectHeight 
+
+            CurPercent = CSng((iLoop / ObjectHeight) * 100) 
+            obj.Line (0, iLoop * ScreenY)-(ObjectWidth * ScreenX, iLoop * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gLowerCenter 
+         For iLoop = ObjectHeight To 0 Step -1 
+
+            CurPercent = 100 - (CSng((iLoop / ObjectHeight) * 100)) 
+            obj.Line (0, iLoop * ScreenY)-(ObjectWidth * ScreenX, iLoop * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gTopLeft ' Diagonal Lines, Upper Left to Lower Right 
+         For iLoop = 0 - HorizontalOffset To ObjectWidth + HorizontalOffset 
+
+            CurPercent = CSng((iLoop / ObjectWidth) * 100) 
+            obj.Line ((iLoop + HorizontalOffset) * ScreenX, 0)-((iLoop - HorizontalOffset) * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gLowerRight ' Diagonal Lines, Lower Right to Upper Left 
+         For iLoop = ObjectWidth + HorizontalOffset To 0 - HorizontalOffset Step -1 
+
+            CurPercent = 100 - (CSng((iLoop / ObjectWidth) * 100)) 
+            obj.Line ((iLoop + HorizontalOffset) * ScreenX, 0)-((iLoop - HorizontalOffset) * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gTopRight ' Diagonal Lines, Upper Right to Lower Left 
+         For iLoop = ObjectWidth + HorizontalOffset To 0 - HorizontalOffset Step -1 
+
+            CurPercent = 100 - (CSng((iLoop / ObjectWidth) * 100)) 
+            obj.Line ((iLoop - HorizontalOffset) * ScreenX, 0)-((iLoop + HorizontalOffset) * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gLowerLeft ' Diagonal Lines, Lower Left to Upper Right 
+         For iLoop = 0 - HorizontalOffset To ObjectWidth + HorizontalOffset 
+
+            CurPercent = CSng((iLoop / ObjectWidth) * 100) 
+            obj.Line ((iLoop - HorizontalOffset) * ScreenX, 0)-((iLoop + HorizontalOffset) * ScreenX, ObjectHeight * ScreenY), GetFadeColor(CurPercent) 
+         Next iLoop 
+
+      Case gCenterCenter 
+
+         MsgBox "Radial doesn't work.  Feel free to fix it.", vbInformation 
+         Exit Sub 
+
+         If ObjectHeight > ObjectWidth Then 
+            Radius = ObjectHeight * ScreenY 
+         Else 
+            Radius = ObjectWidth * ScreenX 
+         End If 
+
+         vCenter = ObjectHeight / 2 
+         hCenter = ObjectWidth / 2 
+
+         obj.Visible = False 
+         For iLoop = 0 To Radius 
+            CurPercent = CSng((iLoop / Radius) * 100) 
+            obj.Circle (hCenter * ScreenX, vCenter * ScreenY), iLoop, GetFadeColor(CurPercent) 
+            obj.Refresh 
+         Next iLoop 
+         obj.Move obj.Left + 1 
+         obj.Move obj.Left - 1 
+         obj.Visible = True 
+
+      Case Else 
+         MsgBox "Nope" 
+         ' The gradient is not found!  For simplicity's sake we
+         ' will ignore this error and just do nothing.
+   End Select 
+
+End Sub 
+
+Private Function GetFadeColor(ByVal Percentage as Single) as Long 
+
+   If Percentage > 100 Then Percentage = 100 
+   If Percentage < 0 Then Percentage = 0 
+
+   Dim iLoop as Integer 
+
+   Dim UpperColor as Long 
+   Dim LowerColor as Long 
+
+   Dim Colors(0 To 1) as RGBType 
+
+   For iLoop = 0 To 9 
+      If Percentage < CSng(iLoop * 10) Then Exit For 
+   Next iLoop 
+
+   'Stop
+
+   UpperColor = iLoop 
+   Percentage = (Percentage - ((iLoop - 1) * 10)) * 10 
+
+   'Stop
+
+   Call DetermineRGB(Fade(UpperColor - 1).fColor, Colors(0).cRed, Colors(0).cGreen, Colors(0).cBlue) 
+   Call DetermineRGB(Fade(UpperColor).fColor, Colors(1).cRed, Colors(1).cGreen, Colors(1).cBlue) 
+
+   GetFadeColor = DetermineFade(Colors(0).cRed, _ 
+   Colors(0).cGreen, _ 
+   Colors(0).cBlue, _ 
+   Colors(1).cRed, _ 
+   Colors(1).cGreen, _ 
+   Colors(1).cBlue, _ 
+   CInt(Percentage)) 
+
+End Function 
+
+Private Sub DetermineRGB(varRGB as Long, varRed as Integer, varGreen as Integer, varBlue as Integer) 
+   ' Determines the individual Red, Green, and Blue values from a long
+   ' number.  Please note that there is probably a faster mathematical
+   ' way of doing this, but I don't know it, and since this procedure is
+   ' only called when you set the start or end color to something new, it
+   ' really isn't important.
+   '
+   ' NOTICE:  You must "CALL" this procedure, not just branch.
+   '
+
+   Dim rs$ 'String to hold the hex of the color 
+   rs$ = Hex(varRGB) 
+
+   While Len(rs$) < 6 
+      ' We need a six character string in the BBGGRR so we can
+      ' extract the individual colors.  0s are prepended for this.
+      rs$ = "0" & rs$ 
+      Wend 
+
+      varRed = Val("&H" & Mid(rs$, 5, 2))     'Duh 
+      varGreen = Val("&H" & Mid(rs$, 3, 2))   'Duh again 
+      varBlue = Val("&H" & Mid(rs$, 1, 2))    'Duh one more time. 
+
+   End Sub 
+
+Private Function DetermineFade(R1 as Integer, G1 as Integer, B1 as Integer, R2 as Integer, G2 as Integer, B2 as Integer, Percent as Integer) as Long 
+   ' Returns a color that sits somewhere between a start and end color.
+   ' Basically its a three-part wrapper for the simple MidPoint function.
+   '
+   ' If you want to improve speed this is the place to do it.
+   '
+
+   Dim fcr as Long     'Red 
+   Dim fcg as Long     'Green 
+   Dim fcb as Long     'Blue 
+
+   Dim fcp as Long     'Percentage 
+
+   fcp = Percent       ' I know, I know.  ByVal it... 
+   If fcp > 100 Then fcp = 100 
+   If fcp < 0 Then fcp = 0 
+
+   fcr = MidPoint(CLng(R1), CLng(R2), fcp)     'Interpolate 
+   fcg = MidPoint(CLng(G1), CLng(G2), fcp)     'Interpolate 
+   fcb = MidPoint(CLng(B1), CLng(B2), fcp)     'Interpolate 
+
+   DetermineFade = RGB(fcr, fcg, fcb)  'Return a long number. 
+
+End Function 
+
+Private Function MidPoint(x1 as Long, x2 as Long, p as Long) as Long 
+   ' This is a simple interpolation function.  It will find a midpoint
+   ' number based on the percentage.  This function is the single most
+   ' called function in the entire class, so keep it short and sweet.
+
+   If x1 > x2 Then 
+      MidPoint = x1 - ((x1 - x2) * (p / 100)) 
+   Else 
+      MidPoint = ((x2 - x1) * (p / 100)) + x1 
+   End If 
+
+End Function 
+
+
+

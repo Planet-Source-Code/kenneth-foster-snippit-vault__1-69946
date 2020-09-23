@@ -1,0 +1,75 @@
+'Put in a Module
+' To call ex:  DrawFormText.DrawText Form1.hDC, 10, 10, "Test as is", True, TranslateColor(vbRed)
+
+
+Option Explicit
+
+
+Private Declare Function OleTranslateColor Lib "OLEPRO32.DLL" _
+        (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, _
+        pccolorref As Long) As Long
+Private Const CLR_INVALID = &HFFFF
+
+' This is a modified version of the original DrawState API. The lParam
+' parameter has been changed to a string instead of a long
+Private Declare Function DrawStateText Lib "user32" Alias "DrawStateA" _
+        (ByVal hDC As Long, ByVal hBrush As Long, ByVal lpDrawStateProc _
+        As Long, ByVal lParam As String, ByVal wParam As Long, _
+        ByVal n1 As Long, ByVal n2 As Long, ByVal n3 As Long, _
+        ByVal n4 As Long, ByVal un As Long) As Long
+Private Declare Function GetTextColor Lib "gdi32" _
+        (ByVal hDC As Long) As Long
+Private Declare Function SetTextColor Lib "gdi32" _
+        (ByVal hDC As Long, ByVal crColor As Long) As Long
+' DrawState API Constants
+Private Const DST_COMPLEX = &H0
+Private Const DST_TEXT = &H1
+Private Const DST_PREFIXTEXT = &H2
+Private Const DST_ICON = &H3
+Private Const DST_BITMAP = &H4
+Private Const DSS_NORMAL = &H0
+Private Const DSS_UNION = &H10 ' // Grey Text
+Private Const DSS_DISABLED = &H20
+Private Const DSS_MONO = &H80
+
+
+Public Function TranslateColor(ByVal Clr As OLE_COLOR, _
+       Optional hPal As Long = 0) As Long
+   If OleTranslateColor(Clr, hPal, TranslateColor) Then
+      TranslateColor = CLR_INVALID
+   End If
+End Function
+
+Public Function DrawText(DrawOnDC As Long, X As Long, Y As Long, _
+       hStr As String, tEnabled As Boolean, Clr As Long) As Long
+    
+    ' This sub will draw text in an enabled or
+    ' disabled state. The text may contain a
+    ' accelerator mnemonic (&)
+    ' Parameters:
+    '  DrawOnDC: The DC to draw on
+    '         X: Top X coordinate
+    '         Y: Top Y coordinate
+    '      hStr: String to print
+    '  tEnabled: State to draw text in (True=Enabled, False=Disabled)
+    '       Clr: Color to draw text with. Only useful if tEnabled
+    '            parameter is True
+    
+    If DrawOnDC = 0 Then Exit Function
+    
+    ' Set new text color and save the old one
+    Dim OT As Long
+    OT = GetTextColor(DrawOnDC)
+    SetTextColor DrawOnDC, Clr
+    ' Draw the text
+    DrawText = DrawStateText(DrawOnDC, 0&, 0&, hStr, Len(hStr), _
+               X, Y, 0&, 0&, DST_PREFIXTEXT Or IIf(tEnabled = True, _
+               DSS_NORMAL, DSS_DISABLED))
+    'Restore old text color
+    SetTextColor DrawOnDC, OT
+    
+End Function
+Private Sub Form_Load()
+'To use the code add this line where you want to do drawing:
+'DrawFormText.DrawText Form1.hDC, 10, 10, "Test as is", True, TranslateColor(vbRed)End Sub
+

@@ -1,0 +1,38 @@
+' You need a menu With 3 options, cut, c
+'     opy, paste. Make sure To name them
+' mnucut, mnucopy, mnupaste. Or just mak
+'     e 3 buttons And change the code a bit.
+' You need one text box, defualt name te
+'     xt1. And thats it.
+
+
+Private Sub mnucopy_Click() 
+
+
+    If Text1.SelText = "" Then 
+        Exit Sub 
+    Else 
+        Clipboard.Clear 
+        Clipboard.SetText Text1.SelText 
+    End If 
+End Sub 
+
+
+Private Sub mnucut_Click() 
+
+
+    If Text1.SelText = "" Then 
+        Exit Sub 
+    Else 
+        Clipboard.Clear 
+        Clipboard.SetText Text1.SelText 
+        Text1.SelText = "" 
+    End If 
+End Sub 
+
+
+Private Sub mnupaste_Click() 
+    Text1.SelText = Clipboard.GetText 
+End Sub 
+
+

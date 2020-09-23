@@ -1,0 +1,47 @@
+'Declarations
+'===============================
+Private Type SHFILEOPSTRUCT
+    hWnd As Long
+    wFunc As Long
+    pFrom As String
+    pTo As String
+    fFlags As Integer
+    fAnyOperationsAborted As Boolean
+    hNameMappings As Long
+    lpszProgressTitle As String
+End Type
+Private Declare Function SHFileOperation Lib _
+    "shell32.dll" Alias "SHFileOperationA" _
+    (lpFileOp As SHFILEOPSTRUCT) As Long
+Private Const FO_DELETE = &H3
+Private Const FOF_ALLOWUNDO = &H40
+Private Const FOF_CREATEPROGRESSDLG As Long = &H0
+Public Enum RemoveAction
+    rfRecycle = 1
+    rfDelete = 2
+End Enum
+'================================
+
+Function Recycle(filename As String, action As RemoveAction) As Boolean
+    Dim FileOperation As SHFILEOPSTRUCT
+    Dim lReturn As Long
+    On Error GoTo RemoveFile_Err
+    With FileOperation
+        .wFunc = FO_DELETE
+        .pFrom = filename
+        If action = rfRecycle Then
+            .fFlags = FOF_ALLOWUNDO + FOF_CREATEPROGRESSDLG
+        Else
+            .fFlags = FO_DELETE + FOF_CREATEPROGRESSDLG
+        End If
+    End With
+    lReturn = SHFileOperation(FileOperation)
+    If lReturn <> 0 Then
+        RemoveFile = False
+    Else
+        RemoveFile = True
+    End If
+    Exit Function
+RemoveFile_Err:
+    RemoveFile = False
+End Function

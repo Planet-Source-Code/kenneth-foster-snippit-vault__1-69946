@@ -1,0 +1,34 @@
+'put this stuff in your New module
+
+
+Declare Function SetWindowPos Lib "user32" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long
+    Global Const conHwndTopmost = -1
+    Global Const conSwpNoActivate = &H10
+    Global Const conSwpShowWindow = &H40
+
+'**************************************
+' Name: A small bit of code To make your form stay On top!
+
+' Description:This code will make your 
+'     form stay On top of Any other windows running, just like winamp stays On top.
+' By: Kevin Nading
+'
+'
+' Inputs:none
+'
+' Returns:none
+'
+'Assumes:just make a New form And make a module And follow instructions below.. 
+'if you already have a form And Or a module just add the code below To them
+
+'Side Effects:do Not make a large form stay On top Or you will Not be able To see the other apps that are Open
+'This code is copyrighted And has limited warranties.
+'Please see http://www.Planet-Source-Code.com/xq/ASP/txtCodeId.2875/lngWId.1/qx/
+'     vb/scripts/ShowCode.htm For details.
+'**************************************
+
+'just Put this Line in your form_load event
+
+SetWindowPos hwnd, conHwndTopmost, 100, 100, 400, 141, conSwpNoActivate Or conSwpShowWindow
+
+

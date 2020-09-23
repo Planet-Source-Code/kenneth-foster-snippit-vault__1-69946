@@ -1,0 +1,172 @@
+'Place in a module named modCode
+
+
+Option Explicit
+'Basic Code by Evan Toder and modified by me
+
+Private fFile%
+Private Declare Function ShowScrollBar Lib "user32" (ByVal hWnd As Long, ByVal wBar As Long, ByVal bShow As Long) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+Private Type RECT
+    Left As Long
+    top As Long
+    Right As Long
+    Bottom As Long
+    End Type
+    Private Const SB_VERT = 1
+    Private Const EM_GETFIRSTVISIBLELINE = &HCE
+    Private Const EM_GETLINECOUNT = &HBA
+    Private Const EM_GETRECT = &HB2
+    
+Enum cDlgShowType
+     ShowOpen
+     ShowSave
+End Enum
+
+'Place CommonDialog on form1 and name it cDlg1
+Function func_cmDialogReturn(cDlg As CommonDialog, ShowType As cDlgShowType, _
+                                bCancErr As Boolean, sInitDir As String, _
+                                lngFlags As Long, ParamArray cDlgFilters()) As String
+
+'---------------------------
+' cDlg:=      the name of your common dialog control
+' ShowType:=  selects .ShowOpen or .ShowSave
+' bCancErr:=  sets boolean state of .CancelError
+' sInitDir:= .InitDir property   example: either specify valid path
+'             or use "" or vbNull
+' lngFlags:= .Flags property     example: cdlOFNExplorer Or cdlOFNHelpButton
+'             or use 0
+'cDlgFilters:=.Filter property   example: "*.txt", "*.*"
+'---------------------------
+'VARIABLES:
+   Dim sFilters  As String
+   Dim i         As Integer
+
+   For i = 0 To UBound(cDlgFilters) - 1
+      sFilters = (sFilters & "(" & CStr(cDlgFilters(i)) & ")|" & cDlgFilters(i)) & "|"
+   Next i
+   'add the last filter without the ending "|"
+   sFilters = (sFilters & "(" & CStr(cDlgFilters(i)) & ")|" & cDlgFilters(i))
+
+   With cDlg
+      .Filter = sFilters
+      .CancelError = bCancErr
+      'set default initial directory if its specified
+      If Len(sInitDir) > 0 Then .InitDir = sInitDir
+      'apply flags if any are specified
+      If lngFlags <> 0 Then .Flags = lngFlags
+      
+      If ShowType = ShowOpen Then
+        .ShowOpen
+      Else
+        .ShowSave
+      End If
+   
+      func_cmDialogReturn = .FileName
+   End With
+
+End Function
+Sub GetVBfile(frm As Form, txt As TextBox, Fill As Boolean)
+'Fill = true "Open" file, Fill = false "Save" file
+'example
+  'Private Sub Command1_Click()
+  'GetVBfile Form1, Text1, True  'open file
+  'End Sub
+'end example
+
+'VARIABLES:
+If Fill = True Then
+  Dim sfPath$, sTemp$, totCode$
+
+'--get the next free file number
+   fFile = FreeFile
+   
+'--common dialog showopen to get a cls, bas, txt or frm files code
+   sfPath = func_cmDialogReturn(frm.cDlg1, ShowOpen, False, "", 0, "*.cls; *.bas; *.frm; *.txt", "*.*")
+                 
+   If sfPath = "" Then Exit Sub
+   
+'--open the file and input its contents into variable totCode
+   Open sfPath For Input As #fFile
+      Do Until EOF(fFile)
+          Line Input #fFile, sTemp
+          totCode = (totCode & sTemp & vbCrLf)
+          DoEvents
+      Loop
+   Close #fFile
+   
+    txt = totCode
+  Else
+    Dim sSaveFile$
+    frm.cDlg1.DefaultExt = ""
+    sSaveFile = func_cmDialogReturn(Form1.cDlg1, ShowSave, False, "", cdlOFNOverwritePrompt, "*.*")
+    'valid path specified, cancel not clicked
+    If sSaveFile <> "" Then
+       fFile = FreeFile
+       Open sSaveFile For Output As #fFile
+          Print #fFile, txt.Text
+       Close #fFile
+    End If
+ End If
+
+End Sub
+
+Public Sub ShowScrollBars(theTextbox As TextBox)
+'make sure multiline is true for the textbox
+'example call:  ShowScrollBars  Text1
+
+    Dim firstVisibleLine As Long
+    Dim r As RECT
+    Dim numberOfLines As Long
+    Dim numberOfVisibleLines As Long
+    Dim rectHeight As Long
+    Dim lineHeight As Long
+    Dim hWnd As Long
+
+    hWnd = theTextbox.hWnd
+
+    firstVisibleLine = SendMessage(hWnd, EM_GETFIRSTVISIBLELINE, 0, 0)
+
+
+
+    If firstVisibleLine <> 0 Then
+        ShowScrollBar hWnd, SB_VERT, 1
+    Else
+        numberOfLines = SendMessage(hWnd, EM_GETLINECOUNT, 0, 0)
+        SendMessage hWnd, EM_GETRECT, 0, r
+        rectHeight = r.Bottom - r.top
+        lineHeight = theTextbox.Parent.TextHeight("W") / Screen.TwipsPerPixelY
+        numberOfVisibleLines = rectHeight / lineHeight
+
+
+        If numberOfVisibleLines < numberOfLines Then
+            ShowScrollBar hWnd, SB_VERT, 1
+        Else
+            ShowScrollBar hWnd, SB_VERT, 0
+        End If
+    End If
+End Sub
+
+
+'example code on form
+'need text1, command1, command2 and commondialog named cDlg1
+'text1 multiline set to true
+'----------------------------------------------------------
+Option Explicit
+
+Private Sub Command1_Click()   'open
+GetVBfile Form1, Text1, True  'open file
+ShowScrollBars Text1
+End Sub
+
+Private Sub Command2_Click()   'save
+GetVBfile Form1, Text1, False  'save file
+End Sub
+
+Private Sub Form_Resize()
+Form1.Height = 5340
+Text1.Width = Form1.Width - 600
+
+End Sub
+

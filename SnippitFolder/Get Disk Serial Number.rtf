@@ -1,0 +1,51 @@
+
+
+
+Private Declare Function GetVolumeInformation Lib _
+"kernel32.dll" Alias "GetVolumeInformationA" (ByVal _
+lpRootPathName As String, ByVal lpVolumeNameBuffer As _
+String, ByVal nVolumeNameSize As Integer, _
+lpVolumeSerialNumber As Long, lpMaximumComponentLength _
+As Long, lpFileSystemFlags As Long, ByVal _
+lpFileSystemNameBuffer As String, ByVal _
+nFileSystemNameSize As Long) As Long
+
+Private Sub Command1_Click()
+MsgBox GetSerialNumber("D:")
+End Sub
+
+Function GetSerialNumber(DriveLetter As String) As String
+    Dim SerialNum As Long
+    Dim VolNameBuf As String
+    Dim FileSysNameBuf As String
+    Select Case Len(DriveLetter)
+        Case 1
+            If LCase(DriveLetter) Like "[a-z]" Then
+                DriveLetter = Left(DriveLetter, 1) & ":\"
+            Else
+                GetSerialNumber = "Error - Bad drive designation"
+            End If
+        Case 2
+            If LCase(DriveLetter) Like "[a-z]:" Then
+                DriveLetter = DriveLetter & "\"
+            Else
+                GetSerialNumber = "Error - Bad drive designation"
+            End If
+        Case 3
+            If LCase(DriveLetter) Like "[!a-z]:\" Then
+                GetSerialNumber = "Error - Bad drive designation"
+            End If
+        Case Else
+            GetSerialNumber = "Error - Bad drive designation"
+    End Select
+    If Len(GetSerialNumber) = 0 Then
+        VolNameBuf = String(255, Chr(0))
+        FileSysNameBuf = String(255, Chr$(0))
+        GetVolumeInformation DriveLetter, VolNameBuf, _
+         Len(VolNameBuf), SerialNum, 0, 0, _
+         FileSysNameBuf, Len(FileSysNameBuf)
+         GetSerialNumber = Right("00000000" & Hex(SerialNum), 8) & "  " & SerialNum
+        'GetSerialNumber = SerialNum
+    End If
+End Function
+

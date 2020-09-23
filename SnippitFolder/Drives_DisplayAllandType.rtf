@@ -1,0 +1,47 @@
+'Reference Microsoft Scripting Runtime
+'add combo box
+
+Private Declare Function GetDriveType Lib "kernel32" Alias "GetDriveTypeA" _
+(ByVal sDrive As String) As Long
+'- Drive Type Constants...
+Const DRIVE_CDROM = 5
+Const DRIVE_FIXED = 3
+Const DRIVE_RAMDISK = 6
+Const DRIVE_REMOTE = 4
+Const DRIVE_REMOVABLE = 2
+
+
+Private Sub Form_Load()
+Dim objfso As Scripting.FileSystemObject
+Dim drives As drives, drive As drive
+
+Set objfso = CreateObject("Scripting.FileSystemObject")
+Set drives = objfso.drives
+For Each drive In drives
+Combo1.AddItem drive.driveletter & ":\" & "      " & GetDriveDesc(drive.driveletter & ":\")
+Next
+End Sub
+
+Public Function GetDriveDesc(strDrive As String) As String
+
+Dim RC As Long
+
+RC = GetDriveType(strDrive) ' Get Drive Type
+
+Select Case RC
+Case DRIVE_CDROM
+GetDriveDesc = "...CD Rom Drive"
+Case DRIVE_FIXED
+GetDriveDesc = "...Fixed Drive"
+Case DRIVE_REMOTE
+GetDriveDesc = "...Network Drive"
+Case DRIVE_RAMDISK
+GetDriveDesc = "...Ram Disk Drive"
+Case DRIVE_REMOVABLE
+GetDriveDesc = "...Removable Disk Drive"
+Case Else
+GetDriveDesc = "[Unknown drive type or error]"
+End Select
+
+End Function
+

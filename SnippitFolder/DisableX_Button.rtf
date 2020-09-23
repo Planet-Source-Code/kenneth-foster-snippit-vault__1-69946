@@ -1,0 +1,17 @@
+Public Sub DisableX(frm As Form)
+  Dim hMenu As Long, nCount As Long
+
+  'Get handle To system menu
+  hMenu = GetSystemMenu(frm.hwnd, 0)
+
+  'Get number of items in menu
+  nCount = GetMenuItemCount(hMenu)
+
+  'Remove last item from system menu (last item is 'Close')
+  Call RemoveMenu(hMenu, nCount - 1, MF_DISABLED Or MF_BYPOSITION)
+
+  'Redraw menu
+  DrawMenuBar frm.hwnd
+
+End Sub
+

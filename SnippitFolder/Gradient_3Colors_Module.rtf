@@ -1,0 +1,67 @@
+'Put in a module or in form
+'this code based on MasterGradient by Joshua Foster
+Option Explicit   
+
+Public Sub DwGd(obj as Object, tpR, tpG, tpB, mdR, mdG, mdB, btR, btG, btB)   
+' For best results all values need to be between 0 and 100
+'You can use on a form or picture
+'example below for a form
+'#####################################
+'Private Sub Form_Load()
+'Me.Show
+'DwGd Me, 100, 0, 0, 100, 0, 100, 0, 0, 100
+'End Sub
+
+'Private Sub Form_Resize()
+'DwGd Me, 100, 0, 0, 100, 0, 100, 0, 0, 100
+'End Sub
+'########################################
+    Dim R1 as Double   
+    Dim G1 as Double   
+    Dim B1 as Double   
+    Dim R2 as Double   
+    Dim G2 as Double   
+    Dim B2 as Double   
+    Dim R0 as Double   
+    Dim G0 as Double   
+    Dim B0 as Double   
+    Dim i as Integer   
+
+    obj.AutoRedraw = true
+    obj.ScaleMode = 0   
+    obj.ScaleHeight = 500   
+    obj.ScaleWidth = 1   
+
+
+  R0 = tpR   
+  G0 = tpG   
+  B0 = tpB   
+
+  R1 = (mdR - R0) / 250   
+  G1 = (mdG - G0) / 250   
+  B1 = (mdB - B0) / 250   
+  R2 = (btR - mdR) / 250   
+  G2 = (btG - mdG) / 250   
+  B2 = (btB - mdB) / 250   
+
+  For i = 0 To 500   
+     obj.Line (0, i)-(1, i), RGB(R0 * 2.55, G0 * 2.55, B0 * 2.55)   
+    If i < 250 Then   
+      R0 = R0 + R1   
+      G0 = G0 + G1   
+      B0 = B0 + B1   
+    Else   
+      R0 = R0 + R2   
+      G0 = G0 + G2   
+      B0 = B0 + B2   
+    End If   
+  Next i   
+  obj.ScaleMode = 1   
+End Sub   
+
+
+
+
+
+
+

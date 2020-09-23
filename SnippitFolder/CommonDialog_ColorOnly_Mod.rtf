@@ -1,0 +1,65 @@
+ Private Declare Function CHOOSECOLOR Lib "comdlg32.dll" Alias "ChooseColorA" (pChoosecolor As CHOOSECOLOR) As Long
+   
+   Private Type CHOOSECOLOR
+   lStructSize As Long
+   hwndOwner As Long
+   hInstance As Long
+   rgbResult As Long
+   lpCustColors As String
+   flags As Long
+   lCustData As Long
+   lpfnHook As Long
+   lpTemplateName As String
+End Type
+
+Dim CustomColors() As Byte
+Dim cc As CHOOSECOLOR
+'------------------------------------------------------
+'Example code for form1
+'Private Sub Form_Load()
+   'Fillit
+'End Sub
+
+'Private Sub Label1_Click()
+   
+   'Dim Sure As Long
+   
+   'Sure = ShowColor
+   'If Sure = -1 Then Exit Sub  'Cancel was clicked
+   'Label1.BackColor = Sure
+   
+'End Sub
+'----------------------------------------------------------------
+Public Function ShowColor() As Long
+   
+   'set the structure size
+   cc.lStructSize = Len(cc)
+   'Set the owner
+   cc.hwndOwner = Form1.hWnd
+   'set the application's instance
+   cc.hInstance = App.hInstance
+   'set the custom colors (converted to Unicode)
+   cc.lpCustColors = StrConv(CustomColors, vbUnicode)
+   'no extra flags
+   cc.flags = 0  'set to 0 = define custom colors unselected. 2= define custom colors selected
+   
+   'Show the 'Select Color'-dialog
+   If CHOOSECOLOR(cc) <> 0 Then
+      ShowColor = (cc.rgbResult)
+      CustomColors = StrConv(cc.lpCustColors, vbFromUnicode)
+   Else
+      ShowColor = -1
+   End If
+   
+End Function
+
+Public Sub Fillit()
+   Dim i As Integer
+   
+   ReDim CustomColors(0 To 16 * 4 - 1) As Byte
+   
+   For i = LBound(CustomColors) To UBound(CustomColors)
+      CustomColors(i) = 0
+   Next i
+End Sub
+

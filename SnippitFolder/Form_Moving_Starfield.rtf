@@ -1,0 +1,104 @@
+'Starfield on Form1
+' Add Timer1 and set interval = 1
+'Set form1.backcolor to whatever
+
+Dim X(100) As Integer
+Dim Y(100) As Integer
+Dim vx As Integer
+Dim vy As Integer
+Dim Value As Long
+Dim speed As Integer
+
+Private Sub Form_DblClick()
+    'exit
+    Unload Me
+End Sub
+
+Private Sub Form_Load()
+    'cover screen with stars randomly
+    Dim i As Integer
+    Timer1.Enabled = False
+    Randomize Timer
+    
+    Value = 150
+    For i = 1 To 100
+        X(i) = Rnd * Me.Width + i * 50
+        Y(i) = Rnd * Me.Height + i * 50
+    Next
+   Timer1.Enabled = True
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+Timer1.Enabled = False
+Unload Me
+End Sub
+
+Private Sub Timer1_Timer()
+'declare variables
+    Dim i As Integer
+    Dim xdist As Integer
+    Dim ydist As Integer
+    Dim dist As Integer
+    
+    speed = 75  'how fast stars move- 200 max
+    'hide old star
+    Me.DrawWidth = 10
+    For i = 1 To 100
+        PSet (X(i), Y(i)), Me.BackColor
+    Next
+    
+    'determine velocity based on distance
+    For i = 1 To 100
+        If X(i) >= Me.Width / 2 Then
+            xdist = X(i) - Me.Width / 2
+            vx = xdist / speed
+        Else
+            xdist = Me.Width / 2 - X(i)
+            vx = -xdist / speed
+        End If
+        
+        If Y(i) >= Me.Height / 2 Then
+            ydist = Y(i) - Me.Height / 2
+            vy = ydist / speed
+        Else
+            ydist = (Me.Height / 2 - 500) - Y(i)
+            vy = -ydist / speed
+        End If
+        
+        'determine size based on distance
+        dist = (xdist ^ 2 + ydist ^ 2) ^ 0.5
+        If dist < 1920 Then
+            Me.DrawWidth = 1
+        Else
+            Me.DrawWidth = dist / 1500
+        End If
+        
+        'move star and draw
+        X(i) = X(i) + vx
+        Y(i) = Y(i) + vy
+        PSet (X(i), Y(i)), vbWhite
+        
+        'check for off-screen stars
+        If X(i) > Me.Width Then
+            PSet (X(i), Y(i)), Me.BackColor
+            X(i) = Me.Width / 2 + Rnd * 5000 + 1
+            Y(i) = Me.Height / 2 + Rnd * 5000 + 1
+        End If
+        If X(i) < 0 Then
+            PSet (X(i), Y(i)), Me.BackColor
+            X(i) = Me.Width / 2 + Rnd * 5000 + 1
+            Y(i) = Me.Height / 2 - Rnd * 5000 - 1
+        End If
+        If Y(i) > Me.Height Then
+            PSet (X(i), Y(i)), Me.BackColor
+            X(i) = Me.Width / 2 - Rnd * 5000 - 1
+            Y(i) = Me.Height / 2 - Rnd * 5000 - 1
+        End If
+        If Y(i) < 0 Then
+            PSet (X(i), Y(i)), Me.BackColor
+            X(i) = Me.Width / 2 - Rnd * 5000 - 1
+            Y(i) = Me.Height / 2 + Rnd * 5000 + 1
+        End If
+    Next
+End Sub
+

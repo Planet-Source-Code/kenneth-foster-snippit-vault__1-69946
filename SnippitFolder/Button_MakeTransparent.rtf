@@ -1,0 +1,50 @@
+" In module declaration
+
+Option Explicit
+
+Public Function MakeButtonsTransparent(frm As Form)
+  Dim ctl As Control
+  Static StartupFlag%
+  On Error GoTo MakeCommandTransparen_ErrHandler
+  If StartupFlag% > 0 Then Exit Function
+  frm.Controls.Add "VB.PictureBox", "tmpPic", frm
+  With frm!tmpPic
+  .AutoRedraw = True
+  For Each ctl In frm.Controls
+    If TypeOf ctl Is CommandButton Then
+      .BorderStyle = 0
+      .Visible = True ' this one also
+      .Cls
+      .Move ctl.Left, ctl.Top, ctl.Width, ctl.Height
+      .CurrentX = (.ScaleWidth / 2) - (frm.TextWidth(ctl.Caption) / 2)
+      .CurrentY = (.ScaleHeight / 2) - (frm.TextHeight(ctl.Caption) / 2)
+      .PaintPicture frm.Image, 0, 0, , , .Left, .Top
+      frm!tmpPic.Print ctl.Caption
+      ctl.Picture = .Image
+      ctl.Caption = ""
+    End If
+  Next ctl
+  .Visible = False
+  End With
+  StartupFlag% = StartupFlag% + 1
+  
+  Exit Function
+MakeCommandTransparen_ErrHandler:
+  frm!tmpPic.Visible = False
+  StartupFlag% = StartupFlag% + 1
+  MsgBox Err.Description
+End Function
+
+'=============================
+' In form declaration
+
+Option Explicit
+
+'Load picture to the form _
+ Load command control _
+ Set property [Style=1-Graphic] _
+
+Private Sub Form_Load()
+  MakeButtonsTransparent Me
+End Sub
+

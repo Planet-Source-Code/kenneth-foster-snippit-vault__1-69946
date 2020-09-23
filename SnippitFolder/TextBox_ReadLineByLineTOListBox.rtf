@@ -1,0 +1,17 @@
+Private Sub Command1_Click()
+    Dim B
+    Dim A As Integer
+    List1.Clear
+    B = Split(RT.Text, Chr(13))
+
+    For A = LBound(B) To UBound(B)
+
+        If A > 0 Then
+            List1.AddItem Mid(B(A), 2, Len(B(A)))
+        ElseIf A = 0 Then
+            List1.AddItem B(A)
+        End If
+    Next A
+    Set B = Nothing
+
+End Sub

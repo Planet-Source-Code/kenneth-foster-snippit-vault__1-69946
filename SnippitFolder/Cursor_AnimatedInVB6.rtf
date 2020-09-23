@@ -1,0 +1,57 @@
+'Put in a module
+
+Private Declare Function LoadCursorFromFile Lib "user32" Alias _
+    "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
+Private Declare Function SetSystemCursor Lib "user32" _
+    (ByVal hcur As Long, ByVal id As Long) As Long
+Private Declare Function GetCursor Lib "user32" () As Long
+Private Declare Function CopyIcon Lib "user32" (ByVal hcur As Long) As Long
+
+Private Const OCR_NORMAL = 32512
+
+Public lngOldCursor As Long, lngNewCursor As Long
+
+Public Sub StartAnimatedCursor(AniFilePath As String)
+
+    ' Create a copy of the current cursor,
+    ' for Windows NT compatibility
+    
+    lngOldCursor = CopyIcon(GetCursor())
+    
+    ' Check the passed string, if it contains
+    ' a solid file path, then load the cursor
+    ' from file. If not, add the App.Path,
+    ' *then* load cursor...
+    
+    If InStr(1, AniFilePath, "\") Then
+        lngNewCursor = LoadCursorFromFile(AniFilePath)
+    Else
+        lngNewCursor = LoadCursorFromFile(App.Path & _
+            "\" & AniFilePath)
+    End If
+    
+    ' Activate the cursor
+        
+    SetSystemCursor lngNewCursor, OCR_NORMAL
+    
+End Sub
+
+Public Sub RestoreLastCursor()
+
+    ' Restore last cursor
+    
+    SetSystemCursor lngOldCursor, OCR_NORMAL
+
+End Sub
+
+
+'Usage
+
+Private Sub Command1_Click()
+StartAnimatedCursor ("c:\windows\cursors\globe.ani")
+
+End Sub
+
+Private Sub Command2_Click()
+RestoreLastCursor
+End Sub

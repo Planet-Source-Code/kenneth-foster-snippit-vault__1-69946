@@ -1,0 +1,91 @@
+
+
+Declare Sub ReleaseCapture Lib "USER32" ()
+Public Declare Function SendMessage Lib "USER32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+'put in module
+
+Public Sub FormDrag(Form1 As Form)  'ex.FormDrag Me
+    ReleaseCapture
+    Call SendMessage(Form1.hWnd, &HA1, 2, 0&)
+    
+    'keeps forms on screen
+    If Form1.Top < 0 Then Form1.Top = 0
+    If Form1.Left < 0 Then Form1.Left = 0
+    If Form1.Top + Form1.Height > Screen.Height Then
+       Form1.Top = Screen.Height - Form1.Height
+    End If
+    If Form1.Left + Form1.Width + Form2.Width > Screen.Width Then
+       Form1.Left = (Screen.Width - Form1.Width) - Form2.Width
+    End If
+End Sub
+
+Public Sub Form_Dock(frm1 As Form, frm2 As Form, tp As Long, lef As Long)
+  'frm1 is the main form
+  'frm2 is the minor form. docks to main form
+  'use tp and lef to set docking position of frm2 to frm1
+  'tp is frm2.top value and lef is frm2.left value
+  
+   If frm2.Left > (frm1.Left + frm1.Width) + 1500 Then Exit Sub ' sets docking distance ,adjust value(1500) for your needs
+   frm2.Top = tp
+   frm2.Left = lef
+End Sub
+
+'example form1
+'-------------------------------
+
+Private Sub Command1_Click() 'show form2
+   Form2.Show
+   Call Form_Dock(Form1, Form2, Form1.Top, Form1.Left + Form1.Width)
+End Sub
+
+Private Sub Command2_Click() ' show form3
+   Form3.Show
+   Call Form_Dock(Form1, Form3, Form1.Top + Form2.Height, Form1.Left + Form1.Width)
+End Sub
+
+Private Sub Command3_Click() 'exit program
+  Unload Me
+  Unload Form2
+  Unload Form3
+End Sub
+
+Private Sub Form_Load()
+   Check1.Value = 1 'docking on
+   Form2.Show
+   Form3.Show
+End Sub
+Private Sub Form_Unload(Cancel As Integer)
+   Unload Me
+   Unload Form2
+   Unload Form3
+End Sub
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+'if mouse button pressed then move forms
+  
+    FormDrag Me
+    If Check1.Value = 1 Then  'docking is enabled
+        Call Form_Dock(Form1, Form2, Form1.Top, Form1.Left + Form1.Width)
+        Call Form_Dock(Form1, Form3, Form1.Top + Form2.Height, Form1.Left + Form1.Width)
+    End If
+End Sub
+
+Private Sub Form_Resize()
+   Call Form_Dock(Form1, Form2, Form1.Top, Form1.Left + Form1.Width)
+   Call Form_Dock(Form1, Form3, Form1.Top + Form2.Height, Form1.Left + Form1.Width)
+End Sub
+
+'example form2
+'-----------------------
+
+Private Sub Command1_Click()
+Form2.Hide
+End Sub
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+   FormDrag Form2
+   
+   'used to dock this form to main form when you click and drag
+   If Form1.Check1.Value = 1 Then
+      Call Form_Dock(Form1, Form2, Form1.Top, Form1.Left + Form1.Width)
+   End If
+End Sub

@@ -1,0 +1,16 @@
+Public PosX
+Public PosY
+=======================
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    PosX = X
+    PosY = Y
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+If Button = 1 Then
+        Me.Left = Me.Left + (X - PosX)
+        Me.Top = Me.Top + (Y - PosY)
+    End If
+End Sub
+

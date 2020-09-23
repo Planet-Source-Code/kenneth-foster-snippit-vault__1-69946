@@ -1,0 +1,23 @@
+'loads text file into listbox , using commas as separator
+'need command1 and list1 controls on form
+'and  a file called " text.txt " with items in it.
+
+Private Sub Command1_Click()
+Dim textfile As String
+Dim strArray() As String
+Dim i As Integer
+
+Open "D:\Temp\test.txt" For Input As #1
+  Do While Not EOF(1)
+   Line Input #1, textfile
+   strArray = Split(textfile, ",")
+   For i = 0 To UBound(strArray)
+   If Not Trim(strArray(i)) = "" Then
+   List1.AddItem strArray(i)
+   End If
+   Next
+  Loop
+Close #1
+
+End Sub
+

@@ -1,0 +1,27 @@
+Public Function FullFormatDate(theDate as String) 
+
+'  Text1.text = FullFormatDate("6/25/1947")
+' IN         -  theDate To be "mm/dd/yyyy"  Or  "mm/dd/yy"
+' OUT (e.g.) - Wednesday, 25th Jun,1947 
+
+Dim wkDD as String 
+
+wkDD = Format(theDate, "DD") 
+
+Select Case wkDD 
+    Case 1, 21, 31 
+        wkDD = Format(wkDD, "#0") & "st" 
+    Case 2, 22 
+        wkDD = Format(wkDD, "#0") & "nd" 
+    Case 3, 23 
+        wkDD = Format(wkDD, "#0") & "rd" 
+    Case Else 
+        wkDD = Format(wkDD, "#0") & "th" 
+End Select 
+
+FullFormatDate = Format(theDate, "DDDD, ") & wkDD & Format(theDate, " MMM YYYY") 
+
+End Function 
+
+
+

@@ -1,0 +1,22 @@
+Option Explicit
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+    'Constant
+    Const WM_VSCROLL = &H115
+    Const SB_BOTTOM = 7
+
+
+Private Sub Command1_Click()
+List1.AddItem "Again"
+SendMessage List1.hwnd, WM_VSCROLL, SB_BOTTOM, 0
+
+End Sub
+
+Private Sub Form_Load()
+List1.AddItem "ken"
+List1.AddItem "was"
+List1.AddItem "here"
+List1.AddItem "again."
+SendMessage List1.hwnd, WM_VSCROLL, SB_BOTTOM, 0
+
+End Sub
+

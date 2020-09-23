@@ -1,0 +1,73 @@
+
+
+
+Option Explicit
+
+Dim pos1 As Single
+
+Private Sub Form_Load()
+    DrawDot Picture1, pos1
+End Sub
+
+Private Sub DrawDot(Obj As Object, ByVal pos As Single)
+Dim X As Long
+Dim Y As Long
+Dim Z As Long
+Dim degree As Double
+Dim radiusX As Long
+Dim radiusY As Long
+Dim convert As Double
+Dim cSize As Integer
+Dim CenterX As Integer
+Dim CenterY As Integer
+
+    pos = pos - 50  ' this determines the scale ex. -50 to 50 for a scale of 100
+    
+    With Obj
+        .Height = 800
+        .Width = 800
+        .AutoRedraw = True
+        .FillStyle = 0
+    End With
+    
+   ''size of circle
+    radiusX = 200
+    radiusY = 200
+    
+    'center of circle
+    CenterX = (400)
+    CenterY = (400)
+    
+    Obj.Cls
+    Obj.Refresh
+    
+    'single dot at a time
+    degree = pos * 3   'this determines start or 0 position and end or 100 pos. 3 = 270, 2= 180, 3.5 = 360
+    convert = 3.14159265358979 / 180 'from Radian to Degree
+    X = CenterX - (Sin(-degree * convert) * radiusX)
+    Y = CenterY - (Sin((90 + (degree)) * convert) * radiusY)
+    Obj.Circle (X, Y), 10, vbBlack
+    
+    'draw circle of dots
+    'For Z = 1 To 100
+    '   degree = Z * 4   'this determines start or 0 position and end or 100 pos. 3 = 270, 2= 180, 3.5 = 360
+    '   convert = 3.14159265358979 / 180 'from Radian to Degree
+    '   X = CenterX - (Sin(-degree * convert) * radiusX)
+    '   Y = CenterY - (Sin((90 + (degree)) * convert) * radiusY)
+    'draw the dot
+    'Obj.Circle (X, Y), 10, vbBlack
+    'Next Z
+    
+    'optionally pset can be used instead of   Obj.Circle (X, Y), 10, vbBlack
+     'Obj.PSet (X, Y), vbRed
+     'Obj.PSet (X + 1, Y), vbRed
+     'Obj.PSet (X - 1, Y), vbRed
+     'Obj.PSet (X, Y + 1), vbRed
+     'Obj.PSet (X, Y - 1), vbRed
+End Sub
+
+Private Sub HS2_Scroll()
+   pos1 = HS2
+   DrawDot Picture1, pos1
+End Sub
+

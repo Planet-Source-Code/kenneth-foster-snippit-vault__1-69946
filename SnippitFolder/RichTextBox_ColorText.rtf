@@ -1,0 +1,74 @@
+Option Explicit
+
+Private Type FStyle
+    Color As Long
+    Bold As Boolean
+    Underline As Boolean
+    Italics As Boolean
+    Keyword As String
+    End Type
+    Dim FArr() As FStyle
+
+
+Function TReplace(txt As RichTextBox)
+
+Dim x As Integer
+Dim z As Integer
+Dim y As Integer
+
+    For x = 1 To Len(txt.Text)
+
+
+        For z = 0 To UBound(FArr)
+
+
+            If LCase(FArr(z).Keyword) = LCase(Mid(txt.Text, x, Len(FArr(z).Keyword))) Then
+                y = txt.SelStart
+                txt.SelStart = x - 1
+                txt.SelLength = Len(FArr(z).Keyword)
+                txt.selcolor = FArr(z).Color
+                txt.SelBold = FArr(z).Bold
+                txt.SelUnderline = FArr(z).Underline
+                txt.SelStart = y
+            End If
+        Next
+    Next
+End Function
+
+
+Private Sub Form_Load()
+    'Lets make 5 keywords - Ken,Foster, was,
+    '     here, again. They are case insensitive.
+    ReDim FArr(4)
+    FArr(0).Bold = True
+    FArr(0).Color = vbBlue
+    FArr(0).Italics = False
+    FArr(0).Underline = False
+    FArr(0).Keyword = "Ken"
+    FArr(1).Bold = True
+    FArr(1).Color = vbBlue
+    FArr(1).Italics = False
+    FArr(1).Underline = False
+    FArr(1).Keyword = "Foster"
+    FArr(2).Bold = False
+    FArr(2).Color = &H9D744F
+    FArr(2).Italics = True
+    FArr(2).Underline = False
+    FArr(2).Keyword = "was"
+    FArr(3).Bold = True
+    FArr(3).Color = &H37C7E6
+    FArr(3).Italics = False
+    FArr(3).Underline = False
+    FArr(3).Keyword = "here"
+    FArr(4).Bold = True
+    FArr(4).Color = &H37C7E6
+    FArr(4).Italics = False
+    FArr(4).Underline = False
+    FArr(4).Keyword = "again"
+End Sub
+
+
+Private Sub Command1_Click()
+    Call TReplace(RichTextBox1)
+End Sub
+

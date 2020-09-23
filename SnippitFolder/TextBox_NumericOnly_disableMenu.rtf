@@ -1,0 +1,67 @@
+Private Sub Text1_KeyDown(KeyCode As Integer, Shift As Integer)
+    Dim ShiftDown As Boolean
+    ShiftDown = (Shift And vbShiftMask) > 0
+
+    If ShiftDown And (KeyCode = vbKeyInsert) Then
+        KeyCode = 0
+    End If
+End Sub
+
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+Dim Opos As Integer
+Dim Resp As String
+Dim TempStr As String
+
+    Opos = Text1.SelStart
+
+    If Not IsNumeric(Chr(KeyAscii)) Then
+
+        Select Case KeyAscii
+            Case 45
+
+            If Left(Text1.Text, 1) = "-" Then
+                'remove Negative
+                Text1.Text = Right(Text1.Text, Len(Text1.Text) - 1)
+                KeyAscii = 0
+
+                If Opos > 1 Then
+                    Text1.SelStart = Opos - 1
+                End If
+            Else
+                'Add Negative
+                Text1.Text = "-" & Text1.Text
+                KeyAscii = 0
+                Text1.SelStart = Opos + 1
+            End If
+            Case 46
+
+            If InStr(Text1.Text, ".") > 0 Then
+                Resp = MsgBox("Value Contains Decimal Point, Re-Position Decimal Point?", vbYesNo + vbQuestion)
+
+                If Resp = vbYes Then
+                    Opos = InStr(Text1.Text, ".")
+                    TempStr = Split(Text1.Text, ".")
+                    Text1.Text = Join(TempStr, "")
+
+                    If Opos > 1 Then
+                        Text1.SelStart = Opos - 1
+                    End If
+                End If
+                KeyAscii = 0
+            End If
+            Case 8
+            Case Else
+            KeyAscii = 0
+        End Select
+End If
+End Sub
+
+Private Sub Text1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    'Disable Menu
+    If Button = 2 Then
+        Text1.Enabled = False
+        MsgBox ("Menu Dissabled.")
+        Text1.Enabled = True
+    End If
+End Sub
+

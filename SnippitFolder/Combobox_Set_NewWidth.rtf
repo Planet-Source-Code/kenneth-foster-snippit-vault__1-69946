@@ -1,0 +1,15 @@
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal _
+    hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, _
+    lParam As Any) As Long
+Const CB_SETDROPPEDWIDTH = &H160
+
+' Set the width of the list area of a ComboBox (in pixels)
+
+Sub SetComboDropDownWidth(ComboBox As ComboBox, ByVal lWidth As Long)
+    SendMessage ComboBox.hwnd, CB_SETDROPPEDWIDTH, lWidth, ByVal 0&
+End Sub
+
+Private Sub Command1_Click()
+SetComboDropDownWidth Combo1, 200
+End Sub

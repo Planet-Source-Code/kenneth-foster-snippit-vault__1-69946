@@ -1,0 +1,82 @@
+
+'Sample form1 code
+
+'------------------------------------------------------------------
+Option Explicit
+Dim MyFile, MSG As String
+Private Sub Command1_Click()
+    'display the Open File dialog
+    'pass file filters in similar fashion to the open dialog OCX requirements...
+    'TITLE,Filter Description|Filter|Next Filter Description|Next Filter... etc.
+    'multiple filters are passed as in this example:
+    'MyFile = fncGetFileNametoOpen("Open A File", "All Files|*.*|Picture Files|*.jpg;*.gif;*.png")
+    'Below...
+    MyFile = fncGetFileNametoOpen("Open Any File", "All Files|*.*")
+Text1.Text = MyFile
+End Sub
+
+'--------------------------------------------------------------------
+
+' put in module
+
+Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameA" (pOpenfilename As OPENFILENAME) As Long
+Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameA" (pOpenfilename As OPENFILENAME) As Long
+Private strfileName As OPENFILENAME
+Public FileSelected As Boolean '--> CptnVic's Addition... coerces value to boolean for ease of use... see form code for use.
+
+Private Type OPENFILENAME
+    lStructSize As Long
+    hwndOwner As Long
+    hInstance As Long
+    lpstrFilter As String
+    lpstrCustomFilter As String
+    nMaxCustFilter As Long
+    nFilterIndex As Long
+    lpstrFile As String
+    nMaxFile As Long
+    lpstrFileTitle As String
+    nMaxFileTitle As Long
+    lpstrInitialDir As String
+    lpstrTitle As String
+    flags As Long
+    nFileOffset As Integer
+    nFileExtension As Integer
+    lpstrDefExt As String
+    lCustData As Long
+    lpfnHook As Long
+    lpTemplateName As String
+End Type
+
+Private Sub DialogFilter(WantedFilter As String)
+    Dim intLoopCount As Integer
+    strfileName.lpstrFilter = ""
+    For intLoopCount = 1 To Len(WantedFilter)
+        If Mid(WantedFilter, intLoopCount, 1) = "|" Then strfileName.lpstrFilter = _
+        strfileName.lpstrFilter + Chr(0) Else strfileName.lpstrFilter = _
+        strfileName.lpstrFilter + Mid(WantedFilter, intLoopCount, 1)
+    Next intLoopCount
+    strfileName.lpstrFilter = strfileName.lpstrFilter + Chr(0)
+End Sub
+
+'This is The Function To get the File Name to Open
+'Even If U don't specify a Title or a Filter it is OK
+
+Public Function fncGetFileNametoOpen(Optional strDialogTitle As String = "Open", Optional strFilter As String = "All Files|*.*", Optional strDefaultExtention As String = "*.*") As String
+    Dim lngReturnValue As Long
+    Dim intRest As Integer
+    strfileName.lpstrTitle = strDialogTitle
+    strfileName.lpstrDefExt = strDefaultExtention
+    DialogFilter (strFilter)
+    strfileName.hInstance = App.hInstance
+    strfileName.lpstrFile = Chr(0) & Space(259) ' --> will return Chr(0) & 259 spaces UNLESS a valid file is selected.
+    strfileName.nMaxFile = 260 ' maximum length of a file name
+    strfileName.flags = &H4
+    strfileName.lStructSize = Len(strfileName)
+    lngReturnValue = GetOpenFileName(strfileName)
+    FileSelected = lngReturnValue ' --> CptnVics addition... must be done after the call to GetOpenFileName(strfileName)!
+        'FileSelected will coerce this value (lngReturnValue) to boolean... true if a file was selected... false otherwise.
+        'FileSelected could be dimensioned as a string... in which case it would return "1" if a file was selected... "0" if canceled
+        'The boolean check takes less code... see the demo form.
+    fncGetFileNametoOpen = strfileName.lpstrFile
+End Function
+

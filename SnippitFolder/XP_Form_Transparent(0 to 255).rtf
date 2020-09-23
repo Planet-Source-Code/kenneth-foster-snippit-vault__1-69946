@@ -1,0 +1,18 @@
+'Make XP form transparent (0 to 255)
+
+Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long '---
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long '------------
+Private Const GWL_EXSTYLE = (-20)
+Private Const WS_EX_LAYERED = &H80000
+Private Const LWA_ALPHA = &H2
+
+Private Sub Command2_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+'makes it transparent 0 - invisible  123 - opaque 255 - solid
+MakeTransparent Me.hWnd, 150
+End Sub
+
+Private Function MakeTransparent(mhWnd As Long, mTransparency As Integer)
+SetWindowLong mhWnd, GWL_EXSTYLE, WS_EX_LAYERED
+SetLayeredWindowAttributes mhWnd, 0, mTransparency, LWA_ALPHA
+End Function
+

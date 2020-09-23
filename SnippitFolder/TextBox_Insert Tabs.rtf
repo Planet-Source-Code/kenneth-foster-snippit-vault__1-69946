@@ -1,0 +1,25 @@
+Dim mKeyTab As Boolean
+
+ Private Sub Text1_KeyDown(KeyCode As Integer, Shift As Integer)
+'INSERT TAB WITH SHIFT+TAB
+  If (((Shift And vbShiftMask) > 0) And (KeyCode = vbKeyT)) Then
+    Call InsertTAB(Screen.ActiveControl) 'Or: Call InsertTAB(Text1) mKeyTab = True
+  End If
+End Sub
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+  If (mKeyTab) Then
+     mKeyTab = False
+     KeyAscii = 0
+  End If
+End Sub
+Private Sub InsertTAB(ByRef sTextBox As Object)
+Dim sSelStart As Long
+   sSelStart = sTextBox.SelStart
+   If (sSelStart = 0) Then
+      sTextBox.Text = (vbTab & sTextBox.Text)
+   Else
+      sTextBox.Text = (Left(sTextBox.Text, sSelStart) & vbTab & Mid(sTextBox.Text, sSelStart + 1))
+   End If
+   sTextBox.SelStart = (sSelStart + 1)
+End Sub
+

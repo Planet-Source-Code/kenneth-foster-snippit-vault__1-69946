@@ -1,0 +1,22 @@
+
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
+
+Const LVM_FIRST As Long = &H1000
+Const LVM_SETCOLUMNWIDTH As Long = (LVM_FIRST + 30)
+Const LVSCW_AUTOSIZE As Long = -1
+Const LVSCW_AUTOSIZE_USEHEADER As Long = -2 'Note: On last column, its width fills remaining width
+                                            '   of list-view according to Micro$oft. This does not
+                                            '   appear to be the case when I do it.
+
+
+Private Sub cmdColumn_Click(Index As Integer)   ' Resize column
+    LockWindowUpdate lvwTest.hWnd               ' Lock update of ListView. Prevents ghostly text
+                                                ' from appearing. I have seen it happen in other
+                                                ' projects, but not this one. Always a good idea
+                                                ' to use nonetheless.
+    SendMessage lvwTest.hWnd, LVM_SETCOLUMNWIDTH, Index, LVSCW_AUTOSIZE_USEHEADER ' The magic of auotosize
+    LockWindowUpdate 0                          ' Unlock
+End Sub

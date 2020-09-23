@@ -1,0 +1,46 @@
+
+
+
+Private Declare Function SendMessage Lib "user32" _
+   Alias "SendMessageA" _ 
+   (ByVal hwnd As Long, _ 
+    ByVal wMsg As Long, _
+    ByVal wParam As Long, _ 
+    lParam As Any) As Long
+
+Private Const LB_SETTABSTOPS = &H192
+
+
+Private Sub Form_Load()
+
+  'set up the tabstops in the list boxes
+   ReDim tabstop(0 To 2) As Long
+  
+  'assign some values to the tabs for the second third and fourth 
+  'column (the first is flush against the listbox edge)
+   tabstop(0) = 90
+   tabstop(1) = 130
+   tabstop(2) = 185
+  
+  'clear then set the tabs
+   Call SendMessage(List1.hwnd, LB_SETTABSTOPS, 0&, ByVal 0&)  
+   Call SendMessage(List1.hwnd, LB_SETTABSTOPS, 3, tabstop(0))
+   List1.Refresh
+
+End Sub
+
+
+Once a set of tabstops are set, they remain even after a List1.Clear has been issued.
+
+The values assigned to the tabstop array may appear somewhat arbitrary. In fact, they are based on a control's measurement system - 'dialog units' - and I have yet to find a suitable algorithm for computing the width of a given font into dialog units that can be successfully used to remove the need for trial and error determination of the values to set.
+
+The wParam and lParam members of the SendMessage call as used above mean:
+wParam: 3 - the total number of tabstops to set
+lParam: tabstop(0) - the array of tabstops with the index representing the first tabstop to use
+
+To populate the listbox, use the tab character between strings when adding items ...
+
+List1.AddItem item1 & vbTab & item2 & vbTab & item3 & vbTab & item4
+
+Note: vbTab is a VB4-defined constant; users of previous versions should use instead either chr$(9), or define your own variable for the tab character, i.e. tb$ = chr$(9). Remember too that the word ' Tab ' is a reserved keyword in Visual Basic.
+

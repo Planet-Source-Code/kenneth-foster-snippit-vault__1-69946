@@ -1,0 +1,106 @@
+
+
+
+'**************************************
+' Name: SetColorBar
+' Description:
+'Creates a color bar background for a Li
+'     stView when in 
+'report mode. Passing the listview and p
+'     icturebox allows 
+'you to use this with more than one cont
+'     rol. You can also 
+'change the colors used for each by pass
+'     ing new RGB color 
+'values in the optional color parameters
+'     .
+' By: 
+'
+' Inputs:
+'Required - cListView As ListView
+'Required - cColorBar As PictureBox
+'Optional - lColor1 As Long
+'Optional - lColor2 As Long
+'
+' Assumes:
+'Add the following line of code to your 
+'     program, 
+'replacing "lvListView" and "picColorBar
+'     " with the 
+'names of your own control values. The c
+'     olor values 
+'are optional; while the default is Gree
+'     n/White, 
+'these create gray bars.
+'SetColorBar lvListView, picColorBar, &H
+'     C0C0C0, &H808080
+'
+' Side Effects:
+'Sets ListView Picture to none if not in
+'     report 
+'mode or on error condition.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=2746&lngWId=1
+'for details.
+'**************************************
+
+
+
+Public Sub SetColorBar(cListView As ListView, cColorBar As PictureBox, Optional lColor1 As Long = &HE2F1E3, Optional lColor2 As Long = vbWhite)
+    ' Creates a color bar background for a L
+    '     istView when in 
+    ' report mode. Passing the listview and 
+    '     picturebox allows 
+    ' you to use this with more than one con
+    '     trol. You can also 
+    ' change the colors used for each by pas
+    '     sing new RGB color 
+    ' values in the optional color parameter
+    '     s.
+    Dim iLineHeight As Long
+    Dim iBarHeight As Long
+    Dim lBarWidth As Long
+    On Error Goto SetColorBarError
+    'set picture to none and exit sub if not
+    '     in report mode
+    If Not cListView.View = lvwReport Then Goto SetColorBarError
+    'these can be commented out if the cColo
+    '     rBar control 
+    'is set correctly.
+    cColorBar.AutoRedraw = True
+    cColorBar.BorderStyle = vbBSNone
+    cColorBar.ScaleMode = vbTwips
+    cColorBar.Visible = False
+    'set the alignment to "Tile" and you onl
+    '     y need 
+    'two bars of color.
+    cListView.PictureAlignment = lvwTile
+    'needed because ListView does not have "
+    '     TextHeight"
+    cColorBar.Font = cListView.Font
+    'set height to a single line of text plu
+    '     s a 
+    'one pixel spacer.
+    iLineHeight = cColorBar.TextHeight("|") + Screen.TwipsPerPixelY
+    'set color bars to 3-line wide.
+    iBarHeight = iLineHeight * 3
+    lBarWidth = cListView.Width
+    'resize the cColorBar picturebox
+    cColorBar.Height = iBarHeight * 2
+    cColorBar.Width = lBarWidth
+    'paint the two bars of color
+    cColorBar.Line (0, 0)-(lBarWidth, iBarHeight), lColor1, BF
+    cColorBar.Line (0, iBarHeight)-(lBarWidth, iBarHeight * 2), lColor2, BF
+    'set the cListView picture to the 
+    'cColorBar image
+    cListView.Picture = cColorBar.Image
+    Exit Sub
+    SetColorBarError:
+    'clear cListView's picture and then exit
+    '     
+    cListView.Picture = LoadPicture("")
+End Sub
+

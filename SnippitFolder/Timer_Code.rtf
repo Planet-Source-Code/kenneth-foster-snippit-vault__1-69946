@@ -1,0 +1,26 @@
+'put on form
+
+Option Explicit
+
+Private Sub Form_Load()
+LTimer = SetTimer(0, 0, 2000, AddressOf MainLoop)
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+KillTimer 0, LTimer
+End Sub
+
+'put in a .bas module
+
+Option Explicit
+
+Public Declare Function SetTimer Lib "user32" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Long) As Long
+Public Declare Function KillTimer Lib "user32" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
+
+Public LTimer As Long
+
+Public Sub MainLoop()
+Beep
+End Sub
+
+

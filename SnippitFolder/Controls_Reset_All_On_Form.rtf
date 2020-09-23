@@ -1,0 +1,14 @@
+
+
+
+Private Sub resetAll()
+        Dim ctrlX As Control
+
+        'reset all the control values
+        For Each ctrlX In Controls
+                If TypeOf ctrlX Is TextBox Then ctrlX.Text = ""
+                If TypeOf ctrlX Is CheckBox Then ctrlX.Value = 0
+                If TypeOf ctrlX Is OptionButton Then ctrlX.Value = False
+        Next ctrlX
+        
+End Sub

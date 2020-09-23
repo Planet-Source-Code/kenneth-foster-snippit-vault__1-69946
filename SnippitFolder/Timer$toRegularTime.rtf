@@ -1,0 +1,24 @@
+'put in a timer
+
+
+    For twotimedigits = 1 To 2
+        current$ = Mid(Time$, twotimedigits, 1)
+        totaltime1$ = totaltime1$ & current$
+    Next twotimedigits
+
+
+    If Int(Totaltime1$) > 12 Then
+        TimeTwo$ = Totaltime1$ - 12
+    Else
+        TimeTwo$ = Totaltime1$
+    End If
+   
+
+    For tme = 3 To Len(Time$)
+        current2$ = Mid(Time$, tme, 1)
+        Totaltime$ = Totaltime$ & current2$
+    Next tme
+    Totaltime$ = TimeTwo$ & Totaltime$
+    RealTime$ = Totaltime$
+  label1.caption = Totaltime$
+

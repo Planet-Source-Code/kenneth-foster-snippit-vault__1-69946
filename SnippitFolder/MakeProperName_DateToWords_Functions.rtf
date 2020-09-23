@@ -1,0 +1,172 @@
+' Put in a module
+
+Option Explicit
+
+Option Compare Text
+
+'Developed by Lisa Z. Morgan
+'Lairhaven Enterprises
+'lairhavn@pinn.net
+'© 2000 All rights reserved.
+
+Public Function MakeProper(StringIn As Variant) As String
+    'Upper-Cases the first letter of each wo
+    '     rd in in a string
+    
+    Dim strBuild As String
+    Dim intLength As Integer
+    Dim intCounter As Integer
+    Dim strChar As String
+    Dim strPrevChar As String
+    intLength = Len(StringIn)
+    'Bail out if there is nothing there
+    If intLength > 0 Then
+        strBuild = UCase(Left(StringIn, 1))
+        For intCounter = 1 To intLength
+            strPrevChar = Mid$(StringIn, intCounter, 1)
+            strChar = Mid$(StringIn, intCounter + 1, 1)
+            Select Case strPrevChar
+                Case Is = " ", ".", "/"
+                strChar = UCase(strChar)
+                Case Else
+            End Select
+        strBuild = strBuild & strChar
+    Next intCounter
+    MakeProper = strBuild
+    strBuild = MakeWordsLowerCase(strBuild, " and ", " or ", " the ", " a ", " To ", " was", " here", " again", "at", "in")
+    MakeProper = strBuild
+End If
+
+Exit Function
+
+End Function
+
+Function MakeWordsLowerCase(StringIn As String, _
+    ParamArray WordsToCheck()) As String
+    'Looks for the words in the WordsToCheck
+    '     Array within
+    'the StringIn string and makes them lowe
+    '     r case
+    
+    Dim strWordToFind As String
+    Dim intWordStarts As Integer
+    Dim intWordEnds As Integer
+    Dim intStartLooking As Integer
+    Dim strResult As String
+    Dim intLength As Integer
+    Dim intCounter As Integer
+    
+    'Initialize the variables
+    strResult = StringIn
+    intLength = Len(strResult)
+    intStartLooking = 1
+    
+    For intCounter = LBound(WordsToCheck) To UBound(WordsToCheck)
+        strWordToFind = WordsToCheck(intCounter)
+
+        Do
+            intWordStarts = InStr(intStartLooking, strResult, strWordToFind)
+            If intWordStarts = 0 Then Exit Do
+            intWordEnds = intWordStarts + Len(strWordToFind)
+            strResult = Left(strResult, intWordStarts - 1) & _
+            LCase(strWordToFind) & _
+            Mid$(strResult, intWordEnds, (intLength - intWordEnds) + 1)
+            intStartLooking = intWordEnds
+        Loop While intWordStarts > 0
+        intStartLooking = 1
+    Next intCounter
+    
+    MakeWordsLowerCase = strResult
+
+    Exit Function
+
+End Function
+
+Function OrdinalNumber(NumberIn As Long) As String
+    'Formats a number as an ordinal number
+    
+    Dim intLastDigit As Integer
+    Dim intLastTwoDigits As Integer
+    intLastDigit = NumberIn Mod 10
+    intLastTwoDigits = NumberIn Mod 100
+
+    Select Case intLastTwoDigits
+        Case 11 To 19
+        OrdinalNumber = CStr(NumberIn) & "th"
+        Case Else
+
+
+        Select Case intLastDigit
+            Case Is = 1
+            OrdinalNumber = CStr(NumberIn) & "st"
+            Case Is = 2
+            OrdinalNumber = CStr(NumberIn) & "nd"
+            Case Is = 3
+            OrdinalNumber = CStr(NumberIn) & "rd"
+            Case Else
+            OrdinalNumber = CStr(NumberIn) & "th"
+        End Select
+End Select
+
+
+Exit Function
+
+End Function
+
+Function MonthName(DateIn As Date) As String
+    'Returns the full name of the month of the date passed in
+    
+    Select Case Month(DateIn)
+        Case Is = 1
+        MonthName = "January"
+        Case Is = 2
+        MonthName = "February"
+        Case Is = 3
+        MonthName = "March"
+        Case Is = 4
+        MonthName = "April"
+        Case Is = 5
+        MonthName = "May"
+        Case Is = 6
+        MonthName = "June"
+        Case Is = 7
+        MonthName = "July"
+        Case Is = 8
+        MonthName = "August"
+        Case Is = 9
+        MonthName = "September"
+        Case Is = 10
+        MonthName = "October"
+        Case Is = 11
+        MonthName = "November"
+        Case Is = 12
+        MonthName = "December"
+    End Select
+
+Exit Function
+
+End Function
+
+
+Function DateWord(DateIn As Date) As String
+    'Accepts: DateIn--the date to be converted - ex. 1/1/2004
+    'Returns: DateWord--the date in "5th day
+    '     of August, 1997" format
+    '***************************************
+   
+   
+    Dim strDay As String
+    Dim strMonth As String
+    Dim strYear As String
+    Dim lngIntDayNum As Long
+    strMonth = MonthName(DateIn)
+    strYear = CStr(Year(DateIn))
+    lngIntDayNum = CInt(Day(DateIn))
+    strDay = OrdinalNumber(lngIntDayNum)
+    DateWord = strDay & _
+    " day of " & strMonth & _
+    ", " & strYear
+
+    Exit Function
+End Function
+

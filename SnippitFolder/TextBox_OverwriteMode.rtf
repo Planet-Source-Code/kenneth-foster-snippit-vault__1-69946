@@ -1,0 +1,20 @@
+
+
+Dim overwriteMode As Boolean 
+Sub Text1_KeyPress (KeyAscii As Integer) 
+If overwriteMode And KeyAscii >= 32 And Text1.SelLength = 0 Then
+ ' we are in overwrite mode, the user hasn't pressed a 
+  ' control key and there's no text currently highlighted
+ If Mid$(Text1.Text, Text1.SelStart + 1, 1) <> vbCr Then
+ ' we are not at the end of the current line of text 
+  ' select the next character, so that it will be replaced by
+  ' key typed by the end user
+ Text1.SelLength = 1 End If
+ End If 
+End Sub 
+Sub Text1_KeyDown (KeyCode As Integer, Shift As Integer)
+ If KeyCode = 45 And Shift = 0 Then    ' 45 = Insert button
+overwriteMode = Not overwriteMode 
+End If
+ End Sub 
+

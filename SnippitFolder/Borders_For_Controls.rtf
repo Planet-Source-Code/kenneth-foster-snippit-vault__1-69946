@@ -1,0 +1,390 @@
+
+
+'**************************************
+' Name: Borders for Controls
+' Description:This code lets you put cus
+'     tom borders/ect. on forms/usercontrols/p
+'     ictureboxes/ect... I made this because I
+'     was making a custom Button, and so I dec
+'     ided to post it, see if it helps anybody
+'     . It has Windows style, Etched, Dotted, 
+'     Solid, ect. and all can also be used as 
+'     frames, just by inserting text into the 
+
+
+'     function call. Also: Everything can be g
+    '     iven a custom color in the function call
+    '     , too... Okay, I've now had 345 people l
+    '     ook at this code, not a single vote, not
+    '     a single comment. Why? If you like it vo
+    '     te for me, or at least leave a comment b
+    '     ehind. By the way, also I'm working on a
+    '     new version, already it has lots of new 
+    '     features, but I have to wait until Ian g
+    '     ets back so the uploads will work again.
+    '     Soon after that it will be up, under Bor
+    '     ders for Controls v1.1. Examples will be
+    '     included in the newer version.
+' By: Daniel Taylor
+'
+' Assumes:The code takes care of everyth
+'     ing. Start a new project, put a few pict
+'     ureboxes on the form. In the form_activa
+'     tion event, type a few lines like: "etch
+'     picture1" or "dottedline picture2", try 
+'     the "CText picture3, "Hello"", too.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=21598&lngWId=1
+'for details.
+'**************************************
+
+'#######################################
+'     ###############'
+'<<<<<<<<<<
+'     ;<<<-------Borders--------->
+'     >>>>>>>>>>
+'     >>>>>>>'
+'#######################################
+'     ###############'
+'By Daniel Taylor
+'These functions let you put custom bord
+'     ers on any
+'picturebox, form or any other control t
+'     hat can have
+'lines and points drawn on it.
+'Also included is a way to gray out thes
+'     e controls, and
+'to draw centered text on them easily.
+'Use this code however you want, I hate 
+'     copyrights, not
+'about to put one on here.
+'A lot of the code in each procedure is 
+'     the same, i tried
+'to make most of it so you just had to c
+'     ut and paste one
+'function if you didn't want to use the 
+'     entire module in
+'your own projects. The Layered one uses
+'     1 other function
+'the GetRGB function just after the laye
+'     red one.
+'This is Pure VB, no extra files or API 
+'     calls.
+'Setting the Text property to something 
+'     other than "" in
+'the border functions will get you a fra
+'     me.
+
+
+Public Function Etch(SrcObj As Object, Optional Color1 As OLE_COLOR = &HE0E0E0, Optional Color2 As OLE_COLOR = &H404040, Optional Text As String = "", Optional TextColor As OLE_COLOR = 0)
+    Dim YPos As Integer, SWidth As Integer, SHeight As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+    'put to vars, faster
+    SWidth = SrcObj.ScaleWidth - 1
+    SHeight = SrcObj.ScaleHeight - 1
+    'Check if theres text, if so, it's a fra
+    '     me...
+
+
+    If Text <> "" Then
+        YPos = SrcObj.TextHeight(Text) / 2
+    Else
+        YPos = 0
+    End If
+    'oustide
+    SrcObj.Line (0, YPos)-(SWidth, YPos), Color2
+    SrcObj.Line (0, YPos)-(0, SHeight), Color2
+    SrcObj.Line (0, SHeight)-(SWidth, SHeight), Color1
+    SrcObj.Line (SWidth, YPos)-(SWidth, SHeight), Color1
+    'inside
+    YPos = YPos + 1
+    SWidth = SWidth - 1
+    SHeight = SHeight - 1
+    SrcObj.Line (1, YPos)-(SWidth, YPos), Color1
+    SrcObj.Line (1, YPos)-(1, SHeight), Color1
+    SrcObj.Line (1, SHeight)-(SWidth, SHeight), Color2
+    SrcObj.Line (SWidth, YPos)-(SWidth, SHeight), Color2
+
+
+    If Text <> "" Then
+        Dim ForeCHolder
+        'get rid of line where text will be
+        SrcObj.Line (4, 0)-(SrcObj.TextWidth(Text) + 6, SrcObj.TextHeight(Text)), SrcObj.BackColor, BF
+        'draw the text
+        SrcObj.CurrentX = 5
+        SrcObj.CurrentY = 0
+
+
+        ForeCHolder = SrcObj.ForeColor
+            SrcObj.ForeColor = TextColor
+            SrcObj.Print Text
+            SrcObj.ForeColor = ForeCHolder
+        End If
+    End Function
+
+
+Public Function Out(SrcObj As Object, Optional Color1 As OLE_COLOR = &HE0E0E0, Optional Color2 As OLE_COLOR = &H404040, Optional Text As String = "", Optional TextColor As OLE_COLOR = 0)
+    Dim YPos As Integer, SWidth As Integer, SHeight As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+    'put to vars, faster
+    SWidth = SrcObj.ScaleWidth - 1
+    SHeight = SrcObj.ScaleHeight - 1
+
+
+    If Text <> "" Then
+        YPos = SrcObj.TextHeight(Text) / 2
+    Else
+        YPos = 0
+    End If
+    'oustide
+    SrcObj.Line (0, YPos)-(SWidth, YPos), Color1
+    SrcObj.Line (0, YPos)-(0, SHeight), Color1
+    SrcObj.Line (0, SHeight)-(SWidth, SHeight), Color2
+    SrcObj.Line (SWidth, YPos)-(SWidth, SHeight), Color2
+
+
+    If Text <> "" Then
+        Dim ForeCHolder
+        'get rid of line where text will be
+        SrcObj.Line (4, 0)-(SrcObj.TextWidth(Text) + 6, SrcObj.TextHeight(Text)), SrcObj.BackColor, BF
+        'draw the text
+        SrcObj.CurrentX = 5
+        SrcObj.CurrentY = 0
+
+
+        ForeCHolder = SrcObj.ForeColor
+            SrcObj.ForeColor = TextColor
+            SrcObj.Print Text
+            SrcObj.ForeColor = ForeCHolder
+        End If
+    End Function
+
+
+Public Function OutLayered(SrcObj As Object, Times As Integer, Optional Color1 As OLE_COLOR = &HE0E0E0, Optional Color2 As OLE_COLOR = &H404040)
+    'For this function we get the RGB value 
+    '     of each involved color and
+    'fade it into the background color slowl
+    '     y, as we move towards the
+    'inside.
+    '#######################################
+    '     ##################''
+    'This doesn't seem to work right, can an
+    '     yone fix it and send
+    'me a copy at Dan@nknet.com? Thanks'''''
+    ''''''''''''''''''''
+    '#######################################
+    '     ##################''
+    Dim SWidth As Integer, SHeight As Integer, Count As Integer
+    Dim Red1 As Integer, Green1 As Integer, Blue1 As Integer
+    Dim Red2 As Integer, Green2 As Integer, Blue2 As Integer
+    Dim Red3 As Integer, Green3 As Integer, Blue3 As Integer
+    Dim Percent As Double, DifR, DifB, DifG, DifR2, DifG2, DifB2
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+    'put to vars, faster
+    SWidth = SrcObj.ScaleWidth - 1
+    SHeight = SrcObj.ScaleHeight - 1
+    GetRGB Color1, Red1, Green1, Blue1
+    GetRGB Color2, Red2, Green2, Blue2
+    GetRGB SrcObj.BackColor, Red3, Green3, Blue3
+    'get the diference in color to use later
+    '     
+    DifR = Abs(Red1 - Red3)
+    DifG = Abs(Green1 - Green3)
+    DifB = Abs(Blue1 - Blue3)
+    DifR2 = Abs(Red2 - Red3)
+    DifG2 = Abs(Green2 - Green3)
+    DifB2 = Abs(Blue2 - Blue3)
+    'just draw layer after layer
+
+
+    For Count = 0 To Times - 1
+        Percent = Count / (Times - 1)
+        'get the percent of color mixture betwee
+        '     n high/low spots
+        'and the backcolor, and use these colors
+        '     . increases every
+        'time until its the backcolor, supposed 
+        '     to anyway.....
+        SrcObj.Line (Count, Count)-(SWidth, Count), RGB((Percent * DifR) + Red1, (Percent * DifG) + Green1, (Percent * DifB) + Blue1)
+        SrcObj.Line (Count, Count)-(Count, SHeight), RGB((Percent * DifR) + Red1, (Percent * DifG) + Green1, (Percent * DifB) + Blue1)
+        SrcObj.Line (Count, SHeight)-(SWidth + 1, SHeight), RGB((Percent * DifR) + Red2, (Percent * DifG) + Green2, (Percent * DifB) + Blue2)
+        SrcObj.Line (SWidth, Count)-(SWidth, SHeight + 1), RGB((Percent * DifR) + Red2, (Percent * DifG) + Green2, (Percent * DifB) + Blue2)
+        SWidth = SWidth - 1
+        SHeight = SHeight - 1
+    Next Count
+End Function
+
+
+Public Function GetRGB(Color As OLE_COLOR, Red, Green, Blue)
+    'gets Red, Green, and Blue values of a c
+    '     olor
+    'I think i saw this on www.PlanetSourceC
+    '     ode.com
+    Red = Color And &HFF
+    Green = (Color And &HFF00&) / 255
+    Blue = (Color And &HFF0000) / 65536
+End Function
+
+
+Public Function DottedLine(SrcObj As Object, Optional Color As OLE_COLOR = &H404040, Optional Interval = 2, Optional Text As String = "", Optional TextColor As OLE_COLOR = 0)
+    'this draws a dotted line(can also be so
+    '     lid -> set interval to 0)
+    'by "stepping" over a number of pixels a
+    '     nd drawing every Nth pixel,
+    'the steps are made with the Interval ar
+    '     gument.
+    Dim X As Integer, Y As Integer, YPos As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+
+
+    If Text <> "" Then
+        YPos = SrcObj.TextHeight(Text) / 2
+    Else
+        YPos = 0
+    End If
+
+
+    For X = 0 To SrcObj.ScaleWidth - 1 Step Interval
+        SrcObj.PSet (X, YPos), Color
+        SrcObj.PSet (X, SrcObj.ScaleHeight - 1), Color
+    Next X
+
+
+    For Y = YPos To SrcObj.ScaleHeight - 1 Step Interval
+        SrcObj.PSet (0, Y), Color
+        SrcObj.PSet (SrcObj.ScaleWidth - 1, Y), Color
+    Next Y
+
+
+    If Text <> "" Then
+        Dim ForeCHolder
+        'get rid of line where text will be
+        SrcObj.Line (4, 0)-(SrcObj.TextWidth(Text) + 6, SrcObj.TextHeight(Text)), SrcObj.BackColor, BF
+        'draw the text
+        SrcObj.CurrentX = 5
+        SrcObj.CurrentY = 0
+
+
+        ForeCHolder = SrcObj.ForeColor
+            SrcObj.ForeColor = TextColor
+            SrcObj.Print Text
+            SrcObj.ForeColor = ForeCHolder
+        End If
+    End Function
+
+
+Public Function GreyOut(SrcObj As Object, Optional Method As Byte = 1, Optional Color As OLE_COLOR = &H808080, Optional Interval As Integer = 2)
+    Dim X As Integer, Y As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+
+
+    If Method = 1 Then
+        'fill regiona with gray dots at interval
+        '     s
+
+
+        For X = 0 To SrcObj.ScaleWidth - 1 Step Interval
+
+
+            For Y = 0 To SrcObj.ScaleHeight - 1 Step Interval
+                SrcObj.PSet (X, Y), Color
+            Next Y
+        Next X
+    Else
+        'fill region using grey mask, sometimes 
+
+
+        '     doesn't work...
+            Dim DrawModeHolder As Integer
+            DrawModeHolder = SrcObj.DrawMode
+            SrcObj.DrawMode = 9
+            SrcObj.Line (0, 0)-(SrcObj.ScaleWidth, SrcObj.ScaleHeight), Color, BF
+            SrcObj.DrawMode = DrawModeHolder
+        End If
+    End Function
+
+
+Public Function CText(SrcObj As Object, Text As String, Optional X = "Center", Optional Y = "Center")
+    'The easiest way to draw centered text o
+    '     n a form/picturebox/ect...
+    'You can also supply an X and Y coordina
+    '     te to draw at.
+    'To use, set the objects font to whateve
+    '     r you want and then
+    'use CText, it's that easy!
+    Dim X1 As Integer, Y1 As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+    X1 = (SrcObj.ScaleWidth / 2) - (SrcObj.TextWidth(Text) / 2)
+    Y1 = (SrcObj.ScaleHeight / 2) - (SrcObj.TextHeight(Text) / 2)
+    'check if text should be centered or not
+    '     
+
+
+    If X = "Center" Then
+        SrcObj.CurrentX = X1
+    Else
+        SrcObj.CurrentX = X
+    End If
+
+
+    If Y = "Center" Then
+        SrcObj.CurrentY = Y1
+    Else
+        SrcObj.CurrentY = Y
+    End If
+    'finally draw text to control
+    SrcObj.Print Text
+End Function
+
+
+Public Function PlainBorder(SrcObj As Object, Optional Color As OLE_COLOR = &H404040, Optional Width = 1, Optional Text As String = "", Optional TextColor As OLE_COLOR = 0)
+    'just draw a box around object
+    Dim YPos As Integer
+    SrcObj.ScaleMode = 3
+    SrcObj.AutoRedraw = True
+    'check if its supposed to be a frame...
+
+
+    If Text <> "" Then
+        YPos = SrcObj.TextHeight(Text) / 2
+    Else
+        YPos = 0
+    End If
+    'if width is 1 then just draw a box, els
+    '     e fill the entire thing
+    'and delete inside width area
+
+
+    If Width < 2 Then
+        SrcObj.Line (0, YPos)-(SrcObj.ScaleWidth - 1, SrcObj.ScaleHeight - 1), Color, B
+    Else
+        SrcObj.Line (0, YPos)-(SrcObj.ScaleWidth - 1, SrcObj.ScaleHeight - 1), Color, BF
+        SrcObj.Line (Width, YPos + Width)-(SrcObj.ScaleWidth - (1 + Width), SrcObj.ScaleHeight - (1 + Width)), SrcObj.BackColor, BF
+    End If
+
+
+    If Text <> "" Then
+        Dim ForeCHolder
+        'get rid of line where text will be
+        SrcObj.Line (4, 0)-(SrcObj.TextWidth(Text) + 6, SrcObj.TextHeight(Text)), SrcObj.BackColor, BF
+        'draw the text
+        SrcObj.CurrentX = 5
+        SrcObj.CurrentY = 0
+
+
+        ForeCHolder = SrcObj.ForeColor
+            SrcObj.ForeColor = TextColor
+            SrcObj.Print Text
+            SrcObj.ForeColor = ForeCHolder
+        End If
+    End Function
+

@@ -1,0 +1,166 @@
+Function DecToBin(dec)
+Dim ret As String
+Dim num As Variant
+Dim bin As Byte
+
+'############## Decimal To Binary ##############
+num = dec
+bin = 0
+ret$ = ""
+Do: DoEvents
+    num = num / 2
+        'If the division of num gives you a
+        'fraction, then subtract .5 and set the
+        'value of bin equal to 1
+        If InStr(1, num, ".", vbBinaryCompare) Then
+            num = num - 0.5
+            bin = 1
+        'If the division of num doesn't give
+        'you a fraction, the set bin equal
+        'to 0
+        Else
+            bin = 0
+        End If
+    'Input the binary first, and then the rest
+    'of the value of ret
+    ret = bin & ret$
+Loop Until num = 0
+'Make sure the return value is 8 digits long
+Do While Len(ret$) <> 8: DoEvents
+    ret = "0" & ret$
+Loop
+DecToBin = ret$
+End Function
+
+
+Function BinToDec(bin)
+
+'############## Binary To Decimal ##############
+
+Do While Len(bin) <> 8: DoEvents
+    bin = "0" & bin
+Loop
+bin1 = Right(bin, 1) * 2 ^ 0
+bin2 = Mid(bin, 7, 1) * 2 ^ 1
+bin3 = Mid(bin, 6, 1) * 2 ^ 2
+bin4 = Mid(bin, 5, 1) * 2 ^ 3
+bin5 = Mid(bin, 4, 1) * 2 ^ 4
+bin6 = Mid(bin, 3, 1) * 2 ^ 5
+bin7 = Mid(bin, 2, 1) * 2 ^ 6
+bin8 = Left(bin, 1) * 2 ^ 7
+BinToDec = bin1 + bin2 + bin3 + bin4 + bin5 + bin6 + bin7 + bin8
+End Function
+
+Function BinToHex(hexval)
+Dim hex1, hex2, hexd1, hexd2 As Variant
+Dim hexd11, hexd12, hexd21, hexd22 As Variant
+Dim hex11, hex12, hex13, hex14, hex21 As Integer
+Dim hex22, hex23, hex24 As Integer
+
+'############### Binary To Hex #################
+
+'Get first group of four from binary
+hex1 = Left(hexval, 4)
+'Get second group of four from binary
+hex2 = Right(hexval, 4)
+'Get decimal of first hex
+hex11 = Right(hex1, 1) * 2 ^ 0
+hex12 = Mid(hex1, 3, 1) * 2 ^ 1
+hex13 = Mid(hex1, 2, 1) * 2 ^ 2
+hex14 = Left(hex1, 1) * 2 ^ 3
+hexd1 = hex11 + hex12 + hex13 + hex14
+'Get decimal of second hex
+hex21 = Right(hex2, 1) * 2 ^ 0
+hex22 = Mid(hex2, 3, 1) * 2 ^ 1
+hex23 = Mid(hex2, 2, 1) * 2 ^ 2
+hex24 = Left(hex2, 1) * 2 ^ 3
+hexd2 = hex21 + hex22 + hex23 + hex24
+'Convert the values of 10 - 15 into hex form
+Select Case hexd1
+    Case 10
+        hexd1 = "a"
+    Case 11
+        hexd1 = "b"
+    Case 12
+        hexd1 = "c"
+    Case 13
+        hexd1 = "d"
+    Case 14
+        hexd1 = "e"
+    Case 15
+        hexd1 = "f"
+    Case Is > 15
+        'If the value is greater than 15,
+        'separate the two digits, add one to the
+        'left most and subtract 6 from the right
+        'most
+        hexd11 = Left(hexd1, 1) + 1
+        hexd12 = Right(hexd1, 1) - 6
+        hexd1 = hexd11 & hexd12
+End Select
+'Convert the values of 10 - 15 into hex form
+Select Case hexd2
+    Case 10
+        hexd2 = "a"
+    Case 11
+        hexd2 = "b"
+    Case 12
+        hexd2 = "c"
+    Case 13
+        hexd2 = "d"
+    Case 14
+        hexd2 = "e"
+    Case 15
+        hexd2 = "f"
+    Case Is > 15
+        'If the value is greater than 15,
+        'separate the two digits, add one to the
+        'left most and subtract 6 from the right
+        'most
+        hexd21 = Left(hexd2, 1) + 1
+        hexd22 = Right(hexd2, 1) - 6
+        hexd2 = hexd21 & hexd22
+End Select
+BinToHex = hexd1 & hexd2
+End Function
+
+Function HexToBin(hex)
+
+'################ Hex To Binary ################
+
+hex1 = Left(hex, 1)
+hex2 = Right(hex, 1)
+Select Case LCase(hex1)
+    Case "a"
+        hex1 = 10
+    Case "b"
+        hex1 = 11
+    Case "c"
+        hex1 = 12
+    Case "d"
+        hex1 = 13
+    Case "e"
+        hex1 = 14
+    Case "f"
+        hex1 = 15
+End Select
+hex1 = DecToBin(hex1)
+hex1 = Right(hex1, 4)
+Select Case LCase(hex2)
+    Case "a"
+        hex2 = 10
+    Case "b"
+        hex2 = 11
+    Case "c"
+        hex2 = 12
+    Case "d"
+        hex2 = 13
+    Case "e"
+        hex2 = 14
+    Case "f"
+        hex2 = 15
+End Select
+hex2 = DecToBin(hex2)
+hex2 = Right(hex2, 4)
+HexToBin = hex1 & hex2
+End Function

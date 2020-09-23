@@ -1,0 +1,11 @@
+Private Sub file1_click() 
+
+    Dim readystring as String 
+    If Right$(Dir1.Path, 1) = "\" Then 'determine weather thers a "\" at the end of the dir1 path 
+        readystring = Dir1.Path & File1.FileName 
+    Else 
+        readystring = Dir1.Path & "\" & File1.FileName 
+    End If 
+Text1.Text = readystring 
+End Sub 
+

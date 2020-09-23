@@ -1,0 +1,7 @@
+Dim z As Long
+For z = 0 To File1.ListCount - 1
+If (File1.List(z)) = ("DesiredFileName.exe") Then
+File1.Selected(z) = True
+End If
+Next z
+

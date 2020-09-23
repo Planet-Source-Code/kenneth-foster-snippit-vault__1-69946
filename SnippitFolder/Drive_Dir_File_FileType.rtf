@@ -1,0 +1,39 @@
+' Put Dir1,Drive1,File1 and Combo1 on Form
+
+Option Explicit
+
+Private Sub Dir1_Change()
+    File1.Pattern = Combo1.Text
+    File1.Path = Dir1.Path
+End Sub
+
+Private Sub Drive1_Change()
+    Dir1.Path = Drive1.Drive
+End Sub
+
+Private Sub File1_Click()
+    File1.Path = Dir1.Path
+   
+
+End Sub
+
+Private Sub Form_Load()
+Combo1.AddItem "*.jpg", 0
+Combo1.AddItem "*.gif", 1
+Combo1.AddItem "*.txt", 2
+Combo1.AddItem "*.html", 3
+Combo1.AddItem "*.ico", 4
+Combo1.AddItem "*.vbp", 5
+Combo1.AddItem "*.bmp", 6
+Combo1.AddItem "*.mdb", 7
+Combo1.AddItem "*.dat", 8
+Combo1.AddItem "*.frm", 9
+Combo1.AddItem "*.vbw", 10
+Combo1.AddItem "*.exe", 11
+Combo1.AddItem "*.gip", 12
+Combo1.AddItem "*.dll", 13
+Combo1.AddItem "*.xml", 14
+Combo1.AddItem "*.jpg", 15
+
+End Sub
+

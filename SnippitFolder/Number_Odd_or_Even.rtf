@@ -1,0 +1,22 @@
+Private Sub Command1_Click() 
+    Dim a
+    a = Text1.Text
+    Dim b
+    b = a / 2
+    Dim c
+    c = Int(b)
+
+
+    If b = c Then
+        Label1.Caption = "Odd: False"
+        Label2.Caption = "Even: True"
+        Text1.Text = ""
+        Text1.SetFocus
+    Else
+        Label1.Caption = "Odd: True"
+        Label2.Caption = "Even: False"
+        Text1.Text = ""
+        Text1.SetFocus
+    End If
+End Sub
+

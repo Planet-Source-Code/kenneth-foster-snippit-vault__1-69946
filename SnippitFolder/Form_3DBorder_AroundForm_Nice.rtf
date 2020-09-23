@@ -1,0 +1,159 @@
+
+
+Private Type POINTAPI
+    x As Long
+    Y As Long
+End Type
+
+Private Declare Function SetPixel& Lib "gdi32" (ByVal hDC As Long, _
+    ByVal x As Long, ByVal Y As Long, ByVal crColor As Long)
+Private Declare Function LineTo& Lib "gdi32" (ByVal hDC As Long, _
+    ByVal x As Long, ByVal Y As Long)
+Private Declare Function MoveToEx Lib "gdi32" (ByVal hDC As Long, _
+    ByVal x As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
+
+' Create a form with a 3D gradient frame
+'
+' Pass this a borderless form
+' You get better results with AutoRedraw set to TRUE
+' and with HiLiteCol and ShadowCol "close" to the
+' form's BackColor
+'
+' It draws a series of lines around the form
+' starting on the outside and moving one pixel inward with each line
+' the number of lines is determined by the "Steps" value that is passed.
+' The Left and Top use the "HiliteCol" value
+' the Right and Bottom use the "ShadowCol" value.
+' Swap them to get a sunken effect
+
+' Call this routine from within Form_Load, as in:
+'    Sub Form_Load()
+'        Const MyBackgroundColor = 16119262
+'        Const MyShadowColor = 14474381
+'        Const MyHiLiteColor = 15329769
+'        Me.BackColor = MyBackgroundColor
+'        DrawHighliteGradientFrame Me, MyHiLiteColor, MyShadowColor, 7
+'    End Sub
+
+
+Sub DrawHighliteGradientFrame(FormIn As Form, ByVal HiLiteCol As Long, _
+    ByVal ShadowCol As Long, ByVal Steps As Integer)
+    ' exit if the form is minimized
+    If FormIn.WindowState = vbMinimized Then Exit Sub
+       
+    Dim InnerCol As Long
+    Dim R_Inner As Long, G_Inner As Long, B_Inner As Long
+    Dim R_HiLite As Long, G_HiLite As Long, B_HiLite As Long
+    Dim R_Shadow As Long, G_Shadow As Long, B_Shadow As Long
+    Dim R_HiLiteIncr As Single, G_HiLiteIncr As Single, B_HiLiteIncr As Single
+    Dim R_HiLiteCur As Single, G_HiLiteCur As Single, B_HiLiteCur As Single
+    Dim R_ShadowIncr As Single, G_ShadowIncr As Single, B_ShadowIncr As Single
+    Dim R_ShadowCur As Single, G_ShadowCur As Single, B_ShadowCur As Single
+    Dim sTemp As String, i As Integer, WD  As Long, HT As Long, DC As Long
+    Dim pos As Integer, LP As POINTAPI, LongVal As Long
+    Dim oldScaleMode As Integer, oldForeColor As Long
+     
+    ' switch to pixel scalemode
+    oldForeColor = FormIn.ForeColor
+    oldScaleMode = FormIn.ScaleMode
+    FormIn.ScaleMode = vbPixels
+    
+    'Set the form width, height & DC
+    With FormIn
+       WD = .ScaleWidth - 1
+       HT = .ScaleHeight - 1
+       DC = .hDC
+    End With
+    
+    'convert the hilite color from long to RGB
+    R_HiLite = (HiLiteCol And &HFF&)
+    G_HiLite = (HiLiteCol And &HFF00&) / &H100&
+    B_HiLite = (HiLiteCol And &HFF0000) / &H10000
+    
+    'convert the shadow color from long to RGB
+    R_Shadow = (ShadowCol And &HFF&)
+    G_Shadow = (ShadowCol And &HFF00&) / &H100&
+    B_Shadow = (ShadowCol And &HFF0000) / &H10000
+    
+    'convert the inner color from long to RGB
+    InnerCol = FormIn.BackColor
+    R_Inner = (InnerCol And &HFF&)
+    G_Inner = (InnerCol And &HFF00&) / &H100&
+    B_Inner = (InnerCol And &HFF0000) / &H10000
+        
+    'set the increments
+    R_HiLiteIncr = (R_HiLite - R_Inner) / Steps
+    G_HiLiteIncr = (G_HiLite - G_Inner) / Steps
+    B_HiLiteIncr = (B_HiLite - B_Inner) / Steps
+    R_ShadowIncr = (R_Shadow - R_Inner) / Steps
+    G_ShadowIncr = (G_Shadow - G_Inner) / Steps
+    B_ShadowIncr = (B_Shadow - B_Inner) / Steps
+    
+    'initialize the current colors
+    R_HiLiteCur = R_HiLite
+    G_HiLiteCur = G_HiLite
+    B_HiLiteCur = B_HiLite
+    R_ShadowCur = R_Shadow
+    G_ShadowCur = G_Shadow
+    B_ShadowCur = B_Shadow
+    
+    With FormIn
+        For i = 0 To Steps - 1
+            'draw clockwise from bottom / left
+            
+            'Use hilite color
+            'Round the RGB vals  to integers and convert to a long color value
+            LongVal = (Int(B_HiLiteCur) * 65536) + (Int(G_HiLiteCur) * 256) + _
+                Int(R_HiLiteCur)
+            
+            'set the drawing color
+            .ForeColor = LongVal
+            
+            'Draw the left and top
+            MoveToEx DC, i, HT - i, LP        'left
+            LineTo DC, i, i
+            MoveToEx DC, i, i, LP             'top
+            LineTo DC, WD - i, i
+            
+            'Use shadow color
+            'Round the RGB vals  to integers and convert to a long color value
+            LongVal = (Int(B_ShadowCur) * 65536) + (Int(G_ShadowCur) * 256) + _
+                Int(R_ShadowCur)
+            
+            'set the drawing color
+            .ForeColor = LongVal
+            
+            'Draw the right and bottom
+            MoveToEx DC, WD - i, i, LP       'right
+            LineTo DC, WD - i, HT - i
+            MoveToEx DC, WD - i, HT - i, LP  'bottom
+            LineTo DC, i, HT - i
+            
+            'increment the colors
+            R_HiLiteCur = R_HiLiteCur - R_HiLiteIncr
+            G_HiLiteCur = G_HiLiteCur - G_HiLiteIncr
+            B_HiLiteCur = B_HiLiteCur - B_HiLiteIncr
+            R_ShadowCur = R_ShadowCur - R_ShadowIncr
+            G_ShadowCur = G_ShadowCur - G_ShadowIncr
+            B_ShadowCur = B_ShadowCur - B_ShadowIncr
+        Next
+   
+        .Refresh
+    End With
+
+    ' restore original values
+    FormIn.ForeColor = oldForeColor
+    FormIn.ScaleMode = oldScaleMode
+
+End Sub
+
+
+
+Private Sub Form_Load()
+       
+        Const MyShadowColor = &HFFC0C0
+        Const MyHiLiteColor = &HFF0000
+        DrawHighliteGradientFrame Me, MyHiLiteColor, MyShadowColor, 5
+
+End Sub
+

@@ -1,0 +1,36 @@
+Private Sub Command1_Click()
+AddColumnsToViewBox "Column 1", 30, "Column 2", 30, "Column 3", 20, "Column 4", 20
+End Sub
+
+Public Sub AddColumnsToViewBox(ParamArray TitlesAndWidths())
+    Dim i, Width, ParameterCount, Msg
+
+    On Error GoTo ErrorHandler
+    ListView1.View = lvwReport
+        
+        
+    'Input-parameter check. (See Author's Note)
+    ParameterCount = UBound(TitlesAndWidths) + 1
+    If ParameterCount / 2 <> CInt(ParameterCount / 2) Then
+       Msg = "Input-parameter count is incorrect.  You must " & _
+              "specify an equal number of titles and widths."
+        MsgBox Msg, , "Prameter-Count Error"
+    End If
+    
+    
+    Width = ListView1.Width - 80
+    With ListView1.ColumnHeaders
+        .Clear
+        For i = 0 To UBound(TitlesAndWidths) - 1 Step 2
+        .Add , , TitlesAndWidths(i), (TitlesAndWidths(i + 1) _
+             * Width) / 100
+        Next i
+    End With
+    
+    Exit Sub
+    
+    
+ErrorHandler:
+    MsgBox Err.Description & "."
+End Sub
+

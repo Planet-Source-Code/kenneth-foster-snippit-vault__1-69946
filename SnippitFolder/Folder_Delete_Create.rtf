@@ -1,0 +1,32 @@
+
+'to delete a folder
+'===============
+Public Sub DelAll(ByVal DirtoDelete As Variant)
+    Dim FSO, FS
+    Set FSO = CreateObject("Scripting.FileSystemObject")
+    FS = FSO.DeleteFolder(DirtoDelete, True)
+End Sub
+
+'to create a folder
+'================
+Private Function CreateDir(strPath As String)
+    On Error Resume Next
+    Dim ArrFolders As Variant
+    ArrFolders = Split(strPath, "\")
+    Dim i As Long
+    Dim CurPath As String: CurPath = ArrFolders(0)
+    MkDir CurPath
+
+
+    For i = 1 To UBound(ArrFolders)
+        CurPath = CurPath & "\" & ArrFolders(i)
+        MkDir CurPath
+    Next i
+    MsgBox "Folder successfully created at   " & CurPath
+    On Error GoTo 0
+
+
+    If Len(Dir(strPath, vbDirectory)) = 0 Then
+        Err.Raise vbObjectError, , "Can't create dir" & vbCrLf & strPath & vbCrLf & ":(((("
+    End If
+End Function

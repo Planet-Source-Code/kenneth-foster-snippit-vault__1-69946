@@ -1,0 +1,34 @@
+Private Sub Command1_Click()    'List Files
+ Dim sFile As String
+
+    List1.Clear                                                  'Clear the screen
+    Font.Bold = True                                    'Bold font
+    Print "Files located on D:\Art and graphics\Photos"                        'Show header
+    Font.Bold = False                                   'Turn off bold font
+    sFile = Dir$("D:\Art and graphics\Photos\*.*", vbNormal)                       'Get first entry
+    Do Until Len(sFile) = 0                             'Loop until we run out (sFile will be empty)
+        List1.AddItem "   " & sFile                              'Display what we found
+        sFile = Dir$                                    'Get next entry
+    Loop
+End Sub
+
+
+Private Sub Command2_Click()     'List Directories
+ Dim sFile As String
+
+    List1.Clear                                                  'Clear the screen
+    Font.Bold = True                                    'Bold font
+    Print "Directories located on C:\"                  'Show header
+    Font.Bold = False                                   'Turn off bold font
+    sFile = Dir$("C:\", vbDirectory)                    'Get first entry
+    Do Until Len(sFile) = 0                             'Loop until we run out (sFile will be empty)
+        If Not sFile = "." And Not sFile = ".." Then    'If in a subdirectory, ignore the encompassing directories
+            If (GetAttr("C:\" & sFile) And vbDirectory) = vbDirectory Then '
+                List1.AddItem "   " & sFile                      'Display what we found
+            End If
+        End If
+        sFile = Dir$                                    'Get next entry.
+    Loop
+
+End Sub
+

@@ -1,0 +1,76 @@
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd as Long, ByVal wMsg as Long, ByVal wParam as Long, lParam as Any) as Long   
+
+
+Private Declare Function ShowScrollBar Lib "user32" (ByVal hWnd as Long, ByVal wBar as Long, ByVal bShow as Long) as Long  
+
+
+Private Type RECT  
+    Left as Long  
+    top as Long  
+    Right as Long  
+    Bottom as Long  
+    End Type  
+    Private Const SB_VERT = 1  
+    Private Const EM_GETFIRSTVISIBLELINE = &HCE  
+    Private Const EM_GETLINECOUNT = &HBA  
+    Private Const EM_GETRECT = &HB2  
+
+
+
+'**************************************
+' Name: ShowScrollBar
+' Description:This code allows you to on
+'     ly show a scrollbar for a multi-line tex
+'     t box when the entered text exceeds the 
+'     visible text area. It should be called i
+'     n the KeyUp procedure for a textbox.
+' By: Jon Dalberg
+'
+' Inputs:theTextBox as VB.TextBox ' the 
+'     multi-line Textbox
+' works only with typed in text,
+' not coded text
+'**************************************
+
+
+
+Public Sub ShowScrollBars(theTextbox as VB.TextBox)  
+    Dim firstVisibleLine as Long  
+    Dim r as RECT  
+    Dim numberOfLines as Long  
+    Dim numberOfVisibleLines as Long  
+    Dim rectHeight as Long  
+    Dim lineHeight as Long  
+    Dim hWnd as Long  
+
+    hWnd = theTextbox.hWnd  
+
+    firstVisibleLine = SendMessage(hWnd, EM_GETFIRSTVISIBLELINE, 0, 0)  
+
+
+
+    If firstVisibleLine <> 0 Then  
+        ShowScrollBar hWnd, SB_VERT, 1  
+    Else  
+        numberOfLines = SendMessage(hWnd, EM_GETLINECOUNT, 0, 0)  
+        SendMessage hWnd, EM_GETRECT, 0, r  
+        rectHeight = r.Bottom - r.Top  
+        lineHeight = theTextbox.Parent.TextHeight("W") / Screen.TwipsPerPixelY  
+        numberOfVisibleLines = rectHeight / lineHeight  
+
+
+        If numberOfVisibleLines < numberOfLines Then  
+            ShowScrollBar hWnd, SB_VERT, 1  
+        Else  
+            ShowScrollBar hWnd, SB_VERT, 0  
+        End If  
+    End If  
+End Sub  
+
+Private Sub Text1_KeyUp(KeyCode as Integer, Shift as Integer)  
+    ShowScrollBars Text1 
+End Sub 
+
+
+
+

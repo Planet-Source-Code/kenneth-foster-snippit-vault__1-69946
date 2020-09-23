@@ -1,0 +1,9 @@
+
+
+Private Sub Command1_Click()
+Application_Caller "D:/My Programs/Grocery List Maker/MyGroList.exe"
+End Sub
+
+Public Sub Application_Caller(pathname As String)
+        Shell pathname, vbNormalFocus
+End Sub

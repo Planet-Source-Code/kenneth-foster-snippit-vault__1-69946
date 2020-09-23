@@ -1,0 +1,7 @@
+Public Function CreateRandNumber(int1stnumber As Integer, int2ndnumber As Integer) As Integer
+
+Randomize Timer
+CreateRandNumber = Int(Rnd * (int2ndnumber - int1stnumber)) + int1stnumber
+
+End Function
+

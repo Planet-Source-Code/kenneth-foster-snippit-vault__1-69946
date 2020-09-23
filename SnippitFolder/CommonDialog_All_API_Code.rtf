@@ -1,0 +1,494 @@
+
+'Needs 6 command buttons
+
+Const FW_NORMAL = 400 
+Const DEFAULT_CHARSET = 1 
+Const OUT_DEFAULT_PRECIS = 0 
+Const CLIP_DEFAULT_PRECIS = 0 
+Const DEFAULT_QUALITY = 0 
+Const DEFAULT_PITCH = 0 
+Const FF_ROMAN = 16 
+Const CF_PRINTERFONTS = &H2 
+Const CF_SCREENFONTS = &H1 
+Const CF_BOTH = (CF_SCREENFONTS or CF_PRINTERFONTS) 
+Const CF_EFFECTS = &H100& 
+Const CF_FORCEFONTEXIST = &H10000 
+Const CF_INITTOLOGFONTSTRUCT = &H40& 
+Const CF_LIMITSIZE = &H2000& 
+Const REGULAR_FONTTYPE = &H400 
+Const LF_FACESIZE = 32 
+Const CCHDEVICENAME = 32 
+Const CCHFORMNAME = 32 
+Const GMEM_MOVEABLE = &H2 
+Const GMEM_ZEROINIT = &H40 
+Const DM_DUPLEX = &H1000& 
+Const DM_ORIENTATION = &H1& 
+Const PD_PRINTSETUP = &H40 
+Const PD_DISABLEPRINTTOFILE = &H80000 
+Private Type POINTAPI 
+    x as Long 
+    y as Long 
+End Type 
+Private Type RECT 
+    Left as Long 
+    top as Long 
+    Right as Long 
+    Bottom as Long 
+End Type 
+Private Type OPENFILENAME 
+    lStructSize as Long 
+    hwndOwner as Long 
+    hInstance as Long 
+    lpstrFilter as String 
+    lpstrCustomFilter as String 
+    nMaxCustFilter as Long 
+    nFilterIndex as Long 
+    lpstrFile as String 
+    nMaxFile as Long 
+    lpstrFileTitle as String 
+    nMaxFileTitle as Long 
+    lpstrInitialDir as String 
+    lpstrTitle as String 
+    flags as Long 
+    nFileOffset as Integer 
+    nFileExtension as Integer 
+    lpstrDefExt as String 
+    lCustData as Long 
+    lpfnHook as Long 
+    lpTemplateName as String 
+End Type 
+Private Type PAGESETUPDLG 
+    lStructSize as Long 
+    hwndOwner as Long 
+    hDevMode as Long 
+    hDevNames as Long 
+    flags as Long 
+    ptPaperSize as POINTAPI 
+    rtMinMargin as RECT 
+    rtMargin as RECT 
+    hInstance as Long 
+    lCustData as Long 
+    lpfnPageSetupHook as Long 
+    lpfnPagePaintHook as Long 
+    lpPageSetupTemplateName as String 
+    hPageSetupTemplate as Long 
+End Type 
+Private Type CHOOSECOLOR 
+    lStructSize as Long 
+    hwndOwner as Long 
+    hInstance as Long 
+    rgbResult as Long 
+    lpCustColors as String 
+    flags as Long 
+    lCustData as Long 
+    lpfnHook as Long 
+    lpTemplateName as String 
+End Type 
+Private Type LOGFONT 
+        lfHeight as Long 
+        lfWidth as Long 
+        lfEscapement as Long 
+        lfOrientation as Long 
+        lfWeight as Long 
+        lfItalic as Byte 
+        lfUnderline as Byte 
+        lfStrikeOut as Byte 
+        lfCharSet as Byte 
+        lfOutPrecision as Byte 
+        lfClipPrecision as Byte 
+        lfQuality as Byte 
+        lfPitchAndFamily as Byte 
+        lfFaceName as String * 31 
+End Type 
+Private Type CHOOSEFONT 
+        lStructSize as Long 
+        hwndOwner as Long          '  caller's window handle 
+        hDC as Long                '  printer DC/IC or NULL 
+        lpLogFont as Long          '  ptr. to a LOGFONT struct 
+        iPointSize as Long         '  10 * size in points of selected font 
+        flags as Long              '  enum. type flags 
+        rgbColors as Long          '  returned text color 
+        lCustData as Long          '  data passed to hook fn. 
+        lpfnHook as Long           '  ptr. to hook function 
+        lpTemplateName as String     '  custom template name 
+        hInstance as Long          '  instance handle of.EXE that 
+                                       '    contains cust. dlg. template
+        lpszStyle as String          '  return the style field here 
+                                       '  must be LF_FACESIZE or bigger
+        nFontType as Integer          '  same value reported to the EnumFonts 
+                                       '    call back with the extra FONTTYPE_
+                                       '    bits added
+        MISSING_ALIGNMENT as Integer 
+        nSizeMin as Long           '  minimum pt size allowed & 
+        nSizeMax as Long           '  max pt size allowed if 
+                                       '    CF_LIMITSIZE is used
+End Type 
+Private Type PRINTDLG_TYPE 
+    lStructSize as Long 
+    hwndOwner as Long 
+    hDevMode as Long 
+    hDevNames as Long 
+    hDC as Long 
+    flags as Long 
+    nFromPage as Integer 
+    nToPage as Integer 
+    nMinPage as Integer 
+    nMaxPage as Integer 
+    nCopies as Integer 
+    hInstance as Long 
+    lCustData as Long 
+    lpfnPrintHook as Long 
+    lpfnSetupHook as Long 
+    lpPrintTemplateName as String 
+    lpSetupTemplateName as String 
+    hPrintTemplate as Long 
+    hSetupTemplate as Long 
+End Type 
+Private Type DEVNAMES_TYPE 
+    wDriverOffset as Integer 
+    wDeviceOffset as Integer 
+    wOutputOffset as Integer 
+    wDefault as Integer 
+    extra as String * 100 
+End Type 
+Private Type DEVMODE_TYPE 
+    dmDeviceName as String * CCHDEVICENAME 
+    dmSpecVersion as Integer 
+    dmDriverVersion as Integer 
+    dmSize as Integer 
+    dmDriverExtra as Integer 
+    dmFields as Long 
+    dmOrientation as Integer 
+    dmPaperSize as Integer 
+    dmPaperLength as Integer 
+    dmPaperWidth as Integer 
+    dmScale as Integer 
+    dmCopies as Integer 
+    dmDefaultSource as Integer 
+    dmPrintQuality as Integer 
+    dmColor as Integer 
+    dmDuplex as Integer 
+    dmYResolution as Integer 
+    dmTTOption as Integer 
+    dmCollate as Integer 
+    dmFormName as String * CCHFORMNAME 
+    dmUnusedPadding as Integer 
+    dmBitsPerPel as Integer 
+    dmPelsWidth as Long 
+    dmPelsHeight as Long 
+    dmDisplayFlags as Long 
+    dmDisplayFrequency as Long 
+End Type 
+Private Declare Function CHOOSECOLOR Lib "comdlg32.dll" Alias "ChooseColorA" (pChoosecolor as CHOOSECOLOR) as Long 
+Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameA" (pOpenfilename as OPENFILENAME) as Long 
+Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameA" (pOpenfilename as OPENFILENAME) as Long 
+Private Declare Function PrintDialog Lib "comdlg32.dll" Alias "PrintDlgA" (pPrintdlg as PRINTDLG_TYPE) as Long 
+Private Declare Function PAGESETUPDLG Lib "comdlg32.dll" Alias "PageSetupDlgA" (pPagesetupdlg as PAGESETUPDLG) as Long 
+Private Declare Function CHOOSEFONT Lib "comdlg32.dll" Alias "ChooseFontA" (pChoosefont as CHOOSEFONT) as Long 
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest as Any, hpvSource as Any, ByVal cbCopy as Long) 
+Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem as Long) as Long 
+Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem as Long) as Long 
+Private Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags as Long, ByVal dwBytes as Long) as Long 
+Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem as Long) as Long 
+Dim OFName as OPENFILENAME 
+Dim CustomColors() as Byte 
+Private Sub Command1_Click() 
+    Dim sFile as String 
+    sFile = ShowOpen 
+    If sFile <> "" Then 
+        MsgBox "You chose this file: " + sFile 
+    Else 
+        MsgBox "You pressed cancel" 
+    End If 
+End Sub 
+Private Sub Command2_Click() 
+    Dim sFile as String 
+    sFile = ShowSave 
+    If sFile <> "" Then 
+        MsgBox "You chose this file: " + sFile 
+    Else 
+        MsgBox "You pressed cancel" 
+    End If 
+End Sub 
+Private Sub Command3_Click() 
+    Dim NewColor as Long 
+    NewColor = ShowColor 
+    If NewColor <> -1 Then 
+        Me.BackColor = NewColor 
+    Else 
+        MsgBox "You chose cancel" 
+    End If 
+End Sub 
+Private Sub Command4_Click() 
+    MsgBox ShowFont 
+End Sub 
+Private Sub Command5_Click() 
+    ShowPrinter me 
+End Sub 
+Private Sub Command6_Click() 
+    ShowPageSetupDlg 
+End Sub 
+Private Sub Form_Load() 
+    'KPD-Team 1998
+    'URL: http://www.allapi.net/
+    'E-Mail: KPDTeam@Allapi.net
+    'Redim the variables to store the cutstom colors
+    ReDim CustomColors(0 To 16 * 4 - 1) as Byte 
+    Dim i as Integer 
+    For i = LBound(CustomColors) To UBound(CustomColors) 
+        CustomColors(i) = 0 
+    Next i 
+    'Set the captions
+    Command1.Caption = "ShowOpen" 
+    Command2.Caption = "ShowSave" 
+    Command3.Caption = "ShowColor" 
+    Command4.Caption = "ShowFont" 
+    Command5.Caption = "ShowPrinter" 
+    Command6.Caption = "ShowPageSetupDlg" 
+End Sub 
+Private Function ShowColor() as Long 
+    Dim CC as CHOOSECOLOR 
+    Dim Custcolor(16) as Long 
+    Dim lReturn as Long 
+
+    'set the structure size
+    cc.lStructSize = Len(cc) 
+    'Set the owner
+    cc.hwndOwner = Me.hWnd 
+    'set the application's instance
+    cc.hInstance = App.hInstance 
+    'set the custom colors (converted to Unicode)
+    cc.lpCustColors = StrConv(CustomColors, vbUnicode) 
+    'no extra flags
+    cc.flags = 0 
+
+    'Show the 'Select Color'-dialog
+    If CHOOSECOLOR(cc) <> 0 Then 
+        ShowColor = cc.rgbResult 
+        CustomColors = StrConv(cc.lpCustColors, vbFromUnicode) 
+    Else 
+        ShowColor = -1 
+    End If 
+End Function 
+Private Function ShowOpen() as String 
+    'Set the structure size
+    OFName.lStructSize = Len(OFName) 
+    'Set the owner window
+    OFName.hwndOwner = Me.hWnd 
+    'Set the application's instance
+    OFName.hInstance = App.hInstance 
+    'Set the filet
+    OFName.lpstrFilter = "All Files (*.*)" + Chr$(0) + "*.*" + Chr$(0) 
+    'Create a buffer
+    OFName.lpstrFile = Space$(254) 
+    'Set the maximum number of chars
+    OFName.nMaxFile = 255 
+    'Create a buffer
+    OFName.lpstrFileTitle = Space$(254) 
+    'Set the maximum number of chars
+    OFName.nMaxFileTitle = 255 
+    'Set the initial directory
+    OFName.lpstrInitialDir = "D:\" 
+    'Set the dialog title
+    OFName.lpstrTitle = "Open File" 
+    'no extra flags
+    OFName.flags = 0 
+
+    'Show the 'Open File'-dialog
+    If GetOpenFileName(OFName) Then 
+        ShowOpen = Trim$(OFName.lpstrFile) 
+    Else 
+        ShowOpen = "" 
+    End If 
+End Function 
+Private Function ShowFont() as String 
+    Dim cf as CHOOSEFONT, lfont as LOGFONT, hMem as Long, pMem as Long 
+    Dim fontname as String, retval as Long 
+    lfont.lfHeight = 0  ' determine default height 
+    lfont.lfWidth = 0  ' determine default width 
+    lfont.lfEscapement = 0  ' angle between baseline and escapement vector 
+    lfont.lfOrientation = 0  ' angle between baseline and orientation vector 
+    lfont.lfWeight = FW_NORMAL  ' normal weight i.e. not bold 
+    lfont.lfCharSet = DEFAULT_CHARSET  ' use default character set 
+    lfont.lfOutPrecision = OUT_DEFAULT_PRECIS  ' default precision mapping 
+    lfont.lfClipPrecision = CLIP_DEFAULT_PRECIS  ' default clipping precision 
+    lfont.lfQuality = DEFAULT_QUALITY  ' default quality setting 
+    lfont.lfPitchAndFamily = DEFAULT_PITCH or FF_ROMAN  ' default pitch, proportional with serifs 
+    lfont.lfFaceName = "Times New Roman" & vbNullChar  ' string must be null-terminated 
+    ' Create the memory block which will act as the LOGFONT structure buffer.
+    hMem = GlobalAlloc(GMEM_MOVEABLE or GMEM_ZEROINIT, Len(lfont)) 
+    pMem = GlobalLock(hMem)  ' lock and get pointer 
+    CopyMemory ByVal pMem, lfont, Len(lfont)  ' copy structure's contents into block 
+    ' Initialize dialog box: Screen and printer fonts, point size between 10 and 72.
+    cf.lStructSize = Len(cf)  ' size of structure 
+    cf.hwndOwner = Form1.hWnd  ' window Form1 is opening this dialog box 
+    cf.hDC = Printer.hDC  ' device context of default printer (using VB's mechanism) 
+    cf.lpLogFont = pMem   ' pointer to LOGFONT memory block buffer 
+    cf.iPointSize = 120  ' 12 point font (in units of 1/10 point) 
+    cf.flags = CF_BOTH or CF_EFFECTS or CF_FORCEFONTEXIST or CF_INITTOLOGFONTSTRUCT or CF_LIMITSIZE 
+    cf.rgbColors = RGB(0, 0, 0)  ' black 
+    cf.nFontType = REGULAR_FONTTYPE  ' regular font type i.e. not bold or anything 
+    cf.nSizeMin = 10  ' minimum point size 
+    cf.nSizeMax = 72  ' maximum point size 
+    ' Now, call the function.  If successful, copy the LOGFONT structure back into the structure
+    ' and then print out the attributes we mentioned earlier that the user selected.
+    retval = CHOOSEFONT(cf)  ' open the dialog box 
+    If retval <> 0 Then  ' success 
+        CopyMemory lfont, ByVal pMem, Len(lfont)  ' copy memory back 
+        ' Now make the fixed-length string holding the font name into a "normal" string.
+        ShowFont = Left(lfont.lfFaceName, InStr(lfont.lfFaceName, vbNullChar) - 1) 
+        Debug.Print  ' end the line 
+    End If 
+    ' Deallocate the memory block we created earlier.  Note that this must
+    ' be done whether the function succeeded or not.
+    retval = GlobalUnlock(hMem)  ' destroy pointer, unlock block 
+    retval = GlobalFree(hMem)  ' free the allocated memory 
+End Function 
+Private Function ShowSave() as String 
+    'Set the structure size
+    OFName.lStructSize = Len(OFName) 
+    'Set the owner window
+    OFName.hwndOwner = Me.hWnd 
+    'Set the application's instance
+    OFName.hInstance = App.hInstance 
+    'Set the filet
+    OFName.lpstrFilter = "All Files (*.*)" + Chr$(0) + "*.*" + Chr$(0) 
+    'Create a buffer
+    OFName.lpstrFile = Space$(254) 
+    'Set the maximum number of chars
+    OFName.nMaxFile = 255 
+    'Create a buffer
+    OFName.lpstrFileTitle = Space$(254) 
+    'Set the maximum number of chars
+    OFName.nMaxFileTitle = 255 
+    'Set the initial directory
+    OFName.lpstrInitialDir = "C:\" 
+    'Set the dialog title
+    OFName.lpstrTitle = "Save File" 
+    'no extra flags
+    OFName.flags = 0 
+
+    'Show the 'Save File'-dialog
+    If GetSaveFileName(OFName) Then 
+        ShowSave = Trim$(OFName.lpstrFile) 
+    Else 
+        ShowSave = "" 
+    End If 
+End Function 
+Private Function ShowPageSetupDlg() as Long 
+    Dim m_PSD as PAGESETUPDLG 
+    'Set the structure size
+    m_PSD.lStructSize = Len(m_PSD) 
+    'Set the owner window
+    m_PSD.hwndOwner = Me.hWnd 
+    'Set the application instance
+    m_PSD.hInstance = App.hInstance 
+    'no extra flags
+    m_PSD.flags = 0 
+
+    'Show the pagesetup dialog
+    If PAGESETUPDLG(m_PSD) Then 
+        ShowPageSetupDlg = 0 
+    Else 
+        ShowPageSetupDlg = -1 
+    End If 
+End Function 
+Public Sub ShowPrinter(frmOwner as Form, Optional PrintFlags as Long) 
+    '-> Code by Donald Grover
+    Dim PrintDlg as PRINTDLG_TYPE 
+    Dim DevMode as DEVMODE_TYPE 
+    Dim DevName as DEVNAMES_TYPE 
+
+    Dim lpDevMode as Long, lpDevName as Long 
+    Dim bReturn as Integer 
+    Dim objPrinter as Printer, NewPrinterName as String 
+
+    ' Use PrintDialog to get the handle to a memory
+    ' block with a DevMode and DevName structures
+
+    PrintDlg.lStructSize = Len(PrintDlg) 
+    PrintDlg.hwndOwner = frmOwner.hWnd 
+
+    PrintDlg.flags = PrintFlags 
+    on Error Resume Next 
+    'Set the current orientation and duplex setting
+    DevMode.dmDeviceName = Printer.DeviceName 
+    DevMode.dmSize = Len(DevMode) 
+    DevMode.dmFields = DM_ORIENTATION or DM_DUPLEX 
+    DevMode.dmPaperWidth = Printer.Width 
+    DevMode.dmOrientation = Printer.Orientation 
+    DevMode.dmPaperSize = Printer.PaperSize 
+    DevMode.dmDuplex = Printer.Duplex 
+    on Error GoTo 0 
+
+    'Allocate memory for the initialization hDevMode structure
+    'and copy the settings gathered above into this memory
+    PrintDlg.hDevMode = GlobalAlloc(GMEM_MOVEABLE or GMEM_ZEROINIT, Len(DevMode)) 
+    lpDevMode = GlobalLock(PrintDlg.hDevMode) 
+    If lpDevMode > 0 Then 
+        CopyMemory ByVal lpDevMode, DevMode, Len(DevMode) 
+        bReturn = GlobalUnlock(PrintDlg.hDevMode) 
+    End If 
+
+    'Set the current driver, device, and port name strings
+    With DevName 
+        .wDriverOffset = 8 
+        .wDeviceOffset = .wDriverOffset + 1 + Len(Printer.DriverName) 
+        .wOutputOffset = .wDeviceOffset + 1 + Len(Printer.Port) 
+        .wDefault = 0 
+    End With 
+
+    With Printer 
+        DevName.extra = .DriverName & Chr(0) & .DeviceName & Chr(0) & .Port & Chr(0) 
+    End With 
+
+    'Allocate memory for the initial hDevName structure
+    'and copy the settings gathered above into this memory
+    PrintDlg.hDevNames = GlobalAlloc(GMEM_MOVEABLE or GMEM_ZEROINIT, Len(DevName)) 
+    lpDevName = GlobalLock(PrintDlg.hDevNames) 
+    If lpDevName > 0 Then 
+        CopyMemory ByVal lpDevName, DevName, Len(DevName) 
+        bReturn = GlobalUnlock(lpDevName) 
+    End If 
+
+    'Call the print dialog up and let the user make changes
+    If PrintDialog(PrintDlg) <> 0 Then 
+
+        'First get the DevName structure.
+        lpDevName = GlobalLock(PrintDlg.hDevNames) 
+        CopyMemory DevName, ByVal lpDevName, 45 
+        bReturn = GlobalUnlock(lpDevName) 
+        GlobalFree PrintDlg.hDevNames 
+
+        'Next get the DevMode structure and set the printer
+        'properties appropriately
+        lpDevMode = GlobalLock(PrintDlg.hDevMode) 
+        CopyMemory DevMode, ByVal lpDevMode, Len(DevMode) 
+        bReturn = GlobalUnlock(PrintDlg.hDevMode) 
+        GlobalFree PrintDlg.hDevMode 
+        NewPrinterName = UCase$(Left(DevMode.dmDeviceName, InStr(DevMode.dmDeviceName, Chr$(0)) - 1)) 
+        If Printer.DeviceName <> NewPrinterName Then 
+            For Each objPrinter in Printers 
+                If UCase$(objPrinter.DeviceName) = NewPrinterName Then 
+                    Set Printer = objPrinter 
+                    'set printer toolbar name at this point
+                End If 
+            Next 
+        End If 
+
+        on Error Resume Next 
+        'Set printer object properties according to selections made
+        'by user
+        Printer.Copies = DevMode.dmCopies 
+        Printer.Duplex = DevMode.dmDuplex 
+        Printer.Orientation = DevMode.dmOrientation 
+        Printer.PaperSize = DevMode.dmPaperSize 
+        Printer.PrintQuality = DevMode.dmPrintQuality 
+        Printer.ColorMode = DevMode.dmColor 
+        Printer.PaperBin = DevMode.dmDefaultSource 
+        on Error GoTo 0 
+    End If 
+End Sub 
+
+
+

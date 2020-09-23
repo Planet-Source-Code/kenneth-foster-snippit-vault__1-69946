@@ -1,0 +1,54 @@
+Option Explicit
+Private Type RECT
+Left As Integer
+top As Integer
+Right As Integer
+bottom As Integer
+End Type
+Private Type POINT
+x As Long
+y As Long
+End Type
+Private Declare Sub ClipCursor Lib "user32" (lpRect As Any)
+Private Declare Sub GetClientRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT)
+Private Declare Sub ClientToScreen Lib "user32" (ByVal hWnd As Long, lpPoint As POINT)
+Private Declare Sub OffsetRect Lib "user32" (lpRect As RECT, ByVal x As Long, ByVal y As Long)
+
+Private Sub Command1_Click()
+'Limits the Cursor movement to within the form.
+Dim client As RECT
+Dim upperleft As POINT
+
+GetClientRect Me.hWnd, client
+upperleft.x = client.left
+upperleft.y = client.top
+ClientToScreen Me.hWnd, upperleft
+OffsetRect client, upperleft.x, upperleft.y
+ClipCursor client
+
+End Sub
+
+Private Sub Command2_Click()
+'Releases the cursor limits
+ClipCursor ByVal 0&
+
+End Sub
+
+Private Sub Form_Load()
+Command1.Caption = "Limit Cursor Movement"
+Command2.Caption = "Release Limit"
+
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+'Releases the cursor limits
+ClipCursor ByVal 0&
+
+End Sub
+
+==========================================================
+NOTE: If you Unload the form after executing the ClipCursor Function, the
+cursor will still be limited To the last coordinates of the now-unloaded
+form. To prevent this behavior, calling the ClipCursor Function With a null
+argument in the Form_Unload event Is recommended.
+

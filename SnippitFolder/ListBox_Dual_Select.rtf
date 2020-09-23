@@ -1,0 +1,56 @@
+'Need two listboxes list1 and list 2 and a command1 button array
+
+
+Option Explicit
+
+Sub SelectList(List1 As ListBox, List2 As ListBox, Index As Integer, Optional Twiz As Variant)
+  On Local Error Resume Next
+  Dim i As Integer
+  
+  Select Case Index
+   Case 0
+    If List1.ListCount = 0 Then Exit Sub
+    List2.AddItem List1.List(List1.ListIndex)
+    List2.ItemData(List2.ListCount - 1) = List1.ItemData(List1.ListIndex)
+    List1.RemoveItem List1.ListIndex
+    If List1.ListCount > 0 Then List1.ListIndex = 0
+    List2.ListIndex = 0
+  Case 1
+    If List1.ListCount = 0 Then Exit Sub
+    For i = 0 To (List1.ListCount - 1)
+         List2.AddItem List1.List(i), List2.ListCount
+         List2.ItemData(List2.ListCount - 1) = List1.ItemData(i)
+    Next
+    List1.Clear
+    List2.ListIndex = 0
+  Case 2
+    If List2.ListCount = 0 Then Exit Sub
+    List1.AddItem List2.List(List2.ListIndex)
+    List1.ItemData(List1.ListCount - 1) = List2.ItemData(List2.ListIndex)
+      List2.RemoveItem List2.ListIndex
+      If List2.ListCount Then List2.ListIndex = 0
+  Case 3
+    If List2.ListCount = 0 Then Exit Sub
+    For i = 0 To (List2.ListCount - 1)
+         List1.AddItem List2.List(i), List1.ListCount
+         List1.ItemData(List1.ListCount - 1) = List2.ItemData(i)
+    Next
+    List2.Clear
+    List1.ListIndex = 0
+  Case Else
+ End Select
+End Sub
+
+Private Sub Command1_Click(Index As Integer)
+If Index = 0 And List1 = "" Then Exit Sub
+If Index = 2 And List2 = "" Then Exit Sub
+Call SelectList(List1, List2, Index)
+End Sub
+
+Private Sub Form_Load()
+List1.AddItem "Kenneth"
+List1.AddItem "Foster"
+List1.AddItem "was here. "
+
+End Sub
+

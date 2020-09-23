@@ -1,0 +1,16 @@
+'Example:
+
+Private Sub Command1_Click()
+Pause (5) 'seconds
+Me.Print "hello"
+End Sub
+
+========================
+Sub Pause(Interval)
+Dim Current
+Current = Timer
+Do While Timer - Current < Val(Interval)
+DoEvents
+Loop
+End Sub
+

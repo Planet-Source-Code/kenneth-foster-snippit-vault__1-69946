@@ -1,0 +1,19 @@
+
+
+Private Sub Form_Load()
+   'GoGetIt      '  Uncomment this line when you want to print out a sub or function.
+                     '  Just make sure the carot is in the sub or function you want to print
+                     '  before running your app. When you are finished programming,just
+                     '  remove this line and the sub or leave it in for future use.
+   Text1.Text = "Uncomment one line of text when you want to print out a sub or function." & vbCrLf
+   Text1.Text = Text1.Text & "Just make sure the carot is in the sub or function you want to print" & vbCrLf
+   Text1.Text = Text1.Text & "before running your app. When you are finished programming,just" & vbCrLf
+   Text1.Text = Text1.Text & "remove the line of text and the sub or leave it in for future use."
+End Sub
+Public Sub GoGetIt()     ' you can also place this code in a module, works the same
+    Clipboard.Clear
+    SendKeys "^{PGUP}^+{PGDN}%EC", True
+    Printer.Print Clipboard.GetText()
+    Printer.NewPage
+    Printer.EndDoc
+End Sub

@@ -1,0 +1,32 @@
+'example using two textboxes
+
+'Private Sub Command1_Click()
+ 'searchHighlight Text1, Text2
+'End Sub
+------------------------------------------------------
+Public Function searchHighlight(srchTextBox As TextBox, srchString As String)
+    On Error Resume Next
+    Dim A As Integer
+    Call srchTextBox.SetFocus
+    SendKeys ("^{HOME}")
+    A = 1
+    Do Until A = Len(srchTextBox.Text)
+        'if word was found...
+        If Mid(UCase$(srchTextBox.Text), A, Len(srchString)) = UCase$(srchString) Then
+            'highlight the word
+            For A = 1 To Len(srchString)
+                SendKeys ("+{RIGHT}")
+            Next A
+            Exit Do
+        End If
+        'if word isnt found or a return is found
+        '     , dont do anything
+        If Mid(srchTextBox.Text, A, 1) = Chr$(13) Then
+        Else
+            'go to next line
+            SendKeys ("{RIGHT}")
+        End If
+        A = A + 1
+        If A > Len(srchTextBox.Text) Then Exit Do
+    Loop
+End Function

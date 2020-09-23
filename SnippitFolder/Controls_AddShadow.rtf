@@ -1,0 +1,50 @@
+Option Explicit 
+
+' *  To shadow all controls in a form,            *
+' *  call to ShadowControls() method.             *
+' *                                               *
+' *  To shadow a control in a form                *
+' *  call DropShadow() method      
+' *  form1 autoRedraw = true
+
+Const FirstLines = 15 'Top shadow roundless      * 
+Const EndLines = 15   'Bottom shadow roundless   * 
+Const Measure = 15    'Form measure (p.e. twips) * 
+Const Desp = 60       'Shadow desp               * 
+Const Band = 50       'Shadow brightness 
+
+
+Sub DropShadow(Control as Object, Formu as Form) 
+    Dim n 
+    For n = 0 To 120 Step Measure 
+        DrawRect Formu, Control.Left + Desp + n / 2, Control.Top + Desp + n / 2, Control.Width - n, Control.Height - n, RGB(256 - (n + Band), 256 - (n + Band), 256 - (n + Band)) 
+    Next 
+End Sub 
+
+Sub DrawRect(Control as Form, l, t, w, h, color) 
+    Dim x, xx 
+    For x = t To t + h Step Measure 
+        xx = x - t 
+
+        Select Case xx 
+            Case Is < FirstLines 
+                Control.Line (l + (FirstLines - xx), xx + t)-(l + w + xx - FirstLines, xx + t), color 
+            Case Is > h - EndLines 
+                Control.Line (l - h + EndLines + xx, xx + t)-(l + w - (EndLines + xx - h), xx + t), color 
+            Case Else 
+                Control.Line (l, xx + t)-(l + w, xx + t), color 
+        End Select 
+
+    Next 
+
+End Sub 
+
+Sub ShadowControls(Formu as Form) 
+    Dim n 
+    For n = 0 To Formu.Controls.Count - 1 
+        DropShadow Formu.Controls(n), Formu 
+    Next 
+End Sub 
+
+
+

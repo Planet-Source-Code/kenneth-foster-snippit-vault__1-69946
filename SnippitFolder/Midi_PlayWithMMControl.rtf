@@ -1,0 +1,22 @@
+Option Explicit
+
+Private Declare Function waveOutGetNumDevs Lib "winmm.dll" () As Long
+Const MidiFile = "Baby.mid"
+Dim Path As String
+
+Private Sub Form_Load()
+'Dim Path As String
+'Dim FileName$
+
+Path = App.Path
+If Right$(Path, 1) <> "\" Then Path = Path + "\"
+If waveOutGetNumDevs() Then
+MMControl1.FileName = Path + MidiFile
+MMControl1.Command = "Open"
+MMControl1.Command = "PLAY"
+End If
+End Sub
+
+'Note:Place MicrosoftMultiMediaControl on Form
+'MMControl1.Command = "Stop" 
+

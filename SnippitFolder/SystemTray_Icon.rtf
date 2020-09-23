@@ -1,0 +1,82 @@
+'Put on form
+
+Private Sub Form_Load()
+    Me.Show 'form must be fully visible
+    Me.Refresh
+        
+        With nid 'with system tray
+            .cbSize = Len(nid)
+            .hwnd = Me.hwnd
+            .uId = vbNull
+            .uFlags = NIF_ICON Or NIF_TIP Or NIF_MESSAGE
+            .uCallBackMessage = WM_MOUSEMOVE
+            .hIcon = Me.Icon 'use form's icon in tray
+            .szTip = "System Tray Example" & vbNullChar 'tooltip text
+        End With
+        
+    Shell_NotifyIcon NIM_ADD, nid 'add to tray
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Dim Result, Action As Long
+    
+    'there are two display modes and we need to find out
+    'which one the application is using
+    
+    If Me.ScaleMode = vbPixels Then
+        Action = X
+    Else
+        Action = X / Screen.TwipsPerPixelX
+    End If
+    
+Select Case Action
+
+    Case WM_LBUTTONDBLCLK 'Left Button Double Click
+        Me.WindowState = vbNormal 'put into taskbar
+            Result = SetForegroundWindow(Me.hwnd)
+        Me.Show 'show form
+    
+    Case WM_RBUTTONUP 'Right Button Up
+        Result = SetForegroundWindow(Me.hwnd)
+       'PopupMenu mnuFile 'popup menu, cool eh?
+    
+    End Select
+    
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer) 'on form unload
+    Shell_NotifyIcon NIM_DELETE, nid 'remove from tray
+End Sub
+
+
+'Put in module
+
+Public Type NOTIFYICONDATA
+cbSize As Long
+hwnd As Long
+uId As Long
+uFlags As Long
+uCallBackMessage As Long
+hIcon As Long
+szTip As String * 64
+End Type
+
+Public Const NIM_ADD = &H0 'Add to Tray
+Public Const NIM_MODIFY = &H1 'Modify Details
+Public Const NIM_DELETE = &H2 'Remove From Tray
+Public Const NIF_MESSAGE = &H1 'Message
+Public Const NIF_ICON = &H2 'Icon
+Public Const NIF_TIP = &H4 'TooTipText
+Public Const WM_MOUSEMOVE = &H200 'On Mousemove
+Public Const WM_LBUTTONDOWN = &H201 'Left Button Down
+Public Const WM_LBUTTONUP = &H202 'Left Button Up
+Public Const WM_LBUTTONDBLCLK = &H203 'Left Double Click
+Public Const WM_RBUTTONDOWN = &H204 'Right Button Down
+Public Const WM_RBUTTONUP = &H205 'Right Button Up
+Public Const WM_RBUTTONDBLCLK = &H206 'Right Double Click
+
+Public Declare Function SetForegroundWindow Lib "user32" (ByVal hwnd As Long) As Long
+Public Declare Function Shell_NotifyIcon Lib "shell32" Alias "Shell_NotifyIconA" (ByVal dwMessage As Long, pnid As NOTIFYICONDATA) As Boolean
+      
+Public nid As NOTIFYICONDATA
+

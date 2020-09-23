@@ -1,0 +1,12 @@
+'Catch exact line of error
+
+Private Sub Form_Load() 
+    On Error Goto err_proc
+    10 Dim i As Long
+    20 i = 10
+    30 i = i / 0
+    40 MsgBox i
+    err_proc:
+    MsgBox "The Error was In line: " & Erl
+End Sub
+

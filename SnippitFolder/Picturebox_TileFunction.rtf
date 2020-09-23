@@ -1,0 +1,37 @@
+Option Explicit
+' Tony Bianchi http://xtbx.com  tony@xtbx.com
+' Use freely
+
+'First we declare the bitblt function to be used by the Mosaic function...
+Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+
+
+
+'this mosaic (tiling) function can be used anyware in your program by simply calling it and referencing
+'the source(MosaicSrc) image and the result (ResultPic) image which will be used as your canvas. As
+'demonstrated by clicking command1 (Make Mosaic) in Form1
+
+Function Mosaic(ResultPic As PictureBox, MosaicSrc As PictureBox)
+Dim xpnt, ypnt As Integer
+Dim SrcWidth, SrcHeight As Long
+
+SrcWidth = MosaicSrc.ScaleWidth
+SrcHeight = MosaicSrc.ScaleHeight
+
+'Double loop (across and down) the ResultPic box filling it with the source image (MosaicSrc) using the bitblt function
+    For xpnt = 0 To ResultPic.ScaleWidth Step SrcWidth
+        For ypnt = 0 To ResultPic.ScaleHeight Step SrcHeight
+
+                BitBlt ResultPic.hDC, xpnt, ypnt, MosaicSrc.ScaleWidth, MosaicSrc.ScaleHeight, MosaicSrc.hDC, 0, 0, vbSrcCopy
+
+        Next ypnt
+    Next xpnt
+End Function
+
+'Example of call ,two pictureboxes and command button on form
+'one picturebox contains texture to tile
+
+Private Sub Command1_Click()
+'here we make the mosaic by calling the mosaic function in module1
+Mosaic PicW, PicM
+End Sub

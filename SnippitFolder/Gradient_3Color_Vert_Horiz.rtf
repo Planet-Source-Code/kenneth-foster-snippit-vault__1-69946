@@ -1,0 +1,61 @@
+'Three Color Gradient in Picturebox vertical or horizontal
+
+
+Option Explicit
+Dim x As Integer
+
+Private Sub Form_Load()
+DrawGrad 0, 0, 0, 100, 50, 10, 100, 100, 100
+End Sub
+
+Public Sub DrawGrad(tpR, tpG, tpB, mdR, mdG, mdB, btR, btG, btB)
+   
+   Dim R1 As Double
+   Dim G1 As Double
+   Dim B1 As Double
+   Dim R2 As Double
+   Dim G2 As Double
+   Dim B2 As Double
+   Dim R0 As Double
+   Dim G0 As Double
+   Dim B0 As Double
+   Dim i As Integer
+  
+   
+   With Picture1
+      .AutoRedraw = True
+      .ScaleMode = 3
+   End With
+   
+   R0 = tpR
+   G0 = tpG
+   B0 = tpB
+   
+   R1 = (mdR - R0) / 250
+   G1 = (mdG - G0) / 250
+   B1 = (mdB - B0) / 250
+   R2 = (btR - mdR) / 250
+   G2 = (btG - mdG) / 250
+   B2 = (btB - mdB) / 250
+   
+   For x = 0 To 500
+      'draw horizontal
+      Picture1.ScaleWidth = 500
+      Picture1.Line (x, 0)-(x, 150), RGB(R0 * 2.55, G0 * 2.55, B0 * 2.55)
+      'draw vertical
+      'Picture1.ScaleHeight = 500
+      'Picture1.Line (0, x)-(150, x), RGB(R0 * 2.55, G0 * 2.55, B0 * 2.55)
+      
+      If x < 250 Then
+         R0 = R0 + R1
+         G0 = G0 + G1
+         B0 = B0 + B1
+      Else
+         R0 = R0 + R2
+         G0 = G0 + G2
+         B0 = B0 + B2
+      End If
+   Next x
+   Picture1.ScaleMode = 1
+End Sub
+

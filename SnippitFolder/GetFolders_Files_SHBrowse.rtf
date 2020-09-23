@@ -1,0 +1,84 @@
+
+
+Private Const BIF_BROWSEINCLUDEFILES As Long = &H4000
+Private Const BIF_RETURNONLYFSDIRS = &H1
+Private Const BIF_BROWSEFORCOMPUTER = &H1000
+Private Const BIF_BROWSEFORPRINTER = &H2000
+Private Const BIF_NEWDIALOGSTYLE As Long = &H40
+Private Const MAX_PATH As Long = 260
+Private Const BIF_EDITBOX As Long = &H10
+
+Private Enum BrowseType
+    BFiles = BIF_BROWSEINCLUDEFILES
+    BFolders = BIF_RETURNONLYFSDIRS
+    BComputers = BIF_BROWSEFORCOMPUTER
+    BPrinters = BIF_BROWSEFORPRINTER
+End Enum
+
+Private Type BROWSEINFO
+   hOwner           As Long
+   pidlRoot         As Long
+   pszDisplayName   As String
+   lpszTitle        As String
+   ulFlags          As Long
+   lpfn             As Long
+   lParam           As Long
+   iImage           As Long
+End Type
+
+Private Bro_T       As BROWSEINFO
+
+Private Declare Function SHGetPathFromIDList Lib "shell32" _
+   Alias "SHGetPathFromIDListA" _
+  (ByVal pidl As Long, _
+   ByVal pszPath As String) As Long
+
+Private Declare Function SHBrowseForFolder Lib "shell32" _
+   Alias "SHBrowseForFolderA" _
+  (lpBrowseInfo As BROWSEINFO) As Long
+
+Private Declare Sub CoTaskMemFree Lib "ole32" _
+   (ByVal pv As Long)
+
+Private Sub Command1_Click()
+Text1.Text = Browse_Folders(BFiles, "Get Files")
+
+End Sub
+
+Private Function Browse_Folders(ByVal BroTypes As BrowseType, Optional ByVal Title_ As String = "") As String
+
+On Error Resume Next
+
+    Dim Ret         As Long
+    Dim Path        As String
+    Dim Pos         As Long
+    
+    With Bro_T
+        .hOwner = Me.hWnd
+        .iImage = Picture1.Picture
+        .lpszTitle = Title_
+        .pidlRoot = 0&
+        .ulFlags = BroTypes Or BIF_NEWDIALOGSTYLE Or _
+                               BIF_EDITBOX Or _
+                               BIF_NEWDIALOGSTYLE
+    End With
+    
+    Ret = SHBrowseForFolder(Bro_T)
+    Path = Space$(MAX_PATH)
+    
+    If SHGetPathFromIDList(ByVal Ret, ByVal Path) Then
+      Pos = InStr(Path, Chr$(0))
+      Browse_Folders = Left(Path, Pos - 1)
+   End If
+   
+    Call CoTaskMemFree(Ret)
+    
+    If Browse_Folders = "" Then Exit Function
+    
+End Function
+
+Private Sub Command2_Click()
+Text1.Text = Browse_Folders(BFolders, "Get Folders")
+
+End Sub
+

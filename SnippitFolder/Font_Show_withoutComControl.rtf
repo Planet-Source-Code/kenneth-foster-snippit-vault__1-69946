@@ -1,0 +1,130 @@
+Private Const LF_FACESIZE = 32
+Private Type LOGFONT
+    lfHeight As Long
+    lfWidth As Long
+    lfEscapement As Long
+    lfOrientation As Long
+    lfWeight As Long
+    lfItalic As Byte
+    lfUnderline As Byte
+    lfStrikeOut As Byte
+    lfCharSet As Byte
+    lfOutPrecision As Byte
+    lfClipPrecision As Byte
+    lfQuality As Byte
+    lfPitchAndFamily As Byte
+    lfFaceName(LF_FACESIZE) As Byte
+End Type
+Private Type ChooseFont
+    lStructSize As Long
+    hwndOwner As Long          '  caller's window handle
+    hdc As Long                '  printer DC/IC or NULL
+    lpLogFont As Long           ' LOGFONT          '  ptr. to a LOGFONT struct
+    iPointSize As Long         '  10 * size in points of selected font
+    flags As Long              '  enum. type flags
+    rgbColors As Long          '  returned text color
+    lCustData As Long          '  data passed to hook fn.
+    lpfnHook As Long           '  ptr. to hook function
+    lpTemplateName As String     '  custom template name
+    hInstance As Long          '  instance handle of.EXE that
+                                   '    contains cust. dlg. template
+    lpszStyle As String          '  return the style field here
+                                   '  must be LF_FACESIZE or bigger
+    nFontType As Integer          '  same value reported to the EnumFonts
+                                   '    call back with the extra FONTTYPE_
+                                   '    bits added
+    MISSING_ALIGNMENT As Integer
+    nSizeMin As Long           '  minimum pt size allowed &
+    nSizeMax As Long           '  max pt size allowed if
+                                   '    CF_LIMITSIZE is used
+End Type
+Private Declare Function ChooseFont Lib "comdlg32.dll" Alias "ChooseFontA" (pChoosefont As ChooseFont) As Long
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (hpvDest As Any, hpvSource As Any, ByVal cbCopy As Long)
+Private Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
+Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
+
+Private Const GMEM_FIXED = &H0
+Private Const GMEM_ZEROINIT = &H40
+Private Const GPTR = (GMEM_FIXED Or GMEM_ZEROINIT)
+Private Const CF_SCREENFONTS = &H1
+Private Const CF_PRINTERFONTS = &H2
+Private Const CF_BOTH = (CF_SCREENFONTS Or CF_PRINTERFONTS)
+Private Const CF_SHOWHELP = &H4&
+Private Const CF_ENABLEHOOK = &H8&
+Private Const CF_ENABLETEMPLATE = &H10&
+Private Const CF_ENABLETEMPLATEHANDLE = &H20&
+Private Const CF_INITTOLOGFONTSTRUCT = &H40&
+Private Const CF_USESTYLE = &H80&
+Private Const CF_EFFECTS = &H100&
+Private Const CF_APPLY = &H200&
+Private Const CF_ANSIONLY = &H400&
+Private Const CF_SCRIPTSONLY = CF_ANSIONLY
+Private Const CF_NOVECTORFONTS = &H800&
+Private Const CF_NOOEMFONTS = CF_NOVECTORFONTS
+Private Const CF_NOSIMULATIONS = &H1000&
+Private Const CF_LIMITSIZE = &H2000&
+Private Const CF_FIXEDPITCHONLY = &H4000&
+Private Const CF_WYSIWYG = &H8000 '  must also have CF_SCREENFONTS CF_PRINTERFONTS
+Private Const CF_FORCEFONTEXIST = &H10000
+Private Const CF_SCALABLEONLY = &H20000
+Private Const CF_TTONLY = &H40000
+Private Const CF_NOFACESEL = &H80000
+Private Const CF_NOSTYLESEL = &H100000
+Private Const CF_NOSIZESEL = &H200000
+Private Const CF_SELECTSCRIPT = &H400000
+Private Const CF_NOSCRIPTSEL = &H800000
+Private Const CF_NOVERTFONTS = &H1000000
+
+Private Function CString(aStr As String) As String
+    CString = ""
+    Dim k As Long
+    k = InStr(aStr, Chr$(0))
+    If k Then
+        CString = Left$(aStr, k - 1)
+    End If
+End Function
+
+Private Sub Command1_Click()
+    Dim CF As ChooseFont, hMem As Long, LF As LOGFONT, aFontName As String
+    hMem = GlobalAlloc(GPTR, Len(LF))
+    CF.hInstance = App.hInstance
+    CF.hwndOwner = hWnd
+    CF.lpLogFont = hMem
+    CF.lStructSize = Len(CF)
+    CF.flags = CF_BOTH
+    If ChooseFont(CF) Then
+        CopyMemory LF, ByVal hMem, Len(LF)
+        aFontName = Space$(LF_FACESIZE)
+        CopyMemory ByVal aFontName, LF.lfFaceName(0), LF_FACESIZE
+        
+       
+        With Label1.Font
+        Label1.Caption = aFontName
+            .Name = CString(aFontName)
+            .Bold = LF.lfWeight
+            .Italic = LF.lfItalic
+            .Size = CF.iPointSize / 10
+            .Underline = LF.lfUnderline
+            .Charset = LF.lfCharSet
+            .Strikethrough = LF.lfStrikeOut
+        End With
+        
+        With Picture1.Font
+            .Name = CString(aFontName)
+            .Bold = LF.lfWeight
+            .Italic = LF.lfItalic
+            .Size = CF.iPointSize / 10
+            .Underline = LF.lfUnderline
+            .Charset = LF.lfCharSet
+            .Strikethrough = LF.lfStrikeOut
+        End With
+        Picture1.Cls
+        Picture1_Paint
+    End If
+    GlobalFree hMem
+End Sub
+
+Private Sub Picture1_Paint()
+    Picture1.Print Picture1.Font.Name
+End Sub
+

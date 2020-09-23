@@ -1,0 +1,20 @@
+'Put in a module
+Option Explicit
+
+Public Declare Function PostMessage Lib "user32" Alias "PostMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+    Public Const EM_UNDO = &HC7
+    Dim msgLONG As Long
+
+Public Sub UndoText(VARtxtbox As TextBox)
+    msgLONG = PostMessage(VARtxtbox.hwnd, EM_UNDO, 0, 0)
+End Sub
+
+
+'put on form
+'command1 and a textbox
+'Undo whatever is typed into textbox
+
+Private Sub Command1_Click()
+Call UndoText(Text1)
+End Sub
+

@@ -1,0 +1,50 @@
+
+'example of call 
+
+'DoStretch img1, pic1, False
+
+Public Function DoStretch(Img as Image, pic as PictureBox, Border as Boolean) 
+    on Error Resume Next 
+    Dim W as Long, H as Long 
+    Dim Rwh as Double 
+
+    With Img 
+            .Stretch = False: .Visible = False 
+            W = .Width: H = .Height 
+
+            If W / H >= 1 Then 
+AdjWidth: 
+                .Width = pic.ScaleWidth 
+                Rwh = pic.ScaleWidth / W 
+                .Height = .Height * Rwh 
+
+                If .Height > pic.ScaleHeight Then 
+                    W = .Width: H = .Height 
+                    GoTo Adjheight 
+                End If 
+            ElseIf W / H < 1 Then 
+Adjheight: 
+                .Height = pic.ScaleHeight 
+                Rwh = pic.ScaleHeight / H 
+                .Width = .Width * Rwh 
+
+                If .Width > pic.ScaleWidth Then 
+                    W = .Width: H = .Height 
+                    GoTo AdjWidth 
+                End If 
+            End If 
+            .Stretch = True: .Visible = True 
+End With 
+
+pic.Width = Img.Width 
+pic.Height = Img.Height 
+
+If Border = True Then 
+   pic.BorderStyle = 1 
+Else 
+   pic.BorderStyle = 0 
+End If 
+
+End Function 
+
+

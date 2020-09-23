@@ -1,0 +1,41 @@
+'Put in module
+'form1 call ... ex.: flat
+
+
+'API declares
+Private Declare Function GetWindowLong& Lib "user32" Alias "GetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long)
+Private Declare Function SetWindowLong& Lib "user32" Alias "SetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long)
+
+Private Const BS_FLAT = &H8000&
+'Type of style to change - normal
+
+Private Const GWL_STYLE = (-16)
+'variables
+
+Dim InitTBStyle As Long, InitLVStyle As Long, InitTVStyle As Long
+Dim InitBTStyle As Long, InitPBStyle As Long, hHeader As Long
+
+Public Sub BTFlat(BT As CommandButton)
+    'if the style is already the BS_FLAT then dont do it again, may cause some flashing
+    If GetWindowLong&(BT.HWnd, GWL_STYLE) And BS_FLAT Then Exit Sub
+    'Set the style, which window?, what style - normal or extended?, new style
+    SetWindowLong BT.HWnd, GWL_STYLE, InitBTStyle Or BS_FLAT
+    BT.Refresh
+End Sub
+Public Sub GetInitialBTStyle(BT As CommandButton)
+    'variable = Get the style, which window?, what style - normal or extended?
+    InitBTStyle = GetWindowLong&(BT.HWnd, GWL_STYLE)
+End Sub
+
+Public Sub flat()
+GetInitialBTStyle Form1.Command1
+GetInitialBTStyle Form1.Command2
+
+
+'Begin flat down
+
+BTFlat Form1.Command1
+BTFlat Form1.Command2
+
+End Sub
+

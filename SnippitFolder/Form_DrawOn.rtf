@@ -1,0 +1,18 @@
+Private A As Integer: Private B As Integer
+
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    If Button = 1 Then
+        A = X: B = Y
+    End If
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    If Button = 1 Then
+
+        Form1.Line (A, B)-(X, Y)
+            A = X: B = Y
+        End If
+    End Sub
+

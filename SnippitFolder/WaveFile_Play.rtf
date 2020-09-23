@@ -1,0 +1,36 @@
+' Name: * Make Your Own *WAV* Player! *
+' Description:This is the code to *PLAY*
+'     , *STOP*, and *LOOP* WAV files. Its real
+'     ly easy! even for a beginner! You can ma
+'     ke your own WAV Player!
+' By: Matt Evans
+
+
+Declare Function sndPlaySound Lib "winmm.dll" Alias "sndPlaySoundA" (ByVal lpszSoundName As String, ByVal uFlags As Long) As Public Const SND_SYNC = &H0
+    Public Const SND_ASYNC = &H1
+    Public Const SND_NODEFAULT = &H2
+    Public Const SND_MEMORY = &H4
+    Public Const SND_LOOP = &H8
+    Public Const SND_NOSTOP = &H10
+
+
+Sub WAVStop()
+    Call WAVPlay(" ")
+End Sub
+
+
+Sub WAVLoop(File)
+    Dim SoundName As String
+    SoundName$ = File
+    wFlags% = SND_ASYNC Or SND_LOOP
+    X = sndPlaySound(SoundName$, wFlags%)
+End Sub
+
+
+Sub WAVPlay(File)
+    Dim SoundName As String
+    SoundName$ = File
+    wFlags% = SND_ASYNC Or SND_NODEFAULT
+    X = sndPlaySound(SoundName$, wFlags%)
+End Sub 
+

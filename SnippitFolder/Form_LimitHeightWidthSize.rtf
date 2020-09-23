@@ -1,0 +1,45 @@
+'Put in a module
+
+Declare Function MoveWindow Lib "user32" (ByVal hwnd as Long, ByVal x as Long, ByVal y as Long, ByVal nWidth as Long, ByVal nHeight as Long, ByVal bRepaint as Long) as Long  
+
+
+'=========================================================
+'place this in the forms resize event      ex: Call WindowMaxSize(Me, 4500,4000 )
+'=========================================================
+Sub WindowMaxSize(FormName as Form, TwipMaxWid%, twipMaxHeight%)  
+Dim storeLeft%, storeTop%, storeHei%, storeWid%  
+
+With FormName  
+  'first lets look for when the window resizes to a size larger than
+  'out maxwid and maxhei specs, so we dont waste processor
+If .Width <= TwipMaxWid And .Height <= twipMaxHeight Then  
+     Exit Sub  
+Else  
+   storeLeft = (.Left / Screen.TwipsPerPixelX)  
+   storeTop = (.Top / Screen.TwipsPerPixelY)  
+
+   If .Width > TwipMaxWid And .Height > twipMaxHeight Then  
+      storeHei = (twipMaxHeight / Screen.TwipsPerPixelY)  
+      storeWid = (TwipMaxWid / Screen.TwipsPerPixelX)  
+'  if only the width is greater than max desired,
+'  dont mess with height but store the height
+   ElseIf .Width > TwipMaxWid Then  
+      storeHei = (.Height / Screen.TwipsPerPixelY)  
+      storeWid = (TwipMaxWid / Screen.TwipsPerPixelX)  
+
+   ElseIf .Height > twipMaxHeight Then  
+'    if only the height is greater than max desired,
+'    dont mess with width but store the height
+      storeHei = (twipMaxHeight / Screen.TwipsPerPixelY)  
+      storeWid = (.Width / Screen.TwipsPerPixelX)  
+
+   End If  
+
+   MoveWindow .hwnd, storeLeft, storeTop, storeWid, storeHei, True  
+End If  
+
+End With  
+
+End Sub  
+
+

@@ -1,0 +1,16 @@
+Function IsOdd(ByRef sNumber as String) as Boolean 
+   If Val(Right$(sNumber, 1)) And 1 Then IsOdd = True 
+End Function 
+
+
+
+Private Function isEven(intNum As Integer) As Boolean
+ 
+   If intNum Mod 2 = 0 Then
+       isEven = True
+   Else
+       isEven = False
+   End If
+
+End Function
+

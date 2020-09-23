@@ -1,0 +1,38 @@
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" _
+        (ByVal hwnd As Long, ByVal wMsg As Long, _
+        ByVal wParam As Integer, ByVal lParam As Any) As Long
+
+Private Const PBM_SETBARCOLOR As Long = (WM_USER + 9)
+Private Const CCM_SETBKCOLOR  As Long = (CCM_FIRST + 1)
+Private Const PBM_SETBKCOLOR  As Long = CCM_SETBKCOLOR
+
+Private Enum PrScrolling
+    Standard = 0
+    Smoth = 1
+End Enum
+
+Private Enum PrBarColor
+    DRed = vbRed
+    DGreen = vbGreen
+    DBlue = vbBlue
+    DBCustom = &HE76F0C
+End Enum
+
+Private Enum PrAppearance
+    ccFlat = 0
+    cc3D = 1
+End Enum
+
+
+
+Public Sub DProgressBar(PB As ProgressBar, Appr As PrAppearance, BarColor As PrBarColor, DScrolling As PrScrolling)
+    
+    With PB
+        .Appearance = Appr
+        .Scrolling = DScrolling
+    End With
+    SendMessage PB.hwnd, PBM_SETBARCOLOR, 0, BarColor
+    SendMessage PB.hwnd, PBM_SETBKCOLOR, 0, &HFFFFFF
+    
+End Sub

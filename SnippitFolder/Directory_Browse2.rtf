@@ -1,0 +1,22 @@
+Option Explicit
+
+Private Sub drive1_change()
+On Error Resume Next
+    Dir1.Path = Drive1.Drive
+End Sub
+
+Private Sub dir1_change()
+    File1.Path = Dir1.Path
+End Sub
+
+Private Sub file1_click()
+'RELIVENT CODE:
+    Dim readystring As String
+    If Right$(Dir1.Path, 1) = "\" Then 'determine weather thers a "\" at the end of the dir1 path
+        readystring = Dir1.Path & File1.FileName
+    Else
+        readystring = Dir1.Path & "\" & File1.FileName
+    End If
+Text1.Text = readystring
+End Sub
+

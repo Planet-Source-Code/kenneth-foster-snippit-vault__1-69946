@@ -1,0 +1,15 @@
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+    Const Numbers$ = "0123456789."
+
+
+    If KeyAscii <> 8 Then
+
+
+        If InStr(Numbers, Chr(KeyAscii)) = 0 Then
+            MsgBox "error"
+            KeyAscii = 0
+            Exit Sub
+        End If
+    End If
+End Sub
+

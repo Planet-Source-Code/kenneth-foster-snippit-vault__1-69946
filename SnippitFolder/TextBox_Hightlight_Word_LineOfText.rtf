@@ -1,0 +1,26 @@
+
+
+Here's a simple way to highlight the current word in a TextBox control (i.e. the word where the caret is): 
+
+Text1.SetFocus
+SendKeys "^{LEFT}+^{RIGHT}"
+Similarly, you can highlight the current line in a multiline TextBox control as follows: 
+
+Text1.SetFocus
+SendKeys "{HOME}+{END}"
+Deleting the current word or the current line is as simple. You just need to add a {DELETE} key at the end of the key sequence: 
+
+Text1.SetFocus
+SendKeys "{HOME}+{END}{DELETE}"
+You can't copy the highlighted text to the Clipboard using the "^C" sequence. However, since the text is currently highlighted you can simply use the SelText property. Curiously, however, the following code fails: 
+
+Text1.SetFocus
+SendKeys "{HOME}+{END}"
+Debug.Print Text1.SelText     ' display a null string
+To have it work properly you must add a DoEvents command: 
+
+Text1.SetFocus
+SendKeys "{HOME}+{END}"
+DoEvents
+Debug.Print Text1.SelText     ' this works
+

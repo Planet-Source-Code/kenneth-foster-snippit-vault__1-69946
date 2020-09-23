@@ -1,0 +1,23 @@
+
+'set command1.index = 0
+
+Private Sub Command1_Click(Index As Integer)
+ If Command1(1) Then Text1.Text = "Ken Foster"
+ If Command1(2) Then Command1(2).Caption = "Gone"
+End Sub
+
+Private Sub Command2_Click()
+Dim i As Long
+Dim max
+If max = 0 Then max = 1
+For i = 1 To 3
+  Load Command1(max)
+  Command1(max).Top = Command1(max - 1).Top + 400
+  Command1(max).Visible = True
+ max = max + 1
+Next i
+ Command1(1).Caption = "Hello"
+  Command1(2).Caption = "again"
+  Command1(3).Caption = "There."
+End Sub
+

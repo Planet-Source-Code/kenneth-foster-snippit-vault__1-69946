@@ -1,0 +1,37 @@
+Public imagename As String
+
+Private Sub Dir1_Change()
+File1.Path = Dir1.Path
+End Sub
+
+Private Sub Drive1_Change()
+Dir1.Path = Drive1.Drive
+End Sub
+
+Private Sub File1_Click()
+If Right(File1.Path, 1) = "\" Then
+imagename = File1.Path + File1.FileName
+Else
+imagename = File1.Path + "\" + File1.FileName
+End If
+Image1.Picture = LoadPicture(imagename)
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+End
+End Sub
+
+Private Sub menuExit_Click(Index As Integer)
+End
+End Sub
+
+Private Sub submenuzoomin_Click(Index As Integer)
+Image1.Stretch = True
+Image1.Refresh
+End Sub
+
+Private Sub submenuzoomout_Click(Index As Integer)
+Image1.Stretch = False
+Image1.Refresh
+End Sub
+

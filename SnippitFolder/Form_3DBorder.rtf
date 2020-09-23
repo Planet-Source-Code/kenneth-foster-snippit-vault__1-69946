@@ -1,0 +1,41 @@
+'Call from Form Resize event  ex: Draw_3d_Border_Around_Form Me
+
+'Place following code on form
+
+Sub Draw_3d_Border_Around_Form (frmForm as Form)  
+    Const cPi = 3.1415926 
+    Dim intLineWidth as Integer 
+    intLineWidth = 5 
+    'save scale mode
+    Dim intSaveScaleMode as Integer 
+    intSaveScaleMode = frmForm.ScaleMode 
+    frmForm.ScaleMode = 3 
+    Dim intScaleWidth as Integer 
+    Dim intScaleHeight as Integer 
+    intScaleWidth = frmForm.ScaleWidth 
+    intScaleHeight = frmForm.ScaleHeight 
+    'clear form
+    frmForm.Cls 
+    'draw white lines
+    frmForm.Line (0, intScaleHeight)-(intLineWidth, 0), &HFFFFFF, BF 
+    frmForm.Line (0, intLineWidth)-(intScaleWidth, 0), &HFFFFFF, BF 
+    'draw grey lines
+    frmForm.Line (intScaleWidth, 0)-(intScaleWidth - intLineWidth, intScaleHeight), &H808080, BF 
+    frmForm.Line (intScaleWidth, intScaleHeight - intLineWidth)-(0, intScaleHeight), &H808080, BF 
+    'draw triangles(actually circles) at cor
+    '     ners
+    Dim intCircleWidth as Integer 
+    intCircleWidth = Sqr(intLineWidth * intLineWidth + intLineWidth * intLineWidth) 
+    frmForm.FillStyle = 0 
+    frmForm.FillColor = QBColor(15) 
+    frmForm.Circle (intLineWidth, intScaleHeight - intLineWidth), intCircleWidth, QBColor(15), -3.1415926, -3.90953745777778 '-180 * cPi / 180, -224 * cPi / 180 
+    frmForm.Circle (intScaleWidth - intLineWidth, intLineWidth), intCircleWidth, QBColor(15), -.78539815, -1.5707963 ' -45 * cPi / 180, -90 * cPi / 180 
+    'draw black frame
+    frmForm.Line (0, intScaleHeight)-(0, 0), 0 
+    frmForm.Line (0, 0)-(intScaleWidth - 1, 0), 0 
+    frmForm.Line (intScaleWidth - 1, 0)-(intScaleWidth - 1, intScaleHeight - 1), 0 
+    frmForm.Line (0, intScaleHeight - 1)-(intScaleWidth - 1, intScaleHeight - 1), 0 
+    'restore scale mode
+    frmForm.ScaleMode = intSaveScaleMode 
+End Sub 
+

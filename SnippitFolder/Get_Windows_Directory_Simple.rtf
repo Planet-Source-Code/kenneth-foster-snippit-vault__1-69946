@@ -1,0 +1,16 @@
+
+Declare Function GetWindowsDirectory Lib "kernel32" _ 
+    Alias "GetWindowsDirectoryA" _
+    (ByVal lpBuffer As String, ByVal nSize As Long) _
+    As Long
+
+Function GetWD() As String 
+    Dim Result
+    Dim WindowsDirectory As String
+    WindowsDirectory = Space(144)
+    Result = GetWindowsDirectory(WindowsDirectory, 144)
+    WindowsDirectory = Trim(WindowsDirectory)
+    GetWD = WindowsDirectory
+End Function
+'Ex: msgbox GetWD
+

@@ -1,0 +1,83 @@
+Private Sub Form_Paint()
+    
+    'Call the DrawFrameOn routine to draw frame around controls (in pixels).
+    
+    'DrawFrameOn lvFonts, lvFonts, "outward", 4
+    'DrawFrameOn lvFonts, lvFonts, "inward", 1
+    
+    'DrawFrameOn picSample, picSample, "outward", 4
+    'DrawFrameOn picSample, picSample, "inward", 1
+
+    DrawFrameOn Label1, Label1, "outward", 4
+    DrawFrameOn Label1, Label1, "inward", 1
+    
+    'DrawFrameOn sldSize, sldSize, "outward", 4
+  
+    DrawFrameOn Command1, Command1, "outward", 4
+   'DrawFrameOn Command1, Command1, "inward", 1
+
+    'DrawFrameOn lblStyle, lblStyle, "outward", 4
+    'DrawFrameOn lblStyle, lblStyle, "inward", 1
+
+    'DrawFrameOn optStyle(0), optStyle(3), "outward", 4
+   
+    'DrawFrameOn chkUnderline, chkStrikethru, "outward", 4
+    'DrawFrameOn chkUnderline, chkStrikethru, "inward", 1
+   
+    'DrawFrameOn cmdOK, cmdCancel, "outward", 4
+    'DrawFrameOn cmdOK, cmdCancel, "inward", 1
+
+
+End Sub
+Public Sub DrawFrameOn(TopLeftControl As Control, LowestRightControl As Control, Style As String, Framewidth)
+Dim dw, fs, sm
+Dim st$
+Dim Lft, Toplft, Hite
+Dim Rite, Ritebotm
+Dim lt As Long
+Dim rb As Long
+
+    'Routine to draw frame around controls.  Variations can be achieved by changing "DrawWidth", shadow colors
+    ' and the width of the frame elements in the form Paint Event
+    
+    'Save the current settings
+    dw = DrawWidth
+    fs = FillStyle
+    sm = ScaleMode
+    
+    DrawWidth = 1
+    FillStyle = 1
+    ScaleMode = 3
+    
+    st = LCase(Left$(Style, 1))
+    Lft = TopLeftControl.Left
+    Toplft = TopLeftControl.Top
+    Hite = TopLeftControl.Height
+    
+    Rite = LowestRightControl.Left + LowestRightControl.Width
+    Ritebotm = LowestRightControl.Top + LowestRightControl.Height
+    
+    If Ritebotm > Hite Then Hite = Ritebotm
+       
+    lt = vb3DHighlight
+    rb = vbButtonShadow
+    
+    'Swap colors if "inward"
+    If st = "i" Then
+        lt = vb3DDKShadow
+        rb = vb3DHighlight
+    End If
+    
+    'Draw the frame
+    Line (Lft - Framewidth, Toplft - Framewidth)-(Rite + Framewidth, Toplft - Framewidth), lt
+    Line (Lft - Framewidth, Toplft - Framewidth)-(Lft - Framewidth, Hite + Framewidth), lt
+    Line (Rite + Framewidth, Toplft - Framewidth)-(Rite + Framewidth, Ritebotm + Framewidth), rb
+    Line (Rite + Framewidth, Ritebotm + Framewidth)-(Lft - Framewidth, Hite + Framewidth), rb
+    
+    'Restore original settings
+    DrawWidth = dw
+    FillStyle = fs
+    ScaleMode = sm
+     
+End Sub
+

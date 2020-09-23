@@ -1,0 +1,64 @@
+Public Function LoadFileToTB(TxtBox As Object, FilePath As _
+   String, Optional Append As Boolean = False) As Boolean
+   
+'PURPOSE: Loads file specified by FilePath into textcontrol 
+'(e.g., Text Box, Rich Text Box) specified by TxtBox
+
+'If Append = true, then loaded text is appended to existing
+' contents else existing contents are overwritten
+
+'Returns: True if Successful, false otherwise
+
+Dim iFile As Integer
+Dim s As String
+
+If Dir(FilePath) = "" Then Exit Function
+
+On Error GoTo ErrorHandler:
+s = TxtBox.Text
+
+iFile = FreeFile
+Open FilePath For Input As #iFile
+s = Input(LOF(iFile), #iFile)
+If Append Then
+    TxtBox.Text = TxtBox.Text & s
+Else
+    TxtBox.Text = s
+End If
+
+LoadFileToTB = True
+
+ErrorHandler:
+If iFile > 0 Then Close #iFile
+
+End Function
+
+Public Function SaveFileFromTB(TxtBox As Object, _
+   FilePath As String, Optional Append As Boolean = False) _
+   As Boolean
+  
+'PURPOSE: Saves contents of text control (e.g., Text Box,
+'Rich Text Box) specified by TxtBox to file specified by FilePath
+
+'If Append = true, then TxtBox's contents are
+'appended to existing file contents
+'else existing file is overwritten
+
+'Returns: True if Successful, false otherwise
+
+Dim iFile As Integer
+
+iFile = FreeFile
+If Append Then
+    Open FilePath For Append As #iFile
+Else
+    Open FilePath For Output As #iFile
+End If
+
+Print #iFile, TxtBox.Text
+SaveFileFromTB = True
+
+ErrorHandler:
+
+Close #iFile
+End Function

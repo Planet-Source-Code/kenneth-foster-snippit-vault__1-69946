@@ -1,0 +1,3 @@
+Get the windows directory . You will need to add a reference to the Microsoft Scripting runtime. This is useful for your apps because the user does not always have Windows 
+installed in the default location. 
+

@@ -1,0 +1,56 @@
+'put in a module
+
+Private Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
+
+Private Declare Function DeleteMenu Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, _
+ ByVal wFlags As Long) As Long
+
+ Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" _
+(ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+
+Public Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" _
+(ByVal hwnd As Long, ByVal nIndex As Long) As Long
+
+
+Public Const GWL_STYLE = (-16)
+Public Const WS_THICKFRAME = &H40000
+Public Const WS_MINIMIZEBOX = &H10000
+Public Const WS_MAXIMIZEBOX = &H20000
+Public Const MF_BYPOSITION = &H400&
+
+Public Sub RemoveMenus(frm As Form, _
+                       remove_restore As Boolean, _
+                       remove_move As Boolean, _
+                       remove_size As Boolean, _
+                       remove_minimize As Boolean, _
+                       remove_maximize As Boolean, _
+                       remove_separator As Boolean, _
+                       remove_close As Boolean)
+Dim hMenu As Long
+  
+' Get the form's system menu handle.
+hMenu = GetSystemMenu(frm.hwnd, False)
+'Do NOT rearrange this code as it operates by relative position!
+If remove_close Then DeleteMenu hMenu, 6, MF_BYPOSITION
+If remove_separator Then DeleteMenu hMenu, 5, MF_BYPOSITION
+If remove_maximize Then DeleteMenu hMenu, 4, MF_BYPOSITION
+If remove_minimize Then DeleteMenu hMenu, 3, MF_BYPOSITION
+If remove_size Then DeleteMenu hMenu, 2, MF_BYPOSITION
+If remove_move Then DeleteMenu hMenu, 1, MF_BYPOSITION
+If remove_restore Then DeleteMenu hMenu, 0, MF_BYPOSITION
+End Sub
+
+
+'form example
+
+Private Sub Form_Load()
+Dim CurStyle As Long
+CurStyle = GetWindowLong(Me.hwnd, GWL_STYLE)
+CurStyle = CurStyle And Not (WS_MINIMIZEBOX)
+'CurStyle = CurStyle And Not WS_MAXIMIZEBOX
+'CurStyle = CurStyle And Not (WS_THICKFRAME)
+CurStyle = SetWindowLong(Me.hwnd, GWL_STYLE, CurStyle)
+RemoveMenus Me, False, False, False, _
+            True, True, False, False
+End Sub
+

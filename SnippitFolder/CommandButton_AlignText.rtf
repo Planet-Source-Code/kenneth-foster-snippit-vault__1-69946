@@ -1,0 +1,36 @@
+Option Explicit
+
+Public Enum BUTTON_STYLE
+    BS_CENTER = &H300&
+    BS_LEFT = &H100&
+    BS_RIGHT = &H200&
+    BS_TOP = &H400&
+End Enum
+Private Const GWL_STYLE& = (-16)
+
+Private Declare Function GetWindowLong& Lib "user32" Alias _
+"GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long)
+
+Private Declare Function SetWindowLong& Lib "user32" Alias _
+"SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, _
+ByVal dwNewLong As Long)
+
+
+
+Public Sub AlignCommandButtonText(Button As Object, _
+   Style As BUTTON_STYLE)
+
+Dim lHwnd As Long
+
+On Error Resume Next
+lHwnd = Button.hwnd
+Dim lWnd As Long
+Dim lRet As Long
+If lHwnd = 0 Then Exit Sub
+
+lWnd = GetWindowLong(lHwnd, GWL_STYLE)
+lRet = SetWindowLong(Command1.hwnd, GWL_STYLE, Style Or lWnd)
+
+
+Button.Refresh
+End Sub

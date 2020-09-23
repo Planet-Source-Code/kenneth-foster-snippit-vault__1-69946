@@ -1,0 +1,17 @@
+One Line of code For entering only numeric values in text box. Just place this code in the text box's keypress event.
+
+If keyascii < asc("0") Or keyascii > asc("9") Then
+keyascii=0
+endif
+
+Or use this:========================================
+
+'make a text box On the form
+Private Sub text1_keypress(KeyAscii As Integer)
+     If KeyAscii >= vbKey0 And KeyAscii <= vbKey9 Or KeyAscii = 8 Then
+       Exit Sub
+     Else
+        KeyAscii = 0
+        MsgBox " Only Numeric Value ", vbExclamation, "Number"
+   End If
+

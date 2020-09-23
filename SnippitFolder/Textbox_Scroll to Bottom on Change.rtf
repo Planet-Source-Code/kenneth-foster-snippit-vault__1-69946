@@ -1,0 +1,20 @@
+'scroll textbox to bottom whenever there is a change 
+
+
+Private Sub Text1_Change()
+ On Error Resume Next
+    Text1.SelLength = 0
+
+
+    If Len(Text1.Text) > 0 Then
+
+
+        If Right$(Text1.Text, 1) = vbCrLf Then
+            Text1.SelStart = Len(Text1.Text) - 1
+            Exit Sub
+        End If
+        Text1.SelStart = Len(Text1.Text)
+    End If
+
+End Sub
+

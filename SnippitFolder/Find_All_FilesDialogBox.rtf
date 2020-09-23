@@ -1,0 +1,20 @@
+Start a new project and add a DriveListBox (Drive1), a DirListBox (Dir1), and a Command Button to the form (Form1). Then add the following code.
+
+Add this code to form1:
+Option Explicit
+Private Declare Function ShellExecute Lib "shell32.dll" Alias _
+        "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As _
+        String, ByVal lpFile As String, ByVal lpParameters As String, _
+        ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+
+Private Const SW_SHOWNORMAL = 1
+Private Const SW_SHOWMINIMIZED = 2
+Private Const SW_SHOWMAXIMIZED = 3
+Private Sub Command1_Click()
+    ShellExecute Me.hwnd, "find", Dir1.Path, vbNullString, _
+                 vbNullString, SW_SHOWNORMAL
+End Sub
+Private Sub Drive1_Change()
+    Dir1.Path = Drive1.Drive
+End Sub
+

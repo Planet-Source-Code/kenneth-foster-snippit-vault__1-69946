@@ -1,0 +1,29 @@
+Option Explicit
+Private Const GWL_EXSTYLE = (-20)
+Private Const WS_EX_LAYERED = &H80000
+Private Const WS_EX_TRANSPARENT = &H20&
+Private Const LWA_ALPHA = &H2&
+
+
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+
+
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+
+
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+
+
+Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hwnd As Long, ByVal crey As Byte, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+
+
+Private Sub Form_Activate()
+    Dim NormalWindowStyle As Long
+    Dim HWD As Long
+    NormalWindowStyle = GetWindowLong(HWD, GWL_EXSTYLE)
+    SetWindowLong Me.hwnd, GWL_EXSTYLE, NormalWindowStyle Or WS_EX_LAYERED
+    SetLayeredWindowAttributes Me.hwnd, 0, (Any Value from 1 To 255) , LWA_ALPHA
+End Sub
+
+
+

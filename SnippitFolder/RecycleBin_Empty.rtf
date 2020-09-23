@@ -1,0 +1,16 @@
+Option Explicit
+
+Private Declare Function SHEmptyRecycleBin Lib "shell32.dll" Alias "SHEmptyRecycleBinA" (ByVal HWnd As Long, ByVal pszRootPath As String, ByVal dwFlags As Long) As Long
+'==============================
+
+Public Sub MakeRecycleBinEmpty(Optional ByVal Drive As String, Optional NoConfirmation As Boolean, Optional NoProgress As Boolean, Optional NoSound As Boolean)
+
+Dim HWnd, Flags As Long
+ On Error Resume Next
+ HWnd = Screen.ActiveForm.HWnd
+ If Len(Drive) > 0 Then _
+  Drive = Left$(Drive, 1) & ":\"
+ Flags = (NoConfirmation And &H1) Or (NoProgress And &H2) Or (NoSound And &H4)
+ SHEmptyRecycleBin HWnd, Drive, Flags
+End Sub
+

@@ -1,0 +1,72 @@
+Option Explicit 
+
+Private Declare Function MoveWindow Lib "user32" (ByVal hwnd as Long, ByVal x as Long, ByVal y as Long, ByVal nWidth as Long, ByVal nHeight as Long, ByVal bRepaint as Long) as Long 
+
+Private Sub Form_Load() 
+Dim i as Integer 
+
+    ' Make a bunch of ComboBox entries.
+    For i = 1 To 50 
+        cboTestCombo.AddItem Format$(i) 
+    Next i 
+    cboTestCombo.ListIndex = 0 
+
+    ' Resize the ComboBox's dropdown area.
+    SizeCombo Me, cboTestCombo, 130, 350 
+
+End Sub 
+' Resize a ComboBox's dropdown display area.
+Public Sub SizeCombo(frm as Form, CBo as ComboBox, w as Long, h as Long) 
+Dim cbleft as Integer 
+Dim cbtop as Integer 
+Dim scalemode as Integer 
+
+    ' Change the Scale Mode on the form to Pixels.
+    scalemode = frm.scalemode 
+    frm.scalemode = vbPixels 
+
+    ' Save the ComboBox's Left, Top values.
+    cbleft = cbo.Left 
+    cbtop = cbo.Top 
+
+    frm.scalemode = scalemode 
+
+    ' Resize the combo box window.
+    MoveWindow cbo.hwnd, cbleft, cbtop, w, h, 1 
+End Sub 
+
+'-------------------------------------------------------------------------------------------------------------------------
+'Another example of usage
+
+Option Explicit
+Private Declare Function MoveWindow Lib "user32" (ByVal hwnd As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+
+Private Sub Form_Load()
+
+   'load Combo1 with some data
+   Combo1.AddItem "January"
+   Combo1.AddItem "Febuary"
+   Combo1.AddItem "March"
+   Combo1.AddItem "April"
+   Combo1.AddItem "May"
+   Combo1.AddItem "June"
+   Combo1.AddItem "July"
+   Combo1.AddItem "August"
+   'normally the combobox would stop here
+   Combo1.AddItem "September"
+   Combo1.AddItem "October"
+   Combo1.AddItem "November"
+   Combo1.AddItem "December"
+   
+   'change scale to pixels if it is not already pixels
+   'api likes pixels
+   Me.scalemode = vbPixels
+   
+   '130 is width value , 180 is height value. Change these to suit your needs.
+   MoveWindow Combo1.hwnd, Combo1.Left, Combo1.Top, 130, 180, 1
+   'Note: the position can be changed also by changing the .Left and .Top values
+   
+   'change scale back to Twips or to whatever it was, if pixels is not desired
+   Me.scalemode = vbTwips
+End Sub
+

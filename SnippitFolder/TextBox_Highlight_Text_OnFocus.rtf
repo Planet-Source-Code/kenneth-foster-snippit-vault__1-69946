@@ -1,0 +1,15 @@
+'Highlights text in textbox when it receives focus.Can start typing to change text or hit tab to leave as is
+
+Sub SetSelected() 
+    Screen.ActiveControl.SelStart = 0
+    Screen.ActiveControl.SelLength = Len(Screen.ActiveControl.Text)
+End Sub
+
+
+For Each field, include this text: 
+
+
+Sub txtField_GotFocus()
+    SetSelected
+End Sub
+

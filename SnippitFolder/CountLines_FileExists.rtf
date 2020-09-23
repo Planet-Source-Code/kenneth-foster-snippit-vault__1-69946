@@ -1,0 +1,32 @@
+'Does file exist
+Public Function CheckFile(file As String) As Boolean
+
+    If StrComp(Dir(file), "", vbTextCompare) <> 0 Then
+        CheckFile = True 'file exists
+    Else
+        CheckFile = False 'file does Not exist
+    End If
+End Function
+'Not to be used on LARGE(many lined) files
+
+Public Function LineCount(file As String) As Integer
+    Dim count As Integer
+    Dim temp As String
+    
+    count = 0 'no line To start
+    'check to see if the file exists
+    If CheckFile(file) = False Then 'file Not In existance
+        LineCount = 0 'no lines
+        Exit Function 'exit the function
+    End If
+    'actual counting of lines
+    Open file For Input As #1 'open the file
+    Do 'loop
+        Line Input #1, temp 'grab a line
+        count = count + 1 'add one To the line total
+    Loop Until EOF(1) 'continue untill at End of the file
+    Close #1 'close the file
+    
+    LineCount = count 'return the count
+End Function
+

@@ -1,0 +1,121 @@
+Private Function ShowDay(txt As String, FD As Boolean)
+
+'example: Text1 = ShowDay(Text1,True)
+
+Dim strD As String
+Dim i, d, m, y, totalD As Integer
+Dim iW, im As Integer
+Dim w As Integer
+Dim strW As String
+
+    strD = Format(txt, "m/d/yyyy")
+    ''' Error for Invalid entries
+    If strD = "" Or Len(strD) > 10 Then
+        MsgBox "Invalid entry !", vbExclamation, "Show Date & Day"
+        Exit Function
+    End If
+    ''' Find first position of "/"
+    i = InStr(1, strD, "/")
+    ''' If first "/" is not found
+    If i = 0 Then
+        MsgBox "Invalid entry !", vbExclamation, "Show Date & Day"
+        Exit Function
+    End If
+    ''' Extract the date
+    m = Mid(strD, 1, i - 1)
+    ''' By default invalid date is greater than 31
+    If d > 31 Then
+        MsgBox "Wrong day !", vbExclamation, "Show Date & Day"
+        Exit Function
+    End If
+    ''' Re-initialize date string after extracting date
+    strD = Mid(strD, i + 1, Len(strD))
+    ''' Find second position of "/"
+    i = InStr(1, strD, "/")
+    ''' If second "/" is not found
+    If i = 0 Then
+        MsgBox "Invalid entry !", vbExclamation, "Show Date & Day"
+        Exit Function
+    End If
+    ''' Extract the day
+    d = Mid(strD, 1, i - 1)
+    ''' Extract the year (the rest string)
+    y = Mid(strD, i + 1, Len(strD))
+    ''' check Month & Year
+    If (m > 12) Then
+        MsgBox "Wrong month !", vbExclamation, "Show Date & Day"
+        Exit Function
+    ElseIf Not (y >= 1900 And y <= 2100) Then
+        MsgBox "Wrong year !"
+        Exit Function
+    Else
+        ''' Initialize total days in month
+        Select Case (m)
+            Case 1: totalD = 31
+            Case 3: totalD = 31
+            Case 5: totalD = 31
+            Case 7: totalD = 31
+            Case 8: totalD = 31
+            Case 10: totalD = 31
+            Case 12: totalD = 31
+            Case 4: totalD = 30
+            Case 6: totalD = 30
+            Case 9: totalD = 30
+            Case 11: totalD = 30
+            Case 2: ''' check for Leap February
+                    If (y Mod 400) = 0 Then
+                        totalD = 29
+                    ElseIf (y Mod 100) = 0 Then
+                        totalD = 28
+                    ElseIf (y Mod 4) = 0 Then
+                        totalD = 29
+                    Else
+                        totalD = 28
+                    End If
+        End Select
+        ''' check date
+        If d > totalD Then
+            MsgBox "Wrong day !", vbExclamation, "Show Date & Day"
+            Exit Function
+        Else
+                Select Case (m)
+                    Case 1: im = 1
+                    Case 2: im = 4
+                    Case 3: im = 4
+                    Case 4: im = 0
+                    Case 5: im = 2
+                    Case 6: im = 5
+                    Case 7: im = 0
+                    Case 8: im = 3
+                    Case 9: im = 6
+                    Case 10: im = 1
+                    Case 11: im = 4
+                    Case 12: im = 6
+                End Select
+
+                w = ((y - 1900) + ((y - 1900) \ 4) + im + d) Mod 7
+                Select Case (w)
+                    Case 0: strW = "Saturday"
+                    Case 1: strW = "Sunday"
+                    Case 2: strW = "Monday"
+                    Case 3: strW = "Tueday"
+                    Case 4: strW = "Wednesday"
+                    Case 5: strW = "Thursday"
+                    Case 6: strW = "Friday"
+                End Select
+            ''' show date, month, year & weekday and Leap Year Condition
+            Dim strTitle As String
+            If ((y Mod 400) = 0) Or (Not ((y Mod 100) = 0) And (y Mod 4) = 0) Then
+                strTitle = "LEAP YEAR !"
+            Else
+                strTitle = "Show Date & Day"
+            End If
+        End If
+    End If
+    If FD = True Then
+      ShowDay = strW & " " & Date
+    Else
+      ShowDay = strW
+    End If
+End Function
+

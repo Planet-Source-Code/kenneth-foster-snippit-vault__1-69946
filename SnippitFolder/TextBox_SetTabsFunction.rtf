@@ -1,0 +1,73 @@
+Option Explicit
+
+Private Declare Function SendMessage Lib _
+"user32" Alias "SendMessageA" (ByVal hwnd As Long, _
+ByVal wMsg As Long, ByVal wParam As Long, _
+lParam As Any) As Long
+
+Private Const EM_SETTABSTOPS = &HCB
+
+Private Sub Command1_Click()
+SetTBTabStops Text1, 40, 80, 120, 140
+
+Text1.Text = "Column1" & vbTab & "Column2" & vbTab & "Column3" & vbTab & "Column4" & vbTab & "Column5" & vbCrLf
+
+Text1.Text = Text1.Text & "Ken" & vbTab & "Foster" & vbTab & "was" & vbTab & "here."
+
+End Sub
+
+Public Function SetTBTabStops(TB As Object, _
+ParamArray TabStops()) As Boolean
+
+'PURPOSE: Set TabStops for a text box,
+'a rich text box or any UserControl
+'based on a text box
+'that exposes the underlying text box's
+'hwnd property.
+
+'This creates columns whereby items
+'in each column are separated by
+'a tab character
+
+
+'USAGE:
+'Pass TextBox Object and a comma delimited
+'list of tab stops.  Tab stops are expressed
+'in dialog units which approximately equal
+'1/4 the width of a character
+
+'EXAMPLE:
+'SetTBTabStops text1, 40, 80, 120
+'text1.text = "Column1" & vbTab & "Column2" _
+'& vbTab & "Column3" & vbTab & "Column4"
+
+'This will create 4 columns separated by
+'about 10 characters
+
+Dim alTabStops() As Long
+Dim lCtr As Long
+Dim lColumns As Long
+Dim lRet As Long
+
+On Error GoTo errorhandler:
+
+ReDim alTabStops(UBound(TabStops)) As Long
+
+For lCtr = 0 To UBound(TabStops)
+    alTabStops(lCtr) = TabStops(lCtr)
+Next
+
+lColumns = UBound(alTabStops) + 1
+
+
+lRet = SendMessage(TB.hwnd, EM_SETTABSTOPS, _
+lColumns, alTabStops(0))
+
+SetTBTabStops = (lRet = 0)
+Exit Function
+
+errorhandler:
+SetTBTabStops = False
+
+End Function
+

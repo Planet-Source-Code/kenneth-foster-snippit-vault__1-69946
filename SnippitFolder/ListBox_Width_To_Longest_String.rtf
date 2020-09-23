@@ -1,0 +1,80 @@
+' VB listbox-resizing demo
+   ' by Andy Fielding (ander5151@yahoo.com)
+   
+   'Need list1, Command1, Command2, Label1
+   
+   Option Explicit
+   Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+   Const SM_CXVSCROLL = 2
+   
+   Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+   Const GWL_STYLE = (-16)
+   Const WS_VSCROLL = &H200000
+   Const WS_HSCROLL = &H100000
+
+Private Sub Command1_Click()
+   DoitNow Label1, List1
+End Sub
+
+Private Sub Command2_Click()
+   Unload Me
+End Sub
+
+Private Sub Form_Load()
+   Label1.AutoSize = True
+   Label1.FontSize = List1.FontSize
+   Label1.Visible = False
+   
+   List1.AddItem "Sample text begins here"
+   List1.AddItem "This is a string"
+   List1.AddItem "Here is a longer string"
+   List1.AddItem "And, amazingly, yet a longer string"
+   List1.AddItem "Finally, here's the longest string of all, dudes!!"
+   List1.AddItem "Some short text"
+   List1.AddItem "Some longer text"
+   List1.AddItem "Some slightly longer text"
+   List1.AddItem "And, amazingly, some yet longer text"
+   List1.AddItem "I say, have you seen the cat?"
+   List1.AddItem "Yes, he's moved to Florida"
+   List1.AddItem "But he didn't finish his Spam!"
+   
+End Sub
+
+Private Sub DoitNow(lab As Label, lst As ListBox)
+   
+   Dim X As Integer, Y As Integer
+   Dim ScrollbarWidth As Long
+   Dim WidestString As Integer
+   
+   '
+   
+   For X = 0 To lst.ListCount - 1
+      lab.Caption = lst.List(X)
+      If lab.Width > WidestString Then WidestString = lab.Width
+   Next X
+   
+   If HasVerticalScrollbar(lst) Then
+      ScrollbarWidth = GetSystemMetrics(SM_CXVSCROLL)
+      lst.Width = WidestString + Me.ScaleX(ScrollbarWidth, vbPixels, vbTwips) + 100
+   Else
+      lst.Width = WidestString + 100
+   End If
+   
+End Sub
+
+Private Function HasVerticalScrollbar(ctrl As Control) As Boolean
+   
+   ' If the control whose name is passed to this function (in this case,
+   ' the listbox) has a vertical scrollbar, return "True"
+   HasVerticalScrollbar = (GetWindowLong(ctrl.hwnd, GWL_STYLE) And WS_VSCROLL)
+   
+End Function
+
+Private Function HasHorizontalScrollbar(ctrl As Control) As Boolean
+   
+   ' We don't need to detect a horizontal scrollbar in this demo, but
+   ' for your reference, here's the code to do that
+   
+   HasHorizontalScrollbar = (GetWindowLong(ctrl.hwnd, GWL_STYLE) And WS_HSCROLL)
+   
+End Function

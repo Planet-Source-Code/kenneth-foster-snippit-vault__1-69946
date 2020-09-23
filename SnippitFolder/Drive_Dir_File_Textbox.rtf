@@ -1,0 +1,19 @@
+'Put Drive1,Dir1,File1 and Textbox1 on form
+
+Option Explicit
+
+Private Sub Dir1_Change()
+      File1.Path = Dir1.Path
+End Sub
+
+Private Sub Drive1_Change()
+      Dir1.Path = Drive1.Drive
+End Sub
+
+Private Sub File1_DblClick()
+   Dim x As Integer
+
+   x = File1.ListIndex
+   Text1.Text = Dir1.Path & "\" & File1.List(x)
+
+End Sub

@@ -1,0 +1,64 @@
+'Need 5 labels ,timer and command button
+
+Dim rgbvalue As Long
+Dim pt As POINTAPI
+Dim activewindow As String
+Dim R As Long
+Dim G As Long
+Dim B As Long
+
+Private Type POINTAPI
+    X As Long
+    Y As Long
+End Type
+
+Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Private Declare Function GetPixel Lib "gdi32.dll" (ByVal hdc As Long, ByVal nXPos As Long, ByVal nYPos As Long) As Long
+Private Declare Function GetDC Lib "user32.dll" (ByVal HWND As Long) As Long
+Private Declare Function GetActiveWindow Lib "user32" () As Long
+
+Private Sub Command1_Click()
+activetxt = GetActiveWindow
+
+    If Timer1.Interval = 0 Then
+        Timer1.Enabled = True
+        Timer1.Interval = 100
+    Else
+        Timer1.Interval = 0
+        Timer1.Enabled = False
+    End If
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+Unload Me
+End Sub
+
+Private Sub Timer1_Timer()
+Dim stdout As Long
+Dim sColor As Double
+
+activewindow = GetActiveWindow
+If activewindow <> activetxt.Text Then
+    Timer1.Interval = 0
+    Timer1.Enabled = False
+    Form1.SetFocus
+    
+Else
+On Error GoTo 10
+GetCursorPos pt
+    rgbvalue = GetPixel(GetDC(stdout), pt.X, pt.Y)
+    Label1.BackColor = rgbvalue
+    GetRGB rgbvalue, R, G, B
+    Label2.Caption = "R  " & R
+    Label3.Caption = "G  " & G
+    Label4.Caption = "B  " & B
+    Label5.Caption = "H  " & Hex(rgbvalue)
+End If
+10: Exit Sub
+End Sub
+Private Sub GetRGB(ByVal LngCol As Long, R As Long, G As Long, B As Long)
+  R = LngCol Mod 256    'Red
+  G = (LngCol And vbGreen) / 256 'Green
+  B = (LngCol And vbBlue) / 65536 'Blue
+End Sub
+

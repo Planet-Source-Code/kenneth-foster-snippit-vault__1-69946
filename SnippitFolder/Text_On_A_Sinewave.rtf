@@ -1,0 +1,31 @@
+'put in a module
+
+Public Sub SinusText(Obj As Object, Txt As String, Xcor%, Ycor%, Ampl%)
+    Dim xx%, ttt%, S(359) As Integer
+    
+    Obj.ScaleMode = 3
+
+'Change the -1 value below for different effect
+
+    For xx% = 0 To 359 Step (360 / Len(Txt) - 1)
+        S(ttt%) = Int((Sin(xx% / 180 * 3.14159)) * Ampl%) + Ycor%
+        ttt% = ttt% + 1
+    Next xx%
+    Obj.CurrentX = Xcor%
+
+
+    For xx% = 0 To Len(Txt)
+        Obj.CurrentY = S(xx%)
+        Obj.Print Mid(Txt, xx% + 1, 1);
+    Next xx%
+End Sub
+
+'example 
+
+' Private Sub Command1_Click()
+'      Call SinusText(Form1, "This is a test to see how it.", 10, 60, 20)
+'End Sub
+'X pos = 10
+'Ypos = 60
+'Height = 20
+

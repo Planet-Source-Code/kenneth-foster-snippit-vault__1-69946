@@ -1,0 +1,24 @@
+Private Declare Function waveOutSetVolume Lib "Winmm" (ByVal wDeviceID as Integer, ByVal dwVolume as Long) as Integer 
+
+Private Declare Function waveOutGetVolume Lib "Winmm" (ByVal wDeviceID as Integer, dwVolume as Long) as Integer 
+
+Private Sub Form_Load() 
+    Dim a, i as Long 
+    Dim tmp as String 
+    a = waveOutGetVolume(0, i) 
+    tmp = "&h" & Right(Hex$(i), 4) 
+    Slider1.Value = CLng(tmp) 
+End Sub 
+
+Private Sub Slider1_Scroll() 
+    Dim a, i as Long 
+    Dim tmp, vol as String 
+    vol = Slider1.Value 
+    tmp = Right((Hex$(vol + 65536)), 4) 
+    vol = CLng("&H" & tmp & tmp) 
+    a = waveOutSetVolume(0, vol) 
+
+End Sub 
+
+
+

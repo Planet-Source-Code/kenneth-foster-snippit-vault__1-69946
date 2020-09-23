@@ -1,0 +1,44 @@
+
+Private Type RECT
+   Left As Long
+   Top As Long
+   Right As Long
+   Bottom As Long
+End Type
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, _
+    lpRect As RECT) As Long
+Private Declare Function ScreenToClientAny Lib "user32" Alias "ScreenToClient" _
+    (ByVal hWnd As Long, lpPoint As Any) As Long
+Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, _
+    ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, _
+    ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+
+' Set a new height for the list area of a ComboBox control
+'
+' NEWHEIGHT is measured in pixels
+
+Sub ComboBoxSetHeight(CB As ComboBox, ByVal newHeight As Long)
+    Dim lpRect As RECT
+    Dim wi As Long
+    
+    ' get combobox rectangle, relative to screen
+    GetWindowRect CB.hWnd, lpRect
+    wi = lpRect.Right - lpRect.Left
+    
+    ' convert to form's client coordinates
+    ScreenToClientAny CB.Parent.hWnd, lpRect
+    
+    ' enforce the new height
+    MoveWindow CB.hWnd, lpRect.Left, lpRect.Top, wi, newHeight, True
+
+End Sub
+
+
+Private Sub Form_Load()
+ComboBoxSetHeight Combo1, 200
+Dim x As Integer
+For x = 0 To 12
+   Combo1.AddItem "#" & x
+Next x
+End Sub
+

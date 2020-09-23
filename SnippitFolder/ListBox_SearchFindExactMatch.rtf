@@ -1,0 +1,35 @@
+
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd as Long, ByVal wMsg as Long, ByVal wParam as Long, lParam as Any) as Long 
+
+ Private Function SearchList(ToSearch as String, lstList as ListBox) as Integer 
+
+ Const LB_FINDSTRINGEXACT = &H1A2  
+
+SearchList = SendMessage(lstList.hWnd, LB_FINDSTRINGEXACT, 0&, ByVal ToSearch)  
+
+End Function  
+'========================================
+
+'example
+
+Option Explicit
+
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+Private Sub Command1_Click()
+Dim x As Integer
+ List1.ListIndex = SearchList(Text1.Text, List1)
+ If List1.Selected(List1.ListIndex) = True Then Text2.Text = List1.Text
+End Sub
+
+Private Sub Form_Load()
+List1.AddItem "Ken"
+List1.AddItem "Foster"
+List1.AddItem "was"
+End Sub
+ Private Function SearchList(ToSearch As String, lstList As ListBox) As Integer
+ Const LB_FINDSTRINGEXACT = &H1A2
+SearchList = SendMessage(lstList.hwnd, LB_FINDSTRINGEXACT, 0&, ByVal ToSearch)
+End Function
+

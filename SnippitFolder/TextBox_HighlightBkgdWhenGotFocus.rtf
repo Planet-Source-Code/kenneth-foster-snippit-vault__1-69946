@@ -1,0 +1,11 @@
+Public Function BkColor(txt As TextBox)
+Dim Control As Control
+
+'call from the GotFocus property of each textbox
+'ex: BkColor Text1
+
+For Each Control In Me
+If TypeOf Control Is TextBox Then Control.BackColor = vbWhite
+Next Control
+txt.BackColor = &HC0FFFF
+End Function

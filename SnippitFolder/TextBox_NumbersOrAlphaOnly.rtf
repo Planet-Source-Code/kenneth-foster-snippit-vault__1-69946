@@ -1,0 +1,11 @@
+'force numbers only in text box
+If IsNumeric(Chr(KeyAscii)) <> True Then KeyAscii = 0
+End Sub
+
+'Or
+
+Private Sub Text1_KeyPress()
+'force alpha only in text box
+If Not IsNumeric(Chr(KeyAscii)) <> True Then KeyAscii = 0
+End Sub
+

@@ -1,0 +1,75 @@
+Private Sub Form_Load()
+    Dim lngMenu As Long
+    Dim lngSubMenu As Long
+    Dim lngMenuItemID As Long
+    Dim lngRet As Long
+
+    On Error Resume Next
+    
+    'Save Menu
+    lngMenu = GetMenu(frmMenu.hwnd) 'Get the Hwnd
+    lngSubMenu = GetSubMenu(lngMenu, 0) 'Find the menu of index '0'
+    'In this case Index zero is the File Menu
+    lngMenuItemID = GetMenuItemID(lngSubMenu, 0) 'Same here, Find submenu Index of '0'.
+    'Index of 0 = the Save menu
+    lngRet = SetMenuItemBitmaps(lngMenu, lngMenuItemID, 0, _
+    picMenuSave.Picture, picMenuSave.Picture)
+    'Set the menu Bitmaps to picMenuSave's picture.
+    
+    'Reason why code has two picMenuSave.Picture
+    'That is for Checked picture, and unchecked
+    
+    'Open Menu
+    lngMenu = GetMenu(frmMenu.hwnd) 'Get hWnd
+    lngSubMenu = GetSubMenu(lngMenu, 0) 'Find Menu Index '0'
+    'In this case, '0' is the File Menu
+    lngMenuItemID = GetMenuItemID(lngSubMenu, 1) 'Find the submenu with index of '1'
+    'In this case, '1' is the Open submenu
+    lngRet = SetMenuItemBitmaps(lngMenu, lngMenuItemID, 0, _
+     picMenuOpen.Picture, picMenuOpen.Picture)
+     
+    'Click Me! Menu
+    lngMenu = GetMenu(frmMenu.hwnd) 'Get Hwnd
+    lngSubMenu = GetSubMenu(lngMenu, 1) 'Find the menu Index '1'
+    'In this case,  '1' is the Checked menu
+    lngMenuItemID = GetMenuItemID(lngSubMenu, 0) 'Find the submenu with an Index of '0'
+    'In this case, '0' is the Click Me! submenu
+    lngRet = SetMenuItemBitmaps(lngMenu, lngMenuItemID, 0, _
+     picUnchecked.Picture, picChecked.Picture)
+    
+End Sub
+'------------------------------------------------
+Private Sub Form_Unload(Cancel As Integer)
+     Unload Me
+    End
+End Sub
+
+'examples
+Private Sub mnuCClick_Click()
+    mnuCClick.Checked = Not mnuCClick.Checked
+End Sub
+
+Private Sub mnuFExit_Click()
+      Unload Me
+    End
+End Sub
+
+'======================================
+'put in module
+
+Option Explicit
+
+'Menu Bitmaps
+Public Declare Function GetMenu Lib "user32" _
+(ByVal hwnd As Long) As Long
+
+Public Declare Function GetSubMenu Lib "user32" _
+(ByVal hMenu As Long, ByVal nPos As Long) As Long
+
+Public Declare Function GetMenuItemID Lib "user32" _
+(ByVal hMenu As Long, ByVal nPos As Long) As Long
+
+Public Declare Function SetMenuItemBitmaps Lib "user32" _
+(ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As _
+Long, ByVal hBitmapUnchecked As Long, ByVal hBitmapChecked _
+As Long) As Long

@@ -1,0 +1,15 @@
+'Put on form
+
+Option Explicit
+Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal HWND As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+
+Public Sub FormDrag(TheForm As Object)
+  On Local Error Resume Next
+  ReleaseCapture
+  SendMessage TheForm.HWND, &HA1, 2, 0&
+End Sub
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+FormDrag Me
+End Sub

@@ -1,0 +1,41 @@
+'Declarations
+'=============================
+
+Public Type SHFILEOPSTRUCT
+    hwnd      As Long
+    wFunc     As Long
+    pFrom     As String
+    pTo       As String
+    fFlags    As Integer
+    fAborted  As Boolean
+    hNameMaps As Long
+    sProgress As String
+End Type
+
+Public Const FO_DELETE As Long = &H3
+Public Const FOF_NOCONFIRMATION As Long = &H10
+Public Const FOF_ALLOWUNDO As Long = &H40
+
+Public Declare Function SHFileOperation Lib "shell32.dll" Alias "SHFileOperationA" (lpFileOp As SHFILEOPSTRUCT) As Long
+
+'==============================
+
+'Returns True if successful
+Public Function Erase2RecycleBin(fileSpec$) As Boolean
+    
+    Dim SHFileOp As SHFILEOPSTRUCT
+    
+    With SHFileOp
+        .wFunc = FO_DELETE
+        .pFrom = fileSpec$ & vbNullChar
+        .fFlags = FOF_ALLOWUNDO + FOF_NOCONFIRMATION
+    End With
+    
+    Erase2RecycleBin = (SHFileOperation(SHFileOp) = 0)
+    
+End Function
+
+'Call the function like this:
+
+blnSuccess = Erase2RecycleBin("C:\Myfolder\myfile")
+

@@ -1,0 +1,17 @@
+'example of usage
+'yourFilename = CheckExt(yourFilename, ".jpg")
+
+Private Function CheckExt(Filename As String, ext As String)
+    Dim stg1 As String
+    Dim stg2 As String
+    
+    stg1 = Right$(Filename, 4)                                      ' get extension
+    stg2 = Left$(Filename, Len(Filename) - 4)                       ' get filename without extension
+    
+    If InStr(Filename, ".") = False Then                            ' if no extension present
+       CheckExt = Filename & ext                                    ' add extension to filename
+    Else
+       CheckExt = stg2 & ext                                        ' Makes sure we have correct extension
+    End If
+      
+End Function

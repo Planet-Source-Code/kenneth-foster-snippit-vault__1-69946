@@ -1,0 +1,11 @@
+Private Sub Form_Resize()
+Dim i As Integer
+Me.AutoRedraw = True
+Me.DrawStyle = 6
+Me.DrawWidth = 2
+Me.ScaleHeight = 2 * 256
+For i = 0 To 256
+Me.Line (0, y)-(Me.Width, y + 2), RGB(i, 0, i)
+y = y + 2
+Next i
+End Sub

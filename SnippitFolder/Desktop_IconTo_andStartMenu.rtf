@@ -1,0 +1,12 @@
+Private Declare Function fCreateShellLink Lib "STKIT432.DLL" (ByVal lpstrFolderName As String, ByVal lpstrLinkName As String, ByVal lpstrLinkPath As String, ByVal lpstrLinkArgs As String) As Long
+
+Private Sub Command1_Click()
+Dim longReturn As Long
+    longReturn = fCreateShellLink("..\Programs\", "Captions On Images", "D:\My Programs\Captions On Images\AddCaptionsToPicture.exe", "")
+    longReturn = fCreateShellLink("..\..\Desktop\", "Captions On Images", "D:\My Programs\Captions On Images\AddCaptionsToPicture.exe", "")
+    'longReturn = fCreateShellLink("..\..\Desktop\", App.Title, App.Path & "\(YourFileNameHere).exe", "") ' (YourFileNameHere) i.e. MyProgram
+End Sub
+
+Private Sub Form_Load()
+
+End Sub

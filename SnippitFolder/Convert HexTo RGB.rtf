@@ -1,0 +1,5 @@
+Private Function ConvertHexToRGB(Cl As Long, R As Byte, G As Byte, B As Byte)
+   R = Cl Mod 256
+   G = (Cl \ 256) Mod 256
+   B = (Cl \ 256 \ 256) Mod 256
+End Function

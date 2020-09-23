@@ -1,0 +1,40 @@
+Option Explicit
+
+Private Sub Command1_Click()
+Text1.Text = ExactAge(Text1.Text)
+End Sub
+
+Public Function ExactAge(BirthDate As Variant) As String
+
+Dim yer As Integer, mon As Integer, d As Integer
+Dim dt As Date
+Dim sAns  As String
+
+    If Not IsDate(BirthDate) Then Exit Function
+    dt = CDate(BirthDate)
+    If dt > Now Then Exit Function
+    
+    yer = Year(dt)
+    mon = Month(dt)
+    d = Day(dt)
+    yer = Year(Date) - yer
+    mon = Month(Date) - mon
+    d = Day(Date) - d
+
+    If Sgn(d) = -1 Then
+        d = 30 - Abs(d)
+        mon = mon - 1
+    End If
+
+    If Sgn(mon) = -1 Then
+        mon = 12 - Abs(mon)
+        yer = yer - 1
+    End If
+    
+sAns = yer & " year(s) " & mon & " month(s) " & d _
+  & " day(s) old."
+
+ExactAge = sAns
+
+End Function
+

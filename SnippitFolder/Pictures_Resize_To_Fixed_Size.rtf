@@ -1,0 +1,51 @@
+Launch VB6 and open a new EXE project. Form1 is created automatically. - Add an Image control (Image1), a command button (cmdPicture) and a Common Dialog control (cdlPicture). - Set the following properties for cdlPicture:  Filter = All files (*.*)|*.*|Bitmap files (*.bmp)|*.bmp|JPEG files (*.jpg, *.jpeg)|*.jpg;*.jpeg|GIF files (*.gif)|*.gif 
+Flags = 4096 
+
+Private Sub cmdPicture_Click()
+
+    Dim str As String, str2 As String
+    Dim strDrive As String
+    
+    On Error GoTo Oops
+    
+         'Get a picture.
+    cdlPicture.ShowOpen
+    Image1 = LoadPicture(cdlPicture.FileName)
+    
+         'Resize the picture.
+    Call sResizePicture
+    
+     str2 = App.Path
+    strDrive = Mid$(App.Path, 1, 1)
+    str = CurDir
+    
+    If str <> str2 Then
+        ChDrive strDrive
+        ChDir str2
+        str = CurDir
+    End If
+    
+    Exit Sub
+    
+Oops:
+    MsgBox Err.Description, vbExclamation
+    
+End Sub
+
+Private Sub sResizePicture()
+    
+    Dim dblRatio As Double
+    
+    If Image1.Picture.Height > Image1.Picture.Width Then
+        dblRatio = Image1.Picture.Width / Image1.Picture.Height
+        Image1.Height = 2160    'Two inches
+        Image1.Width = 2160 * dblRatio   'Two inches
+    ElseIf Image1.Picture.Width > Image1.Picture.Height Then
+        dblRatio = Image1.Picture.Height / Image1.Picture.Width
+        Image1.Height = 2160 * dblRatio    'Two inches
+        Image1.Width = 2160   'Two inches
+    End If
+    
+    Image1.Stretch = True
+
+End Sub

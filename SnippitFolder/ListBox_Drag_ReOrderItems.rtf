@@ -1,0 +1,79 @@
+Option Explicit
+
+Private CurrentIndex As Long
+Private LastIndex As Long
+Private LastString As String
+Private LBHwnd As Long
+Private Dragging As Boolean
+Private DragIndex As Long
+Private DragText As String
+Private Const LB_ITEMFROMPOINT As Long = &H1A9
+Private Declare Function SendMessage _
+    Lib "user32" Alias "SendMessageA" ( _
+    ByVal hwnd As Long, _
+    ByVal wMsg As Long, _
+    ByVal wParam As Long, _
+    lParam As Any) As Long
+
+'===========================
+
+Private Sub Form_Load()
+    Dim v 'Variant For data
+    Dim i&
+    LBHwnd = List1.hwnd 'need it For HitTest
+    'fill the listbox
+    v = Array("Apple", "Orange", "Pear", "Banana", _
+    "Plum", "Kumquat", "Mango", "Tomato", _
+    "Peach", "Kiwi")
+
+
+    For i = 0 To 9
+        List1.AddItem v(i)
+    Next i
+End Sub
+
+
+Function HitTest(ByVal Y As Long) As Long
+    'Gets the listindex from the mouse pos
+    HitTest = SendMessage(LBHwnd, LB_ITEMFROMPOINT, ByVal 0&, ByVal (Y \ Screen.TwipsPerPixelY) * 65536)
+
+
+    If HitTest > List1.ListCount - 1 Then
+        'mouse not over an item
+        HitTest = -1
+    End If
+End Function
+
+
+Private Sub List1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    DragIndex = HitTest(Y) 'item To be dragged
+    If DragIndex < 0 Then Exit Sub 'not on an item
+    Dragging = True 'for MouseMove
+    DragText = List1.List(DragIndex) 'item text
+    LastIndex = DragIndex 'for first time
+    LastString = DragText '""
+End Sub
+
+
+Private Sub List1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    CurrentIndex = HitTest(Y) 'what are we over now
+    If CurrentIndex < 0 Then Exit Sub 'not an item
+
+
+    If Dragging Then
+
+
+        If CurrentIndex <> LastIndex Then 'dragging over different item
+            LastString = List1.List(CurrentIndex) 'save this item
+            List1.List(CurrentIndex) = DragText 'set current
+            List1.List(LastIndex) = LastString 'set previous
+            LastIndex = CurrentIndex 'save last
+        End If
+    End If
+End Sub
+
+
+Private Sub List1_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Dragging = False
+End Sub
+

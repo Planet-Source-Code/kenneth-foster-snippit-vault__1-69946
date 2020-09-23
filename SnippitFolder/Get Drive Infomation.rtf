@@ -1,0 +1,113 @@
+
+'In Module named modGetDriveInfo
+
+'Downloaded from
+'VISUAL BASIC PROGRAMMING ZONE
+'
+'http://vbpz.base.org
+'
+Declare Function GetVolumeInformation Lib "kernel32" Alias "GetVolumeInformationA" (ByVal lpRootPathName As String, ByVal lpVolumeNameBuffer As String, ByVal nVolumeNameSize As Long, lpVolumeSerialNumber As Long, lpMaximumComponentLength As Long, lpFileSystemFlags As Long, ByVal lpFileSystemNameBuffer As String, ByVal nFileSystemNameSize As Long) As Long
+Declare Function GetLogicalDrives& Lib "kernel32" ()
+Declare Function GetDriveType& Lib "kernel32" Alias "GetDriveTypeA" (ByVal nDrive As String)
+Declare Function GetDiskFreeSpace& Lib "kernel32" Alias "GetDiskFreeSpaceA" (ByVal lpRootPathName As String, lpSectorsPerCluster As Long, lpBytesPerSector As Long, lpNumberOfFreeClusters As Long, lpTotalNumberOfClusters As Long)
+Public vararyDriveInfo(26, 11)     'a Variant Array to hold the info
+'Downloaded from
+'VISUAL BASIC PROGRAMMING ZONE
+'
+'http://vbpz.base.org
+'
+Sub getDriveInfo()
+    'There is a array named vararyDriveInfo that
+    'holds all the info for up to 26 drives (A-Z).
+    'Array Format:
+    '    x,1  = Is there a drive for this letter
+    '    x,2  = Drive Letter
+    '    x,3  = Drive Type  2=Floppy, 3=Disk Fixed (local) 4=Disk Remote (Network)  5=CD-ROM
+    '    x,4  = Sectors
+    '    x,5  = Bytes / Sector
+    '    x,6  = Number of free sectors
+    '    x,7  = Total Clusters
+    '    x,8  = Total Bytes
+    '    x,9  = Free Bytes
+    '    x,10 = Percent of Free Bytes
+    '    x,11 = Vol Name
+    
+    Dim ournum As Long
+    Dim rv As Long
+    Dim DriveType As Long
+    Dim c  As Long
+    Dim d As Long
+    Dim e As Long
+    Dim f As Long
+    Dim h As Long
+    Dim Counter As Integer
+    Dim CompareTo
+    Dim tmpDrvLet As String
+    Dim SectorsPerCluster&, BytesPerSector&, NumberOfFreeClustors&, TotalNumberOfClustors&
+    Dim BytesFreeas, BytesTotal, FreeBytes, TotalBytes As Variant
+    Dim dl&, lpVolumeSerialNumber&, lpMaximumComponentLength&, lpFileSystemFlags&
+    Dim lpVolumeNameBuffer As String
+    Dim rc
+    Dim A As String
+    Dim b As String
+    Dim g As String
+    Dim s$, sz&
+    
+    'Get the logical Drivesrv = 0
+    rv = GetLogicalDrives&()
+    If rv = 0 Then
+        MsgBoxText = "No Logical Drives Found. Program will stop."
+        MsgBoxButton = MB_OK + MB_ICONSTOP
+        MsgBoxTitle = "Error"
+        MsgBox MsgBoxText, MsgBoxButton, MsgBoxTitle
+        Stop
+        Exit Sub
+    End If
+    
+    'Clear the VarArrayErase vararyDriveInfo' *** set the var
+    b = String$(255, 0)
+    c = 200
+    g = String$(255, 0)
+    h = 100
+    For Counter = 1 To 26
+        CompareTo = (2 ^ (Counter - 1))
+        If (rv And CompareTo) <> 0 Then
+            vararyDriveInfo(Counter, 1) = True      'Found a drive
+            tmpDrvLet = Chr(Counter + 64)           'Build a drive letter
+            vararyDriveInfo(Counter, 2) = tmpDrvLet 'Save the drive letter
+            tmpDrvLet = tmpDrvLet & ":\"            'Add the root stuff
+            DriveType = GetDriveType&(tmpDrvLet)    'Get the drive type
+            vararyDriveInfo(Counter, 3) = DriveType 'Save the drive type
+            If DriveType = 3 Or DriveType = 4 Then  'Local or network drives only
+                'Get the vol name        A = tmpDrvLet 'DriveLtr & "\:"
+                rc = GetVolumeInformation(A, b, c, d, e, f, g, h)
+                vararyDriveInfo(Counter, 11) = b
+                'Let's get the Drive info for this HardDrive
+                dl& = GetDiskFreeSpace(tmpDrvLet, SectorsPerCluster, BytesPerSector, _
+                NumberOfFreeClustors, TotalNumberOfClustors)
+                vararyDriveInfo(Counter, 4) = Format(SectorsPerCluster, "#,0")
+                vararyDriveInfo(Counter, 5) = Format(BytesPerSector, "#,0")
+                vararyDriveInfo(Counter, 6) = Format(NumberOfFreeClustors, "#,0")
+                vararyDriveInfo(Counter, 7) = Format(TotalNumberOfClustors, "#,0")
+                TotalBytes = (TotalNumberOfClustors / 100) * (SectorsPerCluster / 100) * (BytesPerSector / 100)
+                vararyDriveInfo(Counter, 8) = Format(TotalBytes, "#,0")
+                FreeBytes = (NumberOfFreeClustors / 100) * (SectorsPerCluster / 100) * (BytesPerSector / 100)
+                vararyDriveInfo(Counter, 9) = Format(FreeBytes, "#,0")
+                vararyDriveInfo(Counter, 10) = Format(FreeBytes / TotalBytes, "Percent")
+            End If
+        Else
+            'No drive? then set to false
+            vararyDriveInfo(Counter, 1) = False
+        End If
+    Next Counter
+    MsgBox vararyDriveInfo(4, 2) & " " & vararyDriveInfo(4, 3) & " " & vararyDriveInfo(4, 4) & " " & vararyDriveInfo(3, 10)
+End Sub
+
+
+'On Form
+
+Option Explicit
+
+Private Sub Command1_Click()
+getDriveInfo
+End Sub

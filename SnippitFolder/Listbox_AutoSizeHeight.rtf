@@ -1,0 +1,12 @@
+Public Sub AutoSizeListboxHeight(listBoxToSize As ListBox)
+    Dim newSize As Integer 'variable To hold new size
+    Dim ItemHeight As Long
+    
+    Const MinHeight = 1000 'minimum height of listbox
+   ' Const ItemHeight = 100 'height of Each item
+    ItemHeight = List1.FontSize * 25  'change to suit fontsize 8 thru 18 = 25: 24 = 24
+    newSize = listBoxToSize.ListCount * ItemHeight 'self-explanitory
+    If newSize < MinHeight Then newSize = MinHeight 'make sure it's Not too small
+    listBoxToSize.Height = newSize 'set the size and finish
+End Sub
+

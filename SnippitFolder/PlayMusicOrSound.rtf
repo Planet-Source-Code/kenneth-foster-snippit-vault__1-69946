@@ -1,0 +1,52 @@
+To play a sound file just pass a String into the PlaySound Function With the filename of the WAV file you wish To play. To play music you must pass either a WAV Or a Mid file into the PlayMusic function. The example below uses the SND_LOOP flag, you may want To remove this If you don't want your sound To Loop
+
+
+
+
+Public Declare Function mciSendString Lib "WINMM.DLL" Alias "mciSendStringA" _
+  (ByVal lpstrCommand As String, ByVal lpstrReturnString As Any, _
+   ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
+
+Public Declare Function sndPlaySound Lib "WINMM.DLL" Alias "sndPlaySoundA" _
+   (ByVal lpszSoundName As String, ByVal uFlags As Long) As Long
+
+Public Const SND_SYNC = &H0
+Public Const SND_ASYNC = &H1
+Public Const SND_NODEFAULT = &H2
+Public Const SND_LOOP = &H8
+Public Const SND_NOSTOP = &H10
+
+
+
+Public Sub PlayMusic(lsFilename As String)
+    Dim ret As Integer
+    Dim S As String
+      
+    S = "open " & lsFilename & " Type sequencer Alias gMusic"
+    ret = mciSendString(S, 0&, 0, 0)
+    ret = mciSendString("play gMusic", 0&, 0, 0)
+End Sub
+
+Public Sub StopMusic()
+    Dim ret As Integer
+    ret = mciSendString("close gMusic", 0&, 0, 0)
+End Sub
+
+'Loops a sound
+Public Sub PlaySound(lsFilename As String)
+   Dim wFlags As Long
+   Dim x As Long
+
+   wFlags = SND_ASYNC Or SND_NODEFAULT Or SND_LOOP
+   x = sndPlaySound(lsFilename, wFlags)
+End Sub
+
+'Stops a sound from playing
+Public Sub StopSound()
+    Dim x As Long
+    Dim wFlags As Long
+
+    wFlags = SND_ASYNC Or SND_NODEFAULT
+    x = sndPlaySound("", wFlags)
+End Sub
+

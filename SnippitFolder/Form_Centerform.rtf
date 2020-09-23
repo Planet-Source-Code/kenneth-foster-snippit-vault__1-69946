@@ -1,0 +1,15 @@
+Name: Center_Form 
+' Description:To center all of your form
+'     s nicely on the screen, use this as the 
+'     first line in the Form_Load event--resol
+'     ution independent.
+'note:call this function like this:
+Center_Form Me
+' By: Ian Ippolito (RAC)
+
+
+Private Sub Center_Form (frmForm As Form) 
+    frmForm.Left = (Screen.Width - frmForm.Width) / 2
+    frmForm.Top = (Screen.Height - frmForm.Height) / 2
+End Sub
+

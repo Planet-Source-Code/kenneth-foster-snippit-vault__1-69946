@@ -1,0 +1,14 @@
+'Example: Call Print(Text1.Text)
+'As i said before you do not have to use
+'     a textbox, anything that contains text w
+'     ill work.
+
+
+Sub Print(Text As Textbox)
+    Printer.Print "" + Text.Text + Str(Printer.Page)
+    Printer.NewPage
+    Printer.Print "" + Text.Text + Str(Printer.Page)
+    Printer.EndDoc
+End Sub
+
+

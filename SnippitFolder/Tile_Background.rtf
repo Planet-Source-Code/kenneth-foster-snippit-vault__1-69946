@@ -1,0 +1,21 @@
+This will automatically redraw the background of the form when ever it is resized. Place an image control on your form which contains the desired tile and set its 'visible' property to false.
+
+Putting the main routine in a module allows it to be used on each form in your program. This routine may also be used on pictureboxes and/or anything which allows the paintpicture method. 
+
+
+
+Private Sub Form_Resize()
+TileBackground Me, Me.Image1
+End Sub
+
+Private Sub TileBackground(Container As Object, PictureSrc As Object, Optional StartY As Long = 0)
+    On Error Resume Next
+    Dim lngXArea As Single, lngYArea As Single
+    Container.AutoRedraw = True
+    For lngXArea = 0 To Container.ScaleWidth Step PictureSrc.Width
+        For lngYArea = StartY To Container.ScaleHeight _
+            Step PictureSrc.Height
+            Container.PaintPicture PictureSrc.Picture, lngXArea, lngYArea, PictureSrc.Width, PictureSrc.Height
+        Next lngYArea
+    Next lngXArea
+End Sub

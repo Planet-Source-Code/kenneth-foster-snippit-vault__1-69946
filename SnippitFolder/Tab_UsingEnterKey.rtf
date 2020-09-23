@@ -1,0 +1,27 @@
+' Set the KeyPreview Property of the form To True, and ' include the following code: 
+'Does not work with command keys
+
+
+Sub Form_KeyDown (KeyCode as Integer, Shift as Integer)  
+    ' To trick the system to think 
+    ' the Tab key was pressed
+    If KeyCode = 13 Then SendKeys "{TAB}"  
+End Sub  
+
+
+Sub Form_KeyPress (KeyAscii as Integer)  
+    ' To eliminate the annoying beep
+    If KeyAscii = 13 Then KeyAscii = 0  
+End Sub  
+
+or use this, its simplier 
+
+Private Sub Form_KeyPress(KeyAscii as Integer)  
+If KeyAscii = vbKeyReturn Then 
+ SendKeys "{TAB}"  
+KeyAscii = 0 
+ End If 
+ End Sub  
+
+
+

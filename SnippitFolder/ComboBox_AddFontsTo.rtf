@@ -1,0 +1,15 @@
+Option Explicit
+
+Private Sub Command1_Click()
+Text1.Text = cmbFont.Text
+End Sub
+
+Private Sub Form_Load()
+'add textbox, combobox and command button to form
+
+Dim I As Integer ' Declare variable.
+    For I = 0 To Screen.FontCount - 1
+cmbFont.AddItem Screen.Fonts(I)
+Next I
+
+End Sub

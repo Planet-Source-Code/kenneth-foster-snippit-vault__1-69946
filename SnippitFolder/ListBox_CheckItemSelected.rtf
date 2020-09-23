@@ -1,0 +1,27 @@
+'need two listboxes and a command button
+'set Multiselect to extended on listbox1
+
+Private Sub Command1_Click() 
+Dim X as Integer 
+
+List2.Clear 
+For X = 0 To List1.ListCount - 1 
+    If List1.Selected(X) = True Then 
+        List2.AddItem List1.List(X) 
+    End If 
+Next 
+
+End Sub 
+
+' example of use
+
+Private Sub Form_Load() 
+Dim N as Integer 
+
+For N = 1 To 10 
+    List1.AddItem "Item Number " & N 
+
+Next 
+
+End Sub 
+

@@ -1,0 +1,26 @@
+Private SettedX As Integer, SettedY As Integer
+Private Dragging As Boolean
+
+
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single) 
+    SettedX = X
+    SettedY = Y
+    Dragging = True
+End Sub
+
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+
+    If Dragging Then
+        Me.Left = Me.Left + (X - SettedX)
+        Me.Top = Me.Top + (Y - SettedY)
+    End If
+End Sub
+
+
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Dragging = False
+End Sub
+

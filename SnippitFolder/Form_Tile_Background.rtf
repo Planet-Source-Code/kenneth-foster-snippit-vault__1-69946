@@ -1,0 +1,13 @@
+
+
+Private Sub Form_Paint()
+ Dim X As Integer
+   Dim Y As Integer
+
+   For X = 0 To Width Step ScaleX(Me.Picture.Width)
+      For Y = 0 To Height Step ScaleY(Me.Picture.Height)
+         Me.PaintPicture Me.Picture, X, Y
+      Next
+   Next
+
+End Sub

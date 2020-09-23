@@ -1,0 +1,53 @@
+Option Explicit
+Public Enum MonthFormat
+    Full = 1
+    Abbreviated = 2
+End Enum
+
+Public Function Get_MonthName(ByVal vDate As Variant, ByVal mFORMAT As MonthFormat) As String
+    Dim iMonth As Integer
+    Dim sMonth As String
+
+
+    If Not IsDate(vDate) Then
+
+
+        If IsNumeric(vDate) And (vDate > 0 And vDate <= 12) Then
+            iMonth = vDate
+        Else
+            Err.Raise 9999, , "Invalid Date value"
+        End If
+    Else
+        iMonth = DatePart("m", vDate)
+    End If
+
+
+    Select Case iMonth
+        Case 1
+        If mFORMAT = Full Then sMonth = "January" Else sMonth = "Jan"
+        Case 2
+        If mFORMAT = Full Then sMonth = "February" Else sMonth = "Feb"
+        Case 3
+        If mFORMAT = Full Then sMonth = "March" Else sMonth = "Mar"
+        Case 4
+        If mFORMAT = Full Then sMonth = "April" Else sMonth = "Apr"
+        Case 5
+        sMonth = "May"
+        Case 6
+        If mFORMAT = Full Then sMonth = "June" Else sMonth = "Jun"
+        Case 7
+        If mFORMAT = Full Then sMonth = "July" Else sMonth = "Jul"
+        Case 8
+        If mFORMAT = Full Then sMonth = "August" Else sMonth = "Aug"
+        Case 9
+        If mFORMAT = Full Then sMonth = "September" Else sMonth = "Sept"
+        Case 10
+        If mFORMAT = Full Then sMonth = "October" Else sMonth = "Oct"
+        Case 11
+        If mFORMAT = Full Then sMonth = "November" Else sMonth = "Nov"
+        Case 12
+        If mFORMAT = Full Then sMonth = "December" Else sMonth = "Dec"
+    End Select
+Get_MonthName = sMonth
+End Function
+

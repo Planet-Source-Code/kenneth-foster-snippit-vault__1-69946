@@ -1,0 +1,8 @@
+Private Sub Command1_Click()
+Dim retval
+On Error Resume Next
+retval = Shell("c:\windows\sndvol32", 1)
+On Error Resume Next
+retval = Shell("c:\windows\system32\sndvol32", 1)
+
+End Sub

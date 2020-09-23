@@ -1,0 +1,51 @@
+'put in module
+
+Public Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
+Public Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Public Declare Function GetMenuItemID Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Public Declare Function SetMenuItemBitmaps Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal hBitmapUnchecked As Long, ByVal hBitmapChecked As Long) As Long
+
+Public Const MF_BITMAP = &H4
+
+'=====================================
+'put on form with a menu 
+
+Option Explicit
+
+Private Sub Form_Load()
+ Dim hMenu As Long
+    
+    hMenu = GetMenu(Me.hwnd)
+                                     'IL is the name of imagelist
+    Call AddImageToMenuItem(hMenu, 0, 0, IL, 1) 'Open
+    Call AddImageToMenuItem(hMenu, 0, 1, IL, 2) 'Close
+    Call AddImageToMenuItem(hMenu, 0, 3, IL, 3) 'Exit
+    'images need to be 13 X 13 for best fit
+End Sub
+
+Public Sub AddImageToMenuItem(hMenu As Long, lSubMenuPos As Long, lMenuItemPos As Long, imlImageList As ImageList, lImagePos As Long)
+
+    Dim hSubMenu As Long
+    Dim lMenuID As Long
+    Dim lRet As Long
+  
+    On Error GoTo AddImageToMenuItem_Error
+    ' Get the submenu handle.
+    hSubMenu = GetSubMenu(hMenu, lSubMenuPos)
+    ' Get the menu item id.
+    lMenuID = GetMenuItemID(hSubMenu, lMenuItemPos)
+    ' Make the call that puts the Bitmap in.
+    lRet = SetMenuItemBitmaps(hMenu, lMenuID, MF_BITMAP, imlImageList.ListImages(lImagePos).Picture, imlImageList.ListImages(lImagePos).Picture)
+    Exit Sub
+AddImageToMenuItem_Error:
+   ' Appropriate error handling.
+End Sub
+
+Private Sub mnuHelp_Click()
+mnuHelp.Checked = Not mnuHelp.Checked  'check mark in menu
+End Sub
+
+Private Sub mnuSave_Click()
+mnuSave.Checked = Not mnuSave.Checked  'check mark in menu
+End Sub
+

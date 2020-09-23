@@ -1,0 +1,48 @@
+
+'Save array example
+
+Private Sub cmdSave_Click()
+   Dim FileName As String
+   Dim Free As Long
+   
+   FileName = App.Path & "\" & "ColorPal"    'name of file to be saved to
+   
+   If FileName <> "" Then
+     
+      Free = FreeFile
+      
+      Open FileName For Binary As #Free
+      Put #Free, , ValMain   'this is the array to be saved
+      Close #Free
+   End If
+   
+End Sub
+
+'----------------------------------------------------------------------------------------------------
+
+'load array example
+
+Private Sub cmdload_Click()
+   Dim FileName As String
+   Dim Y As Integer
+   Dim X As Long
+   
+   FileName = App.Path & "\" & "ColorPal"  'file where array is saved
+   
+   If FileName <> "" Then
+      Dim Free As Long
+      
+      Free = FreeFile
+      
+      Open FileName For Binary As #Free
+      Get #Free, , ValMain   'the array to load
+      Close #Free
+   End If
+
+   'put values in array
+   For Y = 0 To 10
+      X = ValMain(Y)
+      lblCol(Y).BackColor = X
+   Next Y
+   
+ End Sub

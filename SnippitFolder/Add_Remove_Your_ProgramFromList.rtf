@@ -1,0 +1,23 @@
+Dim o as New WshShell 
+
+Public Sub list_add(prg_nm as String, uni_cmd as String)   
+
+'adding a program to the list of program ' s in 'Add/Remove Programs' 
+'args: display name, uninstall command 
+
+o.RegWrite "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\" & prg_nm & "\DisplayName", prg_nm  
+o.RegWrite "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\" & prg_nm & "\UninstallString", uni_cmd 
+
+ End Sub  
+
+Public Sub list_rem(prg_nm as String)   
+'removing a program from the list of pro ' grams in 'Add/Remove Programs' 
+'args: display name 
+
+o.RegDelete "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\" & prg_nm  
+End Sub  
+
+
+
+
+

@@ -1,0 +1,60 @@
+'Example Usage
+'=-=-=-=-=-=-=-=-=
+'ListFindAndRemove lstProcesses, "System
+'     "
+'This will search the contents of the li
+'     stbox and delete
+'any occurance of the word "System"
+'ListFindAndReplace lstProcesses, "Syste
+'     m", "Replacement Text"
+'Searches the listbox for the word "Syst
+'     em" and replaces any
+'occurance of it with the words "Replace
+'     ment Text"
+
+
+Public Function ListFindAndRemove(ListBox As ListBox, sSearchText As String)
+    Dim i As Integer
+    'Loop through the contents of the listbo
+    '     x
+
+
+    For i = 0 To ListBox.ListCount - 1
+        Dim sCurrentItem As String
+        'Place the current item in a variable
+        sCurrentItem = ListBox.List(i)
+        'Compare the current item with the strin
+        '     g specified
+
+
+        If sCurrentItem = sSearchText Then
+            'If we find it remove it
+            ListBox.RemoveItem (i)
+        End If
+    Next i
+End Function
+
+
+Public Function ListFindAndReplace(ListBox As ListBox, sSearchText As String, sReplacementText As String)
+    Dim i As Integer
+    'Loop through the contents of the listbo
+    '     x
+
+
+    For i = 0 To ListBox.ListCount - 1
+        Dim sCurrentItem As String
+        'Place the current item in a variable
+        sCurrentItem = ListBox.List(i)
+        'Compare the current item with the strin
+        '     g specified
+
+
+        If sCurrentItem = sSearchText Then
+            'If we find it remove it
+            ListBox.RemoveItem (i)
+            'Replace it with the specified text
+            ListBox.AddItem sReplacementText, i
+        End If
+    Next i
+End Function
+

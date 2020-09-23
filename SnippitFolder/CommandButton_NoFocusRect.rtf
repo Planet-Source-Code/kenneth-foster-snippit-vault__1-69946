@@ -1,0 +1,43 @@
+'Put in module
+'ex.: NoFocusRect Command1, True
+
+Option Explicit
+Private Const GWL_WNDPROC         As Long = (-4)
+Private Const WM_SETFOCUS         As Long = &H7
+Private StandardButtonProc        As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal HWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal HWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+Private Function ButtonProc(ByVal HWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
+'The procedure that gets all windows messages for the subclassed
+'button
+
+    On Error Resume Next
+        Select Case uMsg&
+        Case WM_SETFOCUS 'The button is going to get the focus
+            'Exit the procedure -> The message doesn´t reach the button
+            Exit Function
+        End Select
+        'Call the standard Button Procedure
+        ButtonProc = CallWindowProc(StandardButtonProc, HWnd&, uMsg&, wParam&, lParam&)
+
+End Function
+
+Public Sub NoFocusRect(Button As Object, vValue As Boolean)
+
+'Focus rect off
+
+    If vValue Then
+        'Save the adress of the standard button procedure
+        StandardButtonProc = GetWindowLong(Button.HWnd, GWL_WNDPROC)
+        'Subclass the button to control its Windows Messages
+        SetWindowLong Button.HWnd, GWL_WNDPROC, AddressOf ButtonProc
+    Else 'Focus rect on
+        'Remove the subclassing from the button
+        SetWindowLong Button.HWnd, GWL_WNDPROC, StandardButtonProc
+    End If
+
+End Sub
+

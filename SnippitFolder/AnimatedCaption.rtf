@@ -1,0 +1,7 @@
+Private Sub animation_Timer()
+txt = Space(60) & "Written By Ken Foster" & Space(5)
+s = s + 1
+Me.Caption = Mid(txt, s, 60)
+If s = Len(txt) Then s = 0
+End Sub
+

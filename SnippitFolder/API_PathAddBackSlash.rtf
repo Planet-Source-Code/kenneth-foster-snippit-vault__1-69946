@@ -1,0 +1,13 @@
+Private Declare Function PathAddBackslash Lib "shlwapi.dll" Alias "PathAddBackslashA" (ByVal Path As String) As Long
+
+
+Private Sub Form_Load()
+
+Dim sPath As String
+sPath = "C:\TEST"
+PathAddBackslash (sPath)
+MsgBox sPath
+
+
+End Sub
+

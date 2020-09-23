@@ -1,0 +1,9 @@
+
+Dim gExt as String
+Dim newName as String
+Dim savename as String
+
+
+      gExt = Right$(strPath, Len(strPath) - InStrRev(strPath, "."))
+      newName = Left$(strPath, Len(strPath) - 4)
+      savename = newName & ".jpg"

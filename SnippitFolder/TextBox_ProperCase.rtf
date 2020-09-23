@@ -1,0 +1,11 @@
+
+
+
+Private Sub txtProperCase_Change()
+Dim intCtr As Integer
+    intCtr = txtProperCase.SelStart
+    txtProperCase.Text = StrConv(txtProperCase, vbProperCase)
+    txtProperCase.SelStart = intCtr
+
+End Sub
+

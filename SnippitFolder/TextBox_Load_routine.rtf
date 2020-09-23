@@ -1,0 +1,23 @@
+
+
+Function FileText(ByVal filename As String) As String
+    Dim handle As Integer
+    
+    ' ensure that the file exists
+    If Len(Dir$(filename)) = 0 Then
+        Err.Raise 53   ' File not found
+    End If
+    
+    ' open in binary mode
+    handle = FreeFile
+    Open filename$ For Binary As #handle
+    ' read the string and close the file
+    FileText = Space$(LOF(handle))
+    Get #handle, , FileText
+    Close #handle
+End Function
+
+
+This method is much faster than reading each single line of the file using a Line Input statements. Here's how you can load a multiline textbox control with the contents of Autoexec.bat: 
+Text1.Text = FileText("c:\autoexec.bat")
+

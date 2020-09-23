@@ -1,0 +1,48 @@
+Add this code to a Module:
+Option Explicit
+Private Declare Function FindWindowEx Lib "user32" Alias _
+        "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, _
+        ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
+
+Private Declare Function SHAutoComplete Lib "Shlwapi.dll" _
+        (ByVal hWndEdit As Long, ByVal dwFlags As Long) As Long
+
+' Currently (SHACF_FILESYSTEM | SHACF_URLALL)
+Private Const SHACF_DEFAULT  As Long = &H0
+' This includes the File System as well as the rest of the shell 
+' (Desktop\My Computer\Control Panel\)
+Private Const SHACF_FILESYSTEM As Long = &H1
+' URLs in the User's History
+Private Const SHACF_URLHISTORY As Long = &H2
+' URLs in the User's Recently Used list.
+Private Const SHACF_URLMRU As Long = &H4
+' Both File System and URLs in the User's History
+Private Const SHACF_URLALL As Long = (SHACF_URLHISTORY Or SHACF_URLMRU)
+Public Function DoAutocomplete(ObjX As Object) As Long
+    
+    Dim hWndEdit As Long
+    
+    If TypeOf ObjX Is TextBox Then
+        ' Just set the edit field hWnd to the
+        ' textbox hWnd as a textbox is an
+        ' edit field
+        hWndEdit = ObjX.hWnd
+    ElseIf TypeOf ObjX Is ComboBox Then
+        ' Get edit field of the combobox
+        hWndEdit = FindWindowEx(ObjX.hWnd, 0, "EDIT", vbNullString)
+    Else
+        ' No edit field
+        DoAutocomplete = 0
+        Exit Function
+    End If
+    
+    ' Apply the autocomplete functionality
+    DoAutocomplete = SHAutoComplete(hWndEdit, SHACF_DEFAULT)
+    
+End Function
+'-- End --'
+ 
+To use the code add this line to fx. the Form_Load event:
+   DoAutoComplete Text1
+.. This will make the object named Text1 have autocomplete functionality. You can easily change the autocomplete functionality. By exchanging SHACF_DEFAULT with fx. SHACF_FILESYSTEM in the DoAutocomplete function (marked with bold red text) you can make the autocomplete function only show files on the local system (like the address bar in Windows Explorer).
+

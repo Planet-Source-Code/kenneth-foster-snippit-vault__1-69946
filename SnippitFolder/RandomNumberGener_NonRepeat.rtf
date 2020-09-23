@@ -1,0 +1,59 @@
+'Items needed on form:
+'txtIn(0),txtIn(1) array(2 Text boxes for input of number range) + Text1(to display the string of random nos.), Command1
+Option Explicit
+'Array to store the numbers
+Dim RanNo() As Long
+
+Private Sub RandomizeNumbers(ByVal lngFrom As Long, ByVal lngTo As Long)
+    Dim i As Long
+    Dim j As Long
+    Dim tmp As Long
+    
+    'Redim array
+    ReDim RanNo(lngFrom To lngTo)
+    
+    'Assign the numbers from x to xx
+    For i = lngFrom To lngTo
+        RanNo(i) = i
+    Next i
+    
+      
+    'Swap the numbers randomly with other numbers in the array
+    For i = lngFrom To lngTo
+        'Get a random number
+        j = CLng((lngTo - lngFrom) * Rnd + lngFrom)
+        
+        'Swap the random position with the current position
+        tmp = RanNo(i)
+        RanNo(i) = RanNo(j)
+        RanNo(j) = tmp
+    Next i
+End Sub
+
+Private Sub Command1_Click()
+    Dim Str As String
+    Dim i As Long
+        
+    'Set the mouse pointer to a hourglass
+    Screen.MousePointer = vbHourglass    
+       
+    'Randomize the numbers from x to xx
+    RandomizeNumbers txtIn(0), txtIn(1)        
+        'I use a string to concatenate the values and then assign it to the
+        'textbox
+        Str = ""
+        For i = txtIn(0) To txtIn(1)
+            Str = Str & RanNo(i) & " "
+        Next i
+        
+        'Assign the results!
+        Text1.Text = Str
+       
+    'Set the mouse pointer to normal
+    Screen.MousePointer = vbNormal
+End Sub
+
+Private Sub Form_Load()
+
+End Sub
+

@@ -1,0 +1,57 @@
+' needs 6 command buttons,1 textbox, 1 combobox,1 webcontrol
+
+Private Sub Form_Load()
+    Command1.Caption = "Back"
+    Command2.Caption = "Forward"
+    Command3.Caption = "Refresh"
+    Command4.Caption = "Stop"
+    Command5.Caption = "Home"
+    Command6.Caption = "Go"
+    frmWebBrows.WindowState = 0
+    Combo1.AddItem "http://www.hungrymonster.com/recipe/recipe-search.cfm"
+    Combo1.AddItem "http://www.foodtv.com"
+    Combo1.AddItem "http://www.cdkitchen.com/search/allsearch.shtml"
+    Combo1.AddItem "http://www.copykat.com/asp/recipes.asp"
+End Sub
+
+Private Sub Combo1_Click()
+    WebBrowser1.Navigate (Combo1.Text)
+End Sub
+
+Private Sub Command1_Click()
+    On Error Resume Next
+    WebBrowser1.GoBack
+End Sub
+
+Private Sub Command2_Click()
+    On Error Resume Next
+    WebBrowser1.GoForward
+End Sub
+
+Private Sub Command3_Click()
+    WebBrowser1.Refresh
+End Sub
+
+Private Sub Command4_Click()
+    WebBrowser1.Stop
+End Sub
+
+Private Sub Command5_Click()
+  If Combo1.Text = "" Then Exit Sub
+  WebBrowser1.Navigate (Combo1.Text)
+End Sub
+
+Private Sub Command6_Click()
+    If Text1.Text = "" Then Exit Sub
+    WebBrowser1.Navigate (Text1.Text)
+End Sub
+
+Private Sub Form_Resize()
+   WebBrowser1.Width = frmWebBrows.Width - 500
+   WebBrowser1.Height = frmWebBrows.Height - 1800
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+   Unload Me
+End Sub
+

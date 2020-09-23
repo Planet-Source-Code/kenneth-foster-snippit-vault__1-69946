@@ -1,0 +1,14 @@
+
+Private Sub Form_Load()
+Dim ifn, iloop As Integer
+Dim sline As String
+inf = FreeFile
+Open App.Path & "\listsource.txt" For Input As #inf
+
+Do Until EOF(inf) = True
+    Line Input #inf, sline
+    Form1.Combo1.AddItem sline
+Loop
+
+Close #inf
+End Sub

@@ -1,0 +1,43 @@
+Smart Tab key processing in multiline TextBox controls 
+The only way for a Tab key to insert a tab character in a multiline text box is that the text box is the only control on the form, or at least the only control whose TabStop property is set to True. Otherwise, pressing the Tab key you simply move the focus to another control on the form. 
+If there are other controls on the form that could receive the input focus, you have to manually set their TabStop property to False when the text box gets the focus, and restore to True when the user moves the focus elsewhere, by either clicking on another control or pressing a hotkey. The best method to do that is creating a general routine that does the job and that can easily be reused in all your apps: 
+
+Sub DisableTabStops(Optional restoreIt As Variant)
+    Static saveTabStop(255) As Boolean
+    Dim index As Integer
+    Dim currForm As Form
+        
+    ' not all controls support TabStop property
+    On Error Resume Next
+    Set currForm = Screen.ActiveForm
+    If IsMissing(restoreIt) Then restoreIt = False
+    
+    If restoreIt = False Then
+        ' save current value of TabStop property
+        ' before setting it to False
+        For index = 0 To currForm.Controls.Count - 1
+            saveTabStop(index) = currForm.Controls(index).TabStop
+            currForm.Controls(index).TabStop = False
+        Next
+    Else
+        ' restore previous settings
+        For index = 0 To currForm.Count - 1
+            currForm.Controls(index).TabStop = saveTabStop(index)
+            saveTabStop(index) = False
+        Next
+    End If
+            
+End Sub
+You call this routine from the GotFocus and LostFocus events, as follows: 
+
+Private Sub Text1_GotFocus()
+    ' disable TabStop for all controls
+    DisableTabStops
+End Sub
+
+Private Sub Text1_LostFocus()
+    ' restore previous settings
+    DisableTabStops True
+End Sub
+Note that within standard (non-multiline) text boxes, the Tab key never adds a vbTab character; if the control is the only control on the form with TabStop = True, pressing the Tab key has no effect on input focus and you only get a beep. 
+

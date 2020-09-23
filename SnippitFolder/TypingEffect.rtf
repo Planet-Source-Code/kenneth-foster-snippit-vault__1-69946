@@ -1,0 +1,41 @@
+
+
+Option Explicit
+Sub delay(time)
+Dim Start As Single
+    Start = Timer
+    Do While Timer - Start < time
+        DoEvents
+    Loop
+End Sub
+
+Private Sub Command1_Click()
+    
+TypingEffect "Hi! Nice chatting with you, my name is Rex.....", _
+   0.15
+
+End Sub
+
+Private Sub TypingEffect(msg As String, time)
+    
+    Dim msgLen As Integer
+    Dim currIndex As Integer
+    Dim currChar As String
+    Dim currText As String
+        
+    msgLen = Len(msg)
+    
+    Do While currIndex <= msgLen
+        DoEvents
+            currIndex = currIndex + 1
+            currChar = Mid(msg, currIndex, 1)
+            
+            currText = currText & currChar
+            Text1.Text = currText
+            delay time
+            
+        DoEvents
+     Loop
+
+End Sub
+

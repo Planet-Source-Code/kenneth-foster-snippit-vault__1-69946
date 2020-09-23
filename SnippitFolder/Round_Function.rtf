@@ -1,0 +1,49 @@
+Public Function Round17(ByRef v As Double, Optional ByVal lngDecimals As Long = 0) As Double
+
+' By Filipe Lage
+' ICQ# 3988308
+' MSN: fclage@clix.pt
+' Email: ask me :)
+Dim xint As Double, yint As Double, xrest As Double
+Static PreviousValue As Double
+Static PreviousDecimals As Long
+Static PreviousOutput As Double
+Static m As Double
+If m = 0 Then m = 1 ' Default... M is never 0 (it is always 10 ^n)
+
+If PreviousValue = v And PreviousDecimals = lngDecimals Then
+Round17 = PreviousOutput: Exit Function ' Hey... it's the same number and decimals as before...
+' So, the actual result is the same. No ' need to recalc it
+End If
+
+If v = 0 Then Exit Function ' no matter what rounding is made, 0 is always rounded to 0
+
+If PreviousDecimals = lngDecimals Then
+Else
+PreviousDecimals = lngDecimals
+m = 10 ^ lngDecimals ' A different decimal places, means a new Multiplier
+End If
+
+
+If m = 1 Then xint = v Else xint = v * m ' Let's consider the multiplication of the number by the multiplier
+
+yint = Fix(xint) ' The real integer of the number (unlike INT, FIX reports the actual number)
+
+xrest = CDec(xint - yint) ' Let's get the fraccion of the difference
+
+If xint - yint <> xrest Then xrest = Abs(CCur(xint - yint)) ' This should be impossible... right ? Wrong...
+' Some double returns 0.99999999999 in a ' difference between 2 and 1 for example' r> ' And it's basically the reason for VB r ' ounds to fail
+' But that's another story ;)... So basi ' cally, we detect it and use a diff metho ' d
+' Safe for rounding 1.X to 1 or 2.
+
+Round17 = yint ' Assuming the integer. We'll add +1 or -1 if it is going to be rounded up
+
+If Abs(xrest) >= 0.5 Then Round17 = Round17 + Sgn(v)
+' Rounding is being done (Round of 0.5 m ' eans 0 + round(1.5)-1 => 1)
+' This means that VB Rounding is done, b ' ut without the banker's rounding
+
+If m = 1 Then Else Round17 = Round17 / m ' We only need to devide again if M isn't 1
+
+PreviousOutput = Round17 ' Let's memorise this last result
+PreviousValue = v
+End Function

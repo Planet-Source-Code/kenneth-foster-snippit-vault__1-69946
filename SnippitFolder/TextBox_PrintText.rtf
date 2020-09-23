@@ -1,0 +1,142 @@
+Public Function PrintText(TextBox As Control, ByVal LeftMargin As Double, ByVal RightMargin As Double, ByVal TopMargin As Double, ByVal BottomMargin As Double, ByVal PrintSelectedOnly As Boolean) As Boolean
+    ' Prints the contents of a text box.
+    ' Returns True On success; False On failure.
+    
+    ' PARAMETERS:
+    '   TextBox
+    '       Reference To a text box (e.g. Text1)
+    '   LeftMargin, RightMargin, TopMargin, BottomMargin
+    '       Amount of space To leave around the page
+    '       (units depend upon the printer's ScaleMode)
+    '   PrintSelectedOnly
+    '       Set To True To print just the selected text;
+    '       False To print the entire contents of the text box
+    
+    Dim PrintAreaWidth#
+    Dim StartPara&, EndPara&
+    Dim SpaceFound&, TabFound&, TryBreak&, LineBreak&
+    Dim TextToPrint$, ParaText$, PrintLine$
+    
+    ' Abandon the Function If an Error occurs
+    On Error Goto PrintText_Err
+    
+    ' Put the text To be printed in TextToPrint$
+    TextToPrint$ = IIf(PrintSelectedOnly, TextBox.SelText, TextBox.Text)
+    If TextToPrint$ = "" Then Exit Function
+    
+    ' Calculate the maximum width of a Line of text
+    PrintAreaWidth# = Printer.ScaleWidth - LeftMargin - RightMargin
+    
+    ' Check that the margins are sensible
+    ' (taking the current paper size into consideration)
+    If PrintAreaWidth# <= 0 Then Exit Function
+    If Printer.ScaleHeight - TopMargin - BottomMargin <= 0 Then Exit Function
+    
+    ' Set printer font To the same as the text box's
+    Printer.Font.Name = TextBox.Font.Name
+    Printer.Font.Bold = TextBox.Font.Bold
+    Printer.Font.Charset = TextBox.Font.Charset
+    Printer.Font.Italic = TextBox.Font.Italic
+    Printer.Font.Size = TextBox.Font.Size
+    Printer.Font.Strikethrough = TextBox.Font.Strikethrough
+    Printer.Font.Underline = TextBox.Font.Underline
+    Printer.Font.Weight = TextBox.Font.Weight
+    
+    ' Start printing at the top margin, unless the printing
+    ' position is already further down the page
+    If Printer.CurrentY < TopMargin Then Printer.CurrentY = TopMargin
+    
+    StartPara& = 1
+    Do
+        ' Get Each paragraph of text in turn
+        EndPara& = InStr(StartPara&, TextToPrint$, vbCrLf)
+        If EndPara& = 0 Then EndPara& = Len(TextToPrint$) + 1
+        ParaText$ = Mid$(TextToPrint$, StartPara&, EndPara& - StartPara&)
+        
+        Do
+            If ParaText$ <> "" Then
+                ' Work out how much of the paragraph will fit
+                ' across the page before it has To be wrapped...
+                
+                ' First of all, try breaking the paragraph at a
+                ' space Or a tab
+                TryBreak& = 0
+                LineBreak& = 0
+                Do
+                    SpaceFound& = InStr(TryBreak& + 1, ParaText$, " ")
+                    TabFound& = InStr(TryBreak& + 1, ParaText$, vbTab)
+                    TryBreak& = IIf(TabFound& > 0 And TabFound& < SpaceFound&, TabFound&, SpaceFound&)
+                    If TryBreak& = 0 Then TryBreak& = Len(ParaText$) + 1
+                    If Printer.TextWidth(Left$(ParaText$, TryBreak& - 1)) <= PrintAreaWidth# Then
+                        LineBreak& = TryBreak&
+                    Else
+                        Exit Do
+                    End If
+                Loop Until TryBreak& > Len(ParaText$)
+                
+                ' If there is no space Or tab (just one Long word
+                ' taking up the whole line), break the word anywhere
+                If LineBreak& = 0 Then
+                    For TryBreak& = 1 To Len(ParaText$)
+                        If Printer.TextWidth(Left$(ParaText$, TryBreak& - 1)) > PrintAreaWidth# Then
+                            LineBreak& = TryBreak& - 1
+                            Exit For
+                        End If
+                    Next TryBreak&
+                    ' In the unlikely event that one huge character
+                    ' fills the width of the page, print it anyway,
+                    ' otherwise an infinite Loop will occur
+                    If LineBreak& = 0 Then LineBreak& = 1
+                End If
+                
+                ' Store the Line To be printed in PrintLine$,
+                ' leave the rest of the paragraph in ParaText$
+                PrintLine$ = Left$(ParaText$, LineBreak&)
+                If LineBreak& > Len(ParaText$) Then
+                    ParaText$ = ""
+                Else
+                    ParaText$ = LTrim$(Mid$(ParaText$, LineBreak&))
+                End If
+            Else
+                ' Print an empty Line If necessary
+                PrintLine$ = ""
+            End If
+                        
+            ' If Line won't fit onto this page, start a New page
+            If Printer.CurrentY + Printer.TextHeight(PrintLine$) > Printer.ScaleHeight     BottomMargin Then
+                Printer.NewPage
+                Printer.CurrentY = TopMargin
+            End If
+            
+            ' Set the horizontal printing position To the
+            ' appropriate place, depending upon the text alignment
+            Select Case TextBox.Alignment
+                Case vbLeftJustify
+                    Printer.CurrentX = LeftMargin
+                Case vbRightJustify
+                    Printer.CurrentX = Printer.ScaleWidth - RightMargin - Printer.TextWidth(PrintLine$)
+                Case vbCenter
+                    Printer.CurrentX = LeftMargin + (PrintAreaWidth# - Printer.TextWidth(PrintLine$)) / 2
+            End Select
+            
+            ' Print the Line
+            Printer.Print PrintLine$
+        
+            ' Continue printing lines until the entire paragraph
+            ' of text has been printed
+        Loop Until ParaText$ = ""
+        
+        ' Continue printing paragraphs until the entire piece
+        ' of text has been printed
+        StartPara& = EndPara& + 2
+    Loop Until EndPara& > Len(TextToPrint$)
+
+    ' Send the document To the printer
+    Printer.EndDoc
+    
+    ' Function successful
+    PrintText = True
+
+PrintText_Err:
+End Function
+

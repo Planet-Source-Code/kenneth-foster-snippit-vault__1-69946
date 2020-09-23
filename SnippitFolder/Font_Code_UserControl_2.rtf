@@ -1,0 +1,80 @@
+
+
+
+
+Private Const m_def_ForeColor = vbBlack
+
+Dim m_ForeColor As OLE_COLOR
+Dim m_Caption As String
+
+Private Sub UserControl_InitProperties()
+     Caption = Extender.Name
+     ForeColor = m_def_ForeColor
+     UserControl.FontSize = 30
+     UserControl.FontBold = True
+End Sub
+
+Public Property Get Caption() As String
+     Caption = m_Caption
+End Property
+
+Public Property Let Caption(NewCaption As String)
+     m_Caption = NewCaption
+     PropertyChanged "Caption"
+     ReSize
+End Property
+
+Public Property Get Font() As Font
+     Set Font = UserControl.Font
+End Property
+
+Public Property Set Font(ByVal NewFont As Font)
+     Set UserControl.Font = NewFont
+     PropertyChanged "Font"
+     ReSize
+End Property
+
+Public Property Get ForeColor() As OLE_COLOR
+   Let ForeColor = m_ForeColor
+End Property
+
+Public Property Let ForeColor(ByVal NewForeColor As OLE_COLOR)
+   Let m_ForeColor = NewForeColor
+   PropertyChanged "ForeColor"
+   ReSize
+End Property
+
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+     With PropBag
+          Caption = .ReadProperty("Caption", Extender.Name)
+          ForeColor = .ReadProperty("ForeColor", m_def_ForeColor)
+          Set UserControl.Font = PropBag.ReadProperty("Font", Ambient.Font)
+     End With
+    ReSize
+End Sub
+
+Private Sub UserControl_Resize()
+   ReSize
+End Sub
+
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+     With PropBag
+          Call .WriteProperty("Caption", m_Caption, Extender.Name)
+          Call .WriteProperty("ForeColor", m_ForeColor, m_def_ForeColor)
+          Call .WriteProperty("Font", UserControl.Font, Ambient.Font)
+     End With
+End Sub
+
+Private Sub ReSize()
+     With Label1
+        .Caption = m_Caption
+        .FontSize = UserControl.FontSize
+        .Font = UserControl.Font
+        .ForeColor = m_ForeColor
+        .Top = 0
+        .Left = 0
+        .Width = UserControl.Width
+        .Height = UserControl.Height
+      End With
+End Sub
+

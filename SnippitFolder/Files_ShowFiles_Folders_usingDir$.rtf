@@ -1,0 +1,39 @@
+
+
+Option Explicit
+
+Private Sub cmdExit_Click()
+    Unload Me                                                 '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End Sub
+
+Private Sub cmdShow_Click()
+    Dim sFile As String
+
+    Cls                                                 'Clear the screen
+    Font.Bold = True                                    'Bold font
+    Print "Files located on C:\"                        'Show header
+    Font.Bold = False                                   'Turn off bold font
+    sFile = Dir$("C:\", vbNormal)                       'Get first entry
+    Do Until Len(sFile) = 0                             'Loop until we run out (sFile will be empty)
+        Print "   " & sFile                             'Display what we found
+        sFile = Dir$                                    'Get next entry
+    Loop
+End Sub
+
+Private Sub cmdShowDir_Click()
+    Dim sFile As String
+
+    Cls                                                 'Clear the screen
+    Font.Bold = True                                    'Bold font
+    Print "Directories located on C:\"                  'Show header
+    Font.Bold = False                                   'Turn off bold font
+    sFile = Dir$("C:\", vbDirectory)                    'Get first entry
+    Do Until Len(sFile) = 0                             'Loop until we run out (sFile will be empty)
+        If Not sFile = "." And Not sFile = ".." Then    'If in a subdirectory, ignore the encompassing directories
+            If (GetAttr("C:\" & sFile) And vbDirectory) = vbDirectory Then '
+                Print "   " & sFile                     'Display what we found
+            End If
+        End If
+        sFile = Dir$                                    'Get next entry.
+    Loop
+End Sub

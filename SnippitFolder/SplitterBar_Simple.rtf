@@ -1,0 +1,50 @@
+Option Explicit
+
+Private Sub Form_Resize()
+    Dim nRatio As Integer
+    'align = 3-Align Left..in all three pic box property
+    'picSplitter.borderstyle = none
+    'put a control in each pic box except picSplitter
+    
+    If Not Me.WindowState = vbMinimized Then
+        nRatio = Val(picSplitter.Tag)
+        picLeftPane.Width = 2000 'Me.ScaleWidth * nRatio / 100 - 30
+        picRightPane.Width = Me.ScaleWidth - picLeftPane.Width - 60
+    End If
+End Sub
+
+
+Private Sub picLeftPane_Resize()
+
+    tvwMain.Move -15, -15, picLeftPane.ScaleWidth + 30, picLeftPane.ScaleHeight + 30
+    
+End Sub
+
+
+Private Sub picRightPane_Resize()
+
+    lvwMain.Move -15, -15, picRightPane.ScaleWidth + 30, picRightPane.ScaleHeight + 30
+    
+End Sub
+
+
+Private Sub picSplitter_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    Dim nNewRatio As Integer
+    
+    If Button = vbLeftButton Then
+        nNewRatio = (picSplitter.Left + X) / Me.ScaleWidth * 100
+        picSplitter.BackColor = vbBlue
+        If nNewRatio > 10 And nNewRatio < 90 Then
+            picLeftPane.Width = picSplitter.Left + X
+            picRightPane.Width = Me.ScaleWidth - picLeftPane.Width - 60
+            picSplitter.Tag = nNewRatio
+        End If
+    End If
+    
+End Sub
+
+Private Sub picSplitter_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+picSplitter.BackColor = &H8000000F
+End Sub
+

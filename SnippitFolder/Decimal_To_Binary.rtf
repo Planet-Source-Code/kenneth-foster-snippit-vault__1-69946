@@ -1,0 +1,33 @@
+Private Function DecToBin(dec)
+Dim ret As String
+Dim num As Variant
+Dim bin As Byte
+
+'############## Decimal To Binary ##############
+num = dec
+bin = 0
+ret$ = ""
+Do: DoEvents
+    num = num / 2
+        'If the division of num gives you a
+        'fraction, then subtract .5 and set the
+        'value of bin equal to 1
+        If InStr(1, num, ".", vbBinaryCompare) Then
+            num = num - 0.5
+            bin = 1
+        'If the division of num doesn't give
+        'you a fraction, the set bin equal
+        'to 0
+        Else
+            bin = 0
+        End If
+    'Input the binary first, and then the rest
+    'of the value of ret
+    ret = bin & ret$
+Loop Until num = 0
+'Make sure the return value is 8 digits long
+Do While Len(ret$) <> 8: DoEvents
+    ret = "0" & ret$
+Loop
+DecToBin = ret$
+End Function

@@ -1,0 +1,31 @@
+'Ex: Call SetHeight(Me, Text1, Text1)
+
+Public Sub SetHeight(frmForm As Form, txtlblControl As Control, strString As String)
+    Dim strParse() As String
+    Dim i As Integer
+    Dim intLines As Integer
+    Dim intFontSize As Integer
+    'SAVE EACH LINE OF THE STRING INTO AN AR
+    '     RAY, EDIT THE DELIMITER IF NECESSARY
+    strParse = Split(strString, Chr(10))
+    'RECORD THE FORM'S FONT SIZE BEFORE WE C
+    '     HANGE IT
+    intFontSize = frmForm.FontSize
+    'CHANGE THE FORM'S FONT SIZE TO THAT OF
+    '     THE CONTROL WE WANT
+    'TO RESIZE SO WE CAN USE THE TEXTWIDTH &
+    '     TEXTHEIGHT METHODS
+    frmForm.FontSize = txtlblControl.FontSize
+    'FIND OUT HOW MANY LINES ARE NECESSARY T
+    '     O FIT THE TEXT
+
+
+    For i = 0 To UBound(strParse)
+        intLines = intLines + (frmForm.TextWidth(strParse(i)) \ txtlblControl.Width) + 1
+    Next
+    'SET THE CONTROL'S HEIGHT
+    txtlblControl.Height = CLng(frmForm.TextHeight("WQRqjy") * (intLines + 1))
+    'RESET THE FORM'S FONT SIZE BACK TO ITS
+    '     ORIGINAL VALUE
+    frmForm.FontSize = intFontSize
+End Sub

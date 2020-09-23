@@ -1,0 +1,45 @@
+Function ToRoman(X As Integer) As String 
+    ' function provided by Jason Roozee
+    ' jason@vbhelp.com
+    ' www.VBHelp.com
+    Dim sFinished As String
+    sFinished = String(Int(X / 1000), "M")
+    X = X - (Int(X / 1000) * 1000)
+
+
+    If X >= 900 Then
+        sFinished = sFinished & "CM"
+    ElseIf X >= 500 And X < 900 Then
+        sFinished = sFinished & "D" & String(Int((X - 500) / 100), "C")
+    ElseIf X >= 400 And X < 500 Then
+        sFinished = sFinished & "CD"
+    Else
+        sFinished = sFinished & String(Int(X / 100), "C")
+    End If
+    X = X - (Int(X / 100) * 100)
+
+
+    If X >= 90 Then
+        sFinished = sFinished & "XC"
+    ElseIf X >= 50 And X < 90 Then
+        sFinished = sFinished & "L" & String(Int((X - 50) / 10), "X")
+    ElseIf X >= 40 And X < 50 Then
+        sFinished = sFinished & "XL"
+    Else
+        sFinished = sFinished & String(Int(X / 10), "X")
+    End If
+    X = X - (Int(X / 10) * 10)
+
+
+    If X >= 9 Then
+        sFinished = sFinished & "IX"
+    ElseIf X >= 5 And X < 9 Then
+        sFinished = sFinished & "V" & String(Int((X - 5) / 1), "I")
+    ElseIf X >= 4 And X < 5 Then
+        sFinished = sFinished & "IV"
+    Else
+        sFinished = sFinished & String(Int(X / 1), "I")
+    End If
+    ToRoman = sFinished
+End Function
+

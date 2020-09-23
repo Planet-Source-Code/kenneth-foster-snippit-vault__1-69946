@@ -1,0 +1,27 @@
+Option Explicit
+Dim b, a As Long
+
+Private Sub Command1_Click()
+Form1.Cls
+Form_Load
+Timer1.Enabled = True
+End Sub
+
+Private Sub Form_Load()
+b = 0
+a = Me.ScaleWidth
+End Sub
+
+Private Sub Form_Resize()
+Frame1.Top = Int(Me.Height / 2) - Int(Frame1.Height / 2)
+Frame1.Left = Int(Me.Width / 2) - Int(Frame1.Width / 2)
+End Sub
+
+Private Sub Timer1_Timer()
+b = b + 100
+a = a - 100
+Me.Line (0, b)-(b, Me.ScaleHeight), vbBlue
+Me.Line (Me.ScaleWidth, a)-(a, 0), vbYellow
+Me.Line (a, 0)-(0, b), vbGreen
+Me.Line (b, Me.ScaleHeight)-(Me.ScaleWidth, a), vbWhite
+End Sub

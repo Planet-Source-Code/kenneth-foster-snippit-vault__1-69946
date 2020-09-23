@@ -1,0 +1,44 @@
+
+
+Private Sub Command1_Click()
+Text1.Text = ExtractArgument(1, "Ken Foster,was,here", ",")
+End Sub
+
+Function ExtractArgument(ArgNum As Integer, srchstr As String, Delim As String) As String
+    'Extract an argument or token from a str
+    '     ing based on its position
+    'and a delimiter.
+    On Error GoTo Err_ExtractArgument
+    Dim ArgCount As Integer
+    Dim LastPos As Integer
+    Dim Pos As Integer
+    Dim Arg As String
+    Arg = ""
+    LastPos = 1
+    If ArgNum = 1 Then Arg = srchstr
+
+    Do While InStr(srchstr, Delim) > 0
+        Pos = InStr(LastPos, srchstr, Delim)
+
+        If Pos = 0 Then
+            'No More Args found
+            If ArgCount = ArgNum - 1 Then Arg = Mid(srchstr, LastPos)
+            Exit Do
+        Else
+            ArgCount = ArgCount + 1
+
+            If ArgCount = ArgNum Then
+                Arg = Mid(srchstr, LastPos, Pos - LastPos)
+                Exit Do
+            End If
+        End If
+        LastPos = Pos + 1
+    Loop
+    '---------
+    ExtractArgument = Arg
+    Exit Function
+Err_ExtractArgument:
+    MsgBox "Error " & Err & ": " & Error
+    Resume Next
+End Function
+

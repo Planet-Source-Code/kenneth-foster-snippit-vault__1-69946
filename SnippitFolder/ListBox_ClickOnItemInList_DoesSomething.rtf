@@ -1,0 +1,31 @@
+
+
+'Have you ever wanted, on a listbox, that when a certain item is click, something
+'happens, well, this is the coding for it
+'Do not use this as in a module, but in the form, im just showing how its done.
+
+Private Sub List1_Click()
+If List1.List(List1.ListIndex) = "Source" Then
+MsgBox "You Click Source in List1"
+End If
+End Sub
+
+'================
+'example
+'================
+
+Private Sub Form_Load()
+List1.AddItem "Hello"
+List1.AddItem "Source"
+End Sub
+
+Private Sub List1_Click()
+If List1.List(List1.ListIndex) = "Hello" Then
+'MsgBox "You Click Source in List1"
+Text1.Text = "Hello"
+Check1.Value = 0
+Else
+Text1.Text = "BYE"
+Check1.Value = 1
+End If
+End Sub

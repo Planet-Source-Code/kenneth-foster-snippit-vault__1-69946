@@ -1,0 +1,14 @@
+Option Explicit
+
+Private Declare Function HtmlHelp Lib "hhctrl.ocx" Alias "HtmlHelpA" _
+        (ByVal hwndCaller As Long, ByVal pszFile As String, _
+        ByVal uCommand As Long, ByVal dwData As Long) As Long
+
+Const HH_DISPLAY_TOPIC = &H0
+
+Private Sub Command1_Click()
+    Dim hwndHelp As Long
+   hwndHelp = HtmlHelp(hWnd, App.Path & "\mow_helpfile.chm", HH_DISPLAY_TOPIC, 0)
+
+End Sub
+

@@ -1,0 +1,11 @@
+'Move Focus when enter key is pressed
+'not functional on command buttons.
+'example with text box
+
+Sub Text1_KeyPress (KeyAscii As Integer)
+If KeyAscii = 13 Then
+SendKeys "{tab}"
+KeyAscii = 0
+End If
+End Sub
+

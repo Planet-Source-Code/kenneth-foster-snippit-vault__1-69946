@@ -1,0 +1,28 @@
+'need Text1,Command1 and Check1
+
+
+
+Private Sub Command1_Click()
+Dim Tem As Boolean
+If Check1.Value = 1 Then Tem = True
+Text1.Text = Convert(Text1, Tem)
+End Sub
+
+Private Sub Exit_Click(Index As Integer)
+Unload Me
+End Sub
+Private Function Convert(Num As Integer, Far As Boolean)
+Dim Output As String
+'Info----'
+'F = 9/5C + 32
+'C = 5/9{F - 32}
+If Far = True Then
+   Output = 9 / 5 * Num + 32
+   Label1.Caption = "F"
+Else
+   Output = 5 / 9 * (Num - 32)
+   Label1.Caption = "C"
+End If
+Convert = Output
+End Function
+

@@ -1,0 +1,72 @@
+
+
+Option Explicit 
+Private Declare Function SendMessageByNum Lib "user32" Alias "SendMessageA" _ 
+       (ByVal hwnd as Long, _ 
+        ByVal wMsg as Long, _ 
+        ByVal wParam as Long, _ 
+        ByVal lParam as Long) as Long 
+
+Private Const EM_LINEFROMCHAR as Long = &HC9 
+Private Const EM_LINEINDEX as Long = &HBB 
+Private Const EM_GETLINECOUNT as Long = &HBA 
+Private Const EM_LINESCROLL as Long = &HB6 
+
+'*******************
+' GetLineCount
+' Get the line count
+'*******************
+Public Function GetLineCount(tBox as Object) as Long 
+  GetLineCount = SendMessageByNum(tBox.hwnd, EM_GETLINECOUNT, 0&, 0&) 
+End Function 
+
+'*******************
+' GetLineNum
+' Get current line number
+'*******************
+Public Function GetLineNum(tBox as Object) as Long 
+  GetLineNum = SendMessageByNum(tBox.hwnd, EM_LINEFROMCHAR, tBox.SelStart, 0&) 
+End Function 
+
+
+'*******************
+' GetColPos
+' Get current Column
+'*******************
+Public Function GetColPos(tBox as Object) as Long 
+  GetColPos = tBox.SelStart - SendMessageByNum(tBox.hwnd, EM_LINEINDEX, -1&, 0&) 
+End Function 
+
+'*******************
+' AdjustTextDisplay
+' place current position
+' at top of display, and
+' scroll display up 2 lines
+'*******************
+Public Sub AdjustTextDisplay(tBox as Object) 
+  Dim cPos as Long 
+  Dim cLen as Long 
+
+  With tBox 
+    cPos = .SelStart       'Save selection 
+    cLen = .SelLength      'Save anything highlighted ' ACE="Courier New" SIZE="2" COLOR="#00008 ' 0"> 
+    .SelStart = Len(.Text) 'bottom of text 
+    .SelStart = cPos       'force top of display 
+    .SelLength = cLen      'reselecting any selection 
+    Call SendMessageByNum(tBox.hwnd, EM_LINESCROLL, 0&, -2&) 
+  End With 
+End Sub 
+
+Private Sub Text1_Change() 
+Me.lblLines.Caption = "Lines: " & CStr(GetLineCount(Me.Text1)) 
+Me.lblRow.Caption = "Row: " & CStr(GetLineNum(Me.Text1) + 1) 
+Me.lblCol.Caption = "Col: " & CStr(GetColPos(Me.Text1) + 1) 
+End Sub 
+
+Private Sub Text1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+lblLines.Caption = "Lines: " & CStr(GetLineCount(Text1))
+lblRow.Caption = "Row: " & CStr(GetLineNum(Text1) + 1)
+lblCol.Caption = "Col: " & CStr(GetColPos(Text1) + 1)
+End Sub
+
+

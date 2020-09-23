@@ -1,0 +1,134 @@
+' Name: Print Text Box Contents
+' Description:This function prints conte
+'     nts of a text box and returns True if su
+'     ccessful, False otherwise.
+' By: M. Jahedbozorgan
+'
+' Inputs:TextBox: Reference to the TextB
+'     ox which its text must be printed. (eg "
+'     Text1")
+LeftMargin, RightMargin, TopMargin, BottomMargin:
+Amount of Space To leave around the page. (Units depend upon the Printer's ScaleMode)
+PrintSelectedOnly: Set To True To Print just the selected Text; False To Print the entire contents
+of the TextBox.
+'
+' Returns:Returns True if successful, Fa
+'     lse otherwise.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/xq/ASP/txtCode
+'     Id.31119/lngWId.1/qx/vb/scripts/ShowCode
+'     .htm
+'for details.
+'**************************************
+
+
+
+Public Function PrintText(ByVal TextBox As Control, ByVal LeftMargin As Double, ByVal RightMargin As Double, ByVal TopMargin As Double, ByVal BottomMargin As Double, ByVal PrintSelectedOnly As Boolean) As Boolean
+    Dim PrintAreaWidth As Double
+    Dim StartPara As Long
+    Dim EndPara As Long
+    Dim SpaceFound As Long
+    Dim TabFound As Long
+    Dim TryBreak As Long
+    Dim LineBreak As Long
+    Dim TextToPrint As String
+    Dim ParaText As String
+    Dim PrintLine As String
+    On Error GoTo On_Error
+    TextToPrint = IIf(PrintSelectedOnly, TextBox.SelText, TextBox.Text)
+    If TextToPrint = "" Then Exit Function
+    PrintAreaWidth = Printer.ScaleWidth - LeftMargin - RightMargin
+    If PrintAreaWidth <= 0 Then Exit Function
+    If Printer.ScaleHeight - TopMargin - BottomMargin <= 0 Then Exit Function
+    Printer.Font.Name = TextBox.Font.Name
+    Printer.Font.Bold = TextBox.Font.Bold
+    Printer.Font.Charset = TextBox.Font.Charset
+    Printer.Font.Italic = TextBox.Font.Italic
+    Printer.Font.Size = TextBox.Font.Size
+    Printer.Font.Strikethrough = TextBox.Font.Strikethrough
+    Printer.Font.Underline = TextBox.Font.Underline
+    Printer.Font.Weight = TextBox.Font.Weight
+    If Printer.CurrentY < TopMargin Then Printer.CurrentY = TopMargin
+    StartPara = 1
+
+
+    Do
+        EndPara = InStr(StartPara, TextToPrint, vbCrLf)
+        If EndPara = 0 Then EndPara = Len(TextToPrint) + 1
+        ParaText = Mid$(TextToPrint, StartPara, EndPara - StartPara)
+
+
+        Do
+
+
+            If ParaText <> "" Then
+                TryBreak = 0
+                LineBreak = 0
+
+
+                Do
+                    SpaceFound = InStr(TryBreak + 1, ParaText, "")
+                    TabFound = InStr(TryBreak + 1, ParaText, vbTab)
+                    TryBreak = IIf(TabFound > 0 And TabFound < SpaceFound, TabFound, SpaceFound)
+                    If TryBreak = 0 Then TryBreak = Len(ParaText) + 1
+
+
+                    If Printer.TextWidth(Left$(ParaText, TryBreak - 1)) <= PrintAreaWidth Then
+                        LineBreak = TryBreak
+                    Else
+                        Exit Do
+                    End If
+                Loop Until TryBreak > Len(ParaText)
+
+
+                If LineBreak = 0 Then
+
+
+                    For TryBreak = 1 To Len(ParaText)
+
+
+                        If Printer.TextWidth(Left$(ParaText, TryBreak - 1)) > PrintAreaWidth Then
+                            LineBreak = TryBreak - 1
+                            Exit For
+                        End If
+                    Next TryBreak
+                    If LineBreak = 0 Then LineBreak = 1
+                End If
+                PrintLine = Left$(ParaText, LineBreak)
+
+
+                If LineBreak > Len(ParaText) Then
+                    ParaText = ""
+                Else
+                    ParaText = LTrim$(Mid$(ParaText, LineBreak))
+                End If
+            Else
+                PrintLine = ""
+            End If
+
+
+            If Printer.CurrentY + Printer.TextHeight(PrintLine) > Printer.ScaleHeight - BottomMargin Then
+                Printer.NewPage
+                Printer.CurrentY = TopMargin
+            End If
+
+
+            Select Case TextBox.Alignment
+                Case 0
+                Printer.CurrentX = LeftMargin
+                Case 1
+                Printer.CurrentX = Printer.ScaleWidth - RightMargin - Printer.TextWidth(PrintLine)
+                Case 2
+                Printer.CurrentX = LeftMargin + (PrintAreaWidth - Printer.TextWidth(PrintLine)) / 2
+            End Select
+        Printer.Print PrintLine
+    Loop Until ParaText = ""
+    StartPara = EndPara + 2
+Loop Until EndPara > Len(TextToPrint)
+Printer.EndDoc
+PrintText = True
+On_Error:
+End Function
+

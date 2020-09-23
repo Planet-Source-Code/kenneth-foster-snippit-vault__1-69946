@@ -1,0 +1,98 @@
+'Four command buttons: cmdPrint, cmdSave, cmdAbout, cmdClose
+'One Listbox = List1, used for the list
+'One Textbox = Text1, used for filename when saving
+
+
+Option Explicit
+
+Private Sub Form_Load()
+   LoadList
+   
+   'default filename
+   Text1.Text = "animals.txt"
+End Sub
+
+Private Sub cmdAbout_Click()
+   MsgBox "Another application from FidoWare" & vbCrLf & vbCrLf & "Software that bites back!"
+End Sub
+
+Private Sub cmdClose_Click()
+   Unload Me
+End Sub
+
+Private Sub cmdPrint_Click()
+
+   Dim lngCount As Long
+   
+   On Error GoTo ErrorExit
+   
+   Printer.Print "File printed: " & Now   'datetime stamp
+   Printer.Print ""     'blank line
+   
+   For lngCount = 0 To List1.ListCount
+      Printer.Print List1.List(lngCount)     'send text to printer object
+   Next
+   
+   Printer.EndDoc       'release printer object to printer
+   
+   MsgBox "File printed"
+   
+   Exit Sub
+
+ErrorExit:
+   Dim strErrMsg As String
+   strErrMsg = "Error number: " & Err.Number & vbCrLf & "Error Desc: " & Err.Description
+   MsgBox strErrMsg
+End Sub
+
+Private Sub cmdSave_Click()
+
+   Dim strFileName As String
+   Dim intFileNbr As Integer
+   Dim lngCount As Long
+   
+   On Error GoTo ErrorExit
+   
+   strFileName = App.Path & "\" & Text1.Text
+   intFileNbr = FreeFile
+   
+   Open strFileName For Output As #intFileNbr
+   Print #intFileNbr, "File created: " & Now   'datetime stamp
+   Print #intFileNbr, ""   'blank line
+   
+   For lngCount = 0 To List1.ListCount
+      Print #intFileNbr, List1.List(lngCount)
+   Next
+   
+   Close #intFileNbr
+   
+   MsgBox "File saved"
+   
+   Exit Sub
+
+ErrorExit:
+   Dim strErrMsg As String
+   strErrMsg = "Error number: " & Err.Number & vbCrLf & "Error Desc: " & Err.Description
+   MsgBox strErrMsg
+End Sub
+
+Private Sub LoadList()
+   List1.Clear
+   
+   List1.AddItem "dog"
+   List1.AddItem "cat"
+   List1.AddItem "hamster"
+   List1.AddItem "bear"
+   List1.AddItem "cow"
+   List1.AddItem "duck"
+   List1.AddItem "lizard"
+   List1.AddItem "pig"
+   List1.AddItem "fish"
+   List1.AddItem "goose"
+   List1.AddItem "elephant"
+   List1.AddItem "moose"
+   List1.AddItem "horse"
+   List1.AddItem "giraffe"
+   List1.AddItem "donkey"
+End Sub
+

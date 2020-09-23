@@ -1,0 +1,28 @@
+Sub LoadList(Lst As ListBox, file As String)
+'Call LoadList (List1,"C:\Windows\System\Saved.lst")
+On Error GoTo error
+Open file For Input As #1
+Do Until EOF(1)
+Input #1, a$
+Lst.AddItem a$
+Loop
+Close 1
+Exit Sub
+error:
+X = MsgBox("File Not Found", vbOKOnly, "Error")
+End Sub
+
+Sub SaveList(Lst As ListBox, file As String)
+'Call SaveList (List1,"C:\Windows\System\Saved.lst")
+On Error GoTo error
+Open file For Output As #1
+For i = 0 To Lst.ListCount - 1
+a$ = Lst.List(i)
+Print #1, a$
+Next
+Close 1
+Exit Sub
+error:
+X = MsgBox("There has been a error!", vbOKOnly, "Error")
+End Sub
+

@@ -1,0 +1,35 @@
+Option Explicit
+'Form Shrinking Animation Designed and Created by Atul Kumar Gupta
+Dim I As Integer
+Dim H As Integer
+Dim W As Integer
+Dim H1 As Integer
+Dim W1 As Integer
+Dim X As Integer 'Speed rate at which form shrinks
+Private Sub Form_Load()
+I = 0
+X = 30 'Decrease value to increase shrink speed/increase to slow down
+H = Form1.Height
+W = Form1.Width
+Timer1.Enabled = False
+Timer1.Interval = 1 'Decrease to speed up the shrink/increase to slow it down
+
+End Sub
+Private Sub Command1_Click()
+Form1.Caption = ""
+Timer1.Enabled = True
+End Sub
+
+Private Sub Timer1_Timer()
+I = I + 1
+
+If I = X Then
+    Unload Form1
+Else
+    Form1.Height = Form1.Height - Int(H / X)
+    Form1.Width = Form1.Width - Int(W / X)
+    Form1.Top = Form1.Top + Int((H / X) / 2)
+    Form1.Left = Form1.Left + Int((H / X) / 2)
+End If
+End Sub
+

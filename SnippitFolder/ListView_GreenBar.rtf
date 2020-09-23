@@ -1,0 +1,158 @@
+
+
+'**************************************
+' Name: Greenbar
+' Description:This code displays a horiz
+'     ontal "greenbar" background (similar to 
+'     the old greenbar computer paper with alt
+'     ernating green and white bands) on a lis
+'     tview
+control that's In "report" format.
+It makes it easier For the user To read the selections on the listview without having to use those ugly gridlines.
+Code can easily be modified To display bars of any color & height.
+' By: Blake Arnold
+'
+' Assumes:Code is easily modifiable, jus
+'     t take a look at the REM statements and 
+'     feel free to modify it. It works great r
+'     ight out of the box, though.
+'
+' Side Effects:Requires a tiny bit of ex
+'     tra RAM for the picturebox.
+'
+'This code is copyrighted and has
+' limited warranties.Please see http://w
+'     ww.Planet-Source-Code.com/vb/scripts/Sho
+'     wCode.asp?txtCodeId=5039&lngWId=1
+'for details.
+'**************************************
+
+'Greenbar
+'Blake Arnold
+'12/21/1999
+'
+'This code displays a horizontal "greenb
+'     ar" background
+'(similar to the old greenbar computer p
+'     aper with
+'alternating green and white bands) on a
+'     listview
+'control that's in "report" format.
+'
+'It makes it easier for the user to read
+'     the
+'selections on the listview without havi
+'     ng to use those
+'ugly gridlines.
+'
+'Code can easily be modified to display 
+'     bars of any
+'color & height.
+'
+'The sample code requires a form with a 
+'     picture box
+'(picGreenbar), and a Listview control (
+'     Listview1).
+'
+'Notes:
+'Currently VB6 only.
+'Requires a tiny bit of extra RAM for th
+'     e
+'picturebox. Other than that I have foun
+'     d no
+'disadvatages.
+'
+'Place the sample code in the Form_Load 
+'     event to test it.
+
+
+Private Sub Form_Load()
+    'Vars for greenbar code
+    Dim i As Integer
+    Dim iFontHeight As Long
+    Dim iBarHeight As Integer
+    ' --- Code to load & display some sample
+    '     data ---
+    Dim j As Integer
+    Dim itmX As ListItem
+    Dim ColHead As ColumnHeader
+    ListView1.ColumnHeaders.Add , , "This is Just a Simple Example"
+    ListView1.ColumnHeaders(1).Width = 3000
+
+
+    For j = 1 To 33
+        Set itmX = ListView1.ListItems.Add()
+        itmX.Text = "This is item number " & CStr(j)
+    Next j
+    ' --- End sample data code ---
+    
+    '***** Greenbar - Code to calc barsize &
+    '     draw bars in the picture control *****'
+    'We use twips for all our measurements (
+    '     listview doesn't have a Scalemode)
+    Me.ScaleMode = vbTwips 'make sure our form is In twips
+    picGreenbar.ScaleMode = vbTwips
+    picGreenbar.BorderStyle = vbBSNone 'this is important - we don't want To measure the border In our calcs.
+    picGreenbar.AutoRedraw = True
+    picGreenbar.Visible = False
+    picGreenbar.Font = ListView1.Font
+    iFontHeight = picGreenbar.TextHeight("b") + Screen.TwipsPerPixelY
+    iBarHeight = (iFontHeight * 3) '3 line wide greenbars. 
+    picGreenbar.Width = ListView1.Width
+    '======
+    'size the picture control 2 barheights t
+    '     all
+    picGreenbar.Height = iBarHeight * 2
+    'set a custom scalemode to make drawing 
+    '     the bars easy (set up for 2 bars)
+    picGreenbar.ScaleMode = vbUser
+    picGreenbar.ScaleHeight = 2 '2 bar-widths high
+    picGreenbar.ScaleWidth = 1 '1 bar-width wide
+    'draw the actual bars
+    picGreenbar.Line (0, 0)-(1, 1), vbWhite, BF 'white bars - modify vbWhite To change bar color
+    picGreenbar.Line (0, 1)-(1, 2), RGB(227, 241, 226), BF 'light green bars - modify RGB(x,x,x) To change bar color
+    '======
+    'put it in the listview control, tiled
+    ListView1.PictureAlignment = lvwTile
+    ListView1.Picture = picGreenbar.Image
+    
+    'Notes:
+    'You could actually use more uniquely co
+    '     lored bars if desired.
+    'I've found this is usefull where the li
+    '     st is in distinct sections
+    'of a certain number of lines.
+    'Example (using 5 differently colored ba
+    '     rs)
+    'replace the original code between the "
+    '     ======" marks with
+    'this (remove the first comment hash (')
+    '     , of course):
+    ''======
+    'picGreenbar.Height = iBarHeight * 5 '5 
+    '     is how many different colors bars we'll 
+    '     use
+    ''set a custom scalemode to make drawing
+    '     the bars easy (set up for 2 bars)
+    'picGreenbar.ScaleMode = vbUser
+    'picGreenbar.ScaleHeight = 5 '5 bar-widt
+    '     hs high
+    'picGreenbar.ScaleWidth = 1 '1 bar-width
+    '     wide
+    'picGreenbar.DrawWidth = 1
+    ''draw the actual bars
+    'picGreenbar.Line (0, 0)-(1, 1), RGB(254
+    '     , 209, 199), BF 
+    'picGreenbar.Line (0, 1)-(1, 2), RGB(254
+    '     , 255, 193), BF
+    'picGreenbar.Line (0, 2)-(1, 3), RGB(200
+    '     , 255, 193), BF
+    'picGreenbar.Line (0, 3)-(1, 4), RGB(193
+    '     , 255, 254), BF
+    'picGreenbar.Line (0, 4)-(1, 5), vbWhite
+    '     , BF
+    ''======
+    '
+    '***** End Greenbar *****'
+End Sub
+

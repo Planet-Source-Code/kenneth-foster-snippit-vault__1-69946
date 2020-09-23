@@ -1,0 +1,44 @@
+Auto Save/Load/Add/Remove to/from List Boxes
+
+
+
+Public Sub List_Add(List As ListBox, txt As String)
+    List.AddItem txt
+End Sub
+
+Public Sub List_Load(TheList As ListBox, FileName As String)
+    'Loads a file To a list box
+    On Error Resume Next
+    Dim TheContents As String
+    Dim fFile As Integer
+    fFile = FreeFile
+    Open FileName For Input As fFile
+    Do
+        Line Input #fFile, TheContents$
+        Call List_Add(TheList, TheContents$)
+    Loop Until EOF(fFile)
+    Close fFile
+End Sub
+
+ 
+
+Public Sub List_Save(TheList As ListBox, FileName As String)
+    'Save a listbox as FileName
+    On Error Resume Next
+    Dim Save As Long
+    Dim fFile As Integer
+    fFile = FreeFile
+    Open FileName For Output As fFile
+    For Save = 0 To TheList.ListCount - 1
+        Print #fFile, TheList.List(Save)
+    Next Save
+    Close fFile
+End Sub
+
+Public Sub List_Remove(List As ListBox)
+    On Error Resume Next
+    If List.ListCount < 0 Then Exit Sub
+    List.RemoveItem List.ListIndex
+End Sub
+
+

@@ -1,0 +1,22 @@
+
+
+Private Sub Form_Load()
+SinusText Picture1, "Now is the time for all good men to come.....home", 10, 30, 30
+End Sub
+
+Public Function SinusText(Obj As Object, Txt As String, Xcor%, Ycor%, Ampl%)
+Dim xx%, tt%, S(359) As Integer
+Obj.ScaleMode = 3
+Obj.FontSize = 10
+Obj.FontBold = True
+For xx% = 0 To 359 Step (360 / Len(Txt))
+S(tt%) = Int((Sin(xx% / 180 * 3.14159)) * Ampl%) + Ycor%
+tt% = tt% + 1
+Next xx%
+Obj.CurrentX = Xcor%
+For xx% = 0 To Len(Txt)
+Obj.CurrentY = S(xx%)
+Obj.Print Mid(Txt, xx% + 1, 1);
+Next xx%
+End Function
+

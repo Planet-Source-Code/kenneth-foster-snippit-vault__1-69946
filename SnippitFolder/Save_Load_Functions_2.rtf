@@ -1,0 +1,78 @@
+'Place in a module
+'-----------------------------------------------------------------------
+'Example of usage
+
+Private Sub Command1_Click()  
+Text1.Text = ReadText("test.txt")  
+End Sub  
+
+Private Sub Command2_Click()  
+If MsgBox("Append text to textfile?", vbQuestion + vbYesNo, "Question") = vbYes Then  
+    Call WriteText("test.txt", Text1.Text, True)  
+Else  
+    Call WriteText("test.txt", Text1.Text, False)  
+End If  
+End Sub  
+'--------------------------------------------------------------------------
+
+Public Function ReadText(Filename as String)  
+Dim ff as Integer  
+Dim Text as String  
+
+on Error GoTo Handle 
+'Checking if the file currently exists
+If FileExists(Filename) = False Then 
+  MsgBox "File not found. Check if the file is Currently exists.", vbCritical, "Sorry"
+  Exit Function 
+End If
+
+ff = FreeFile  
+Open Filename For Input as #ff  
+    Text = Input(LOF(ff), ff)  
+Close #ff  
+
+ReadText = Text  
+Exit Function 
+Handle: 
+MsgBox "Error " & Err.Number & vbCrLf & Err.Description, vbCritical, "Error" 
+End Function  
+
+Public Function WriteText(Filename as String, Text as String, Optional Append as Boolean = False)  
+Dim ff as Integer  
+
+On Error GoTo Handle 
+
+ff = FreeFile  
+If Append = True Then  
+    Open Filename For Append as #ff  
+        Print #ff, Text '; - doesn't include the trailing newline  
+    Close #ff  
+Else  
+    Open Filename For Output as #ff  
+        Print #ff, Text '; - doesn't include the trailing newline  
+    Close #ff  
+End If  
+If FileExists(FileName) = False Then    'Check whether the file created 
+        MsgBox "Unexpectd error occured. File could not be saved", vbCritical, "Sorry" 
+        SaveText = False    'Returns 'False' 
+    Else 
+        SaveText = True     'Returns 'True' 
+    End If 
+Exit Function 
+Handle: 
+    WriteText = False 
+    MsgBox "Error " & Err.Number & vbCrLf & Err.Description, vbCritical, "Error" 
+
+End Function  
+
+Public Function FileExists(FileName as String) as Boolean  
+'This function checks the existance of a file
+on Error GoTo Handle  
+    If FileLen(FileName) >= 0 Then: FileExists = True: Exit Function  
+Handle:  
+    FileExists = False  
+End Function  
+
+
+
+

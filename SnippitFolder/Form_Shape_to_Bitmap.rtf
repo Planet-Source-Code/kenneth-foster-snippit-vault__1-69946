@@ -1,0 +1,141 @@
+Option Explicit 
+
+'autoRedraw = true
+'borderstyle =  none
+'controlbox = false
+'startupposition = 2
+
+Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject as Long) as Long 
+Private Declare Function SelectObject Lib "gdi32" (ByVal hdc as Long, ByVal hObject as Long) as Long 
+Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hdc as Long) as Long 
+Private Declare Function DeleteDC Lib "gdi32" (ByVal hdc as Long) as Long 
+Private Declare Function ExtCreateRegion Lib "gdi32" (lpXform as Any, ByVal nCount as Long, lpRgnData as Any) as Long 
+Private Declare Function GetGDIObject Lib "gdi32" Alias "GetObjectA" (ByVal hObject as Long, ByVal nCount as Long, lpObject as Any) as Long 
+Private Declare Function GetPixel Lib "gdi32" (ByVal hdc as Long, ByVal X as Long, ByVal Y as Long) as Long 
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination as Any, Source as Any, ByVal Length as Long) 
+
+Private Declare Function CopyImage Lib "user32" (ByVal handle as Long, ByVal un1 as Long, ByVal n1 as Long, ByVal n2 as Long, ByVal un2 as Long) as Long 
+Private Declare Function GetDC Lib "user32" (ByVal hWnd as Long) as Long 
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd as Long, ByVal hdc as Long) as Long 
+Private Declare Function SetRect Lib "user32" (lpRect as RECT, ByVal X1 as Long, ByVal Y1 as Long, ByVal X2 as Long, ByVal Y2 as Long) as Long 
+Private Declare Function SetWindowRgn Lib "user32" (ByVal hWnd as Long, ByVal hRgn as Long, ByVal bRedraw as Boolean) as Long 
+
+Private Type BITMAP 
+    bmType as Long 
+    bmWidth as Long 
+    bmHeight as Long 
+    bmWidthBytes as Long 
+    bmPlanes as Integer 
+    bmBitsPixel as Integer 
+    bmBits as Long 
+End Type 
+Private Const IMAGE_BITMAP as Long = 0 
+Private Const LR_COPYRETURNORG as Long = &H4 
+Private Type RECT 
+    Left as Long 
+    top as Long 
+    Right as Long 
+    Bottom as Long 
+End Type 
+Private OldX as Integer 
+Private OldY as Integer 
+
+Private Function CreateShapedRegion(ByVal hBitmap as Long, ByVal hWnd as Long) as Boolean 
+
+If hBitmap = 0 or hWnd = 0 Then Exit Function 
+Dim bmpInfo as BITMAP 
+If GetGDIObject(hBitmap, Len(bmpInfo), bmpInfo) = 0 Then Exit Function 
+
+Dim tDC as Long, srcDC as Long, tRgn as Long 
+Dim tBMP as Long, oldBMP as Long 
+Dim X as Long, Y as Long, transColor as Long 
+Dim rgnRects() as RECT, rCount as Long 
+Dim rStart as Long, bReset as Boolean 
+
+srcDC = GetDC(hWnd) 
+tDC = CreateCompatibleDC(srcDC) 
+ReleaseDC hWnd, srcDC 
+tBMP = CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG) 
+oldBMP = SelectObject(tDC, tBMP) 
+transColor = GetPixel(tDC, 0, 0) 
+
+ReDim rgnRects(0 To bmpInfo.bmWidth * 3) 
+
+on Error GoTo ResizeRectArray 
+For Y = 0 To bmpInfo.bmHeight - 1 
+    For X = 0 To bmpInfo.bmWidth - 1 
+        If GetPixel(tDC, X, Y) = transColor Then 
+                       If bReset Then 
+                              SetRect rgnRects(rCount + 2), rStart, Y, X, Y + 1 
+                bReset = False          ' reset flag 
+                rCount = rCount + 1     ' keep track of nr in use 
+            End If 
+        Else 
+                     If bReset = False Then 
+                              bReset = True 
+                rStart = X      ' set start point 
+            End If 
+        End If 
+    Next 
+    If bReset Then 
+                SetRect rgnRects(rCount + 2), rStart, Y, X, Y + 1 
+        bReset = False          ' reset flag 
+        rCount = rCount + 1     ' keep track of nr in use 
+    End If 
+Next 
+on Error Resume Next 
+If rCount Then 
+      With rgnRects(0) 
+        .Left = 32                  ' length of region header in bytes 
+        .Top = 1                    ' required cannot be anything else 
+        .Right = rCount             ' number of rectangles for the region 
+        .Bottom = rCount * 16&      ' byte size used by the rectangles 
+    End With 
+    With rgnRects(1)                ' bounding rectangle identification 
+        .Left = 0                   ' left 
+        .Top = 0                    ' top 
+        .Right = bmpInfo.bmWidth    ' right 
+        .Bottom = bmpInfo.bmHeight  ' bottom 
+    End With 
+      tRgn = ExtCreateRegion(ByVal 0&, (rCount + 2) * 16, rgnRects(0)) 
+    If tRgn = 0 Then 
+        MsgBox "Shaped Region failed" 
+    Else 
+        SetWindowRgn hWnd, tRgn, True 
+    End If 
+Else 
+    MsgBox "Shaped Region failed" 
+End If 
+Erase rgnRects() 
+DeleteObject SelectObject(tDC, oldBMP) 
+DeleteDC tDC 
+Exit Function 
+
+ResizeRectArray: 
+ReDim Preserve rgnRects(0 To UBound(rgnRects) + bmpInfo.bmWidth) 
+Resume 
+End Function 
+
+
+Private Sub Form_Load() 
+  form1.autoRedraw = True 
+  form1.borderstyle =  0 
+
+CreateShapedRegion Form1.Picture.handle, Form1.hWnd 
+End Sub 
+
+Private Sub Form_MouseDown(Button as Integer, Shift as Integer, X as Single, Y as Single) 
+      OldX = X 
+      OldY = Y 
+End Sub 
+
+Private Sub Form_MouseMove(Button as Integer, Shift as Integer, X as Single, Y as Single) 
+      If Button = 1 Then 
+            Me.Left = Me.Left + (X - OldX) 
+            Me.Top = Me.Top + (Y - OldY) 
+      End If 
+End Sub 
+
+
+

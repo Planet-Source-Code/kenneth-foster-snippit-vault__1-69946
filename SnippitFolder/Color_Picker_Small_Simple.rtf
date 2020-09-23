@@ -1,0 +1,30 @@
+Option Explicit 
+'one picturebox with color picture
+'3 labels
+
+Private Sub Form_Load() 
+ 
+End Sub 
+
+Private Sub Picture1_MouseUp(Button as Integer, Shift as Integer, X as Single, Y as Single) 
+Dim r as Byte 
+Dim g as Byte
+dim b as Byte
+
+Dim color as Long 
+
+  If Button = 1 Then 
+      color = Picture1.Point(X, Y) 
+      Label1.BackColor = color 
+      'convert color to rgb
+      r = color And 255 
+      g = (color \ 256) And 255 
+      b = (color \ 65536) And 255 
+     Label2.Caption = "RGB:  " & r & "," & g & "," & b 
+     'convert color to hex
+     Label3.Caption = "HEX:  " & Hex(color) 
+  End If 
+
+End Sub 
+
+

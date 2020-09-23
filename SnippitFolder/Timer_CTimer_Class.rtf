@@ -1,0 +1,88 @@
+'Put in a Class Module named CTimer
+
+Option Explicit
+
+Public Event Timer()
+
+'interval in seconds
+Private m_Interval As Long
+
+Private m_Stop As Boolean
+
+Public Sub StartTimer(Optional Interval As Long = 0)
+m_Stop = False
+Me.Interval = IIf(Interval = 0, Me.Interval, Abs(Interval))
+Call TimerLoop
+End Sub
+
+Public Sub StopTimer()
+m_Stop = True
+End Sub
+
+Public Sub Pause(Length As Long)
+Dim n As Long
+
+n = Timer + Abs(Length)
+Do While Timer <= n
+    DoEvents
+Loop
+End Sub
+
+Private Sub TimerLoop()
+Dim n As Long
+Do
+    If (Timer Mod Me.Interval) = 0 Then
+        n = Timer
+        RaiseEvent Timer
+        
+        'wait until this interval
+        'completes
+        Do While Timer <= n + Interval
+            DoEvents
+        Loop
+    End If
+    
+    DoEvents
+Loop While m_Stop = False
+End Sub
+
+Public Property Let Interval(NewVal As Long)
+m_Interval = Abs(NewVal)
+m_Stop = IIf(m_Interval = 0, True, False)
+End Property
+
+Public Property Get Interval() As Long
+Interval = m_Interval
+End Property
+
+'Example of use
+' Put on a form with two command buttons
+
+Option Explicit
+Public WithEvents t As CTimer
+Private Sub Command1_Click()
+
+Me.Caption = 0
+Call t.StartTimer(1)
+
+
+End Sub
+
+Private Sub Command2_Click()
+t.StopTimer
+End Sub
+
+Private Sub Form_Load()
+Set t = New CTimer
+
+End Sub
+
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+If (t Is Nothing) = False Then t.StopTimer
+End Sub
+
+Private Sub t_Timer()
+Me.Caption = Me.Caption + 1
+
+End Sub
+

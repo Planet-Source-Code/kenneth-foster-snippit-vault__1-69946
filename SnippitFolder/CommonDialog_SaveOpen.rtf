@@ -1,0 +1,49 @@
+Dim FileName as String
+Dim OpenFile as String 
+
+'Needs two command buttons ,textbox and CommonDialog on Form
+
+Private Sub cmdOpen_Click()  
+    Dim FNUM as Integer 
+    Dim txt as String 
+    on Error GoTo FileError 
+    CommonDialog1.FileName = "C:\My Documents\*.txt" 
+    CommonDialog1.Filter = "Text documents|*.TXT|All files(*.*)|*.*" 
+    CommonDialog1.ShowOpen 
+    FileName = CommonDialog1.FileName 
+    FNUM = FreeFile 
+    Open CommonDialog1.FileName For Input as #1 
+    txt = Input(LOF(FNUM), #FNUM) 
+    Close #FNUM 
+    Text1.Text = txt 
+    OpenFile = CommonDialog1.FileName 
+
+
+    Form1.Caption = CommonDialog1.FileTitle 
+               Exit Sub 
+        FileError: 
+        OpenFile = "" 
+    End Sub 
+
+
+Private Sub cmdSave_Click() 
+    Dim FNUM as Integer 
+    Dim txt as String 
+    on Error GoTo FileError 
+    CommonDialog1.FileName = "C:\My Documents\Untitled" 
+    CommonDialog1.Filter = "Text documents|*.TXT|All files(*.*)|*.*" 
+    CommonDialog1.ShowSave 
+    FNUM = FreeFile 
+    Open CommonDialog1.FileName For Output as #1 
+    Print #FNUM, Text1.Text 
+    Close #FNUM 
+    OpenFile = CommonDialog1.FileName 
+    Text1.Text = "" 
+
+
+    Form1.Caption = "Untitled" 
+        Exit Sub 
+        FileError: 
+        OpenFile = "" 
+    End Sub 
+

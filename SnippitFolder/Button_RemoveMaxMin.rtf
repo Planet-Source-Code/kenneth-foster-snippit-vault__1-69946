@@ -1,0 +1,25 @@
+Option Explicit
+
+Private Declare Function GetWindowLong Lib "user32" _
+  Alias "GetWindowLongA" (ByVal hWnd As Long, _
+  ByVal nIndex As Long) As Long
+
+Private Declare Function SetWindowLong Lib "user32" _
+   Alias "SetWindowLongA" (ByVal hWnd As Long, _
+   ByVal nIndex As Long, ByVal dwNewLong As Long) _
+   As Long
+
+Private Const GWL_STYLE = (-16)
+Private Const WS_MINIMIZEBOX = &H20000
+Private Const WS_MAXIMIZEBOX = &H10000
+'---------------------------------------
+
+Public Sub NoMaxBox(f As MDIForm)
+      
+    Dim l As Long
+    l = GetWindowLong(f.hWnd, GWL_STYLE)
+    l = l And Not (WS_MAXIMIZEBOX)
+    l = SetWindowLong(f.hWnd, GWL_STYLE, l)
+    
+End Sub
+

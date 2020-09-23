@@ -1,0 +1,23 @@
+
+
+
+
+Private Type POINTAPI
+    x As Long
+    y As Long
+End Type
+
+Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Private Declare Function GetPixel Lib "gdi32.dll" (ByVal hdc As Long, ByVal nXPos As Long, ByVal nYPos As Long) As Long
+Private Declare Function GetDC Lib "user32.dll" (ByVal hwnd As Long) As Long
+
+Dim pt As POINTAPI
+'========================================
+'example code
+
+Dim stdout As Long
+
+GetCursorPos pt
+    rgbvalue = GetPixel(GetDC(stdout), pt.x, pt.y)
+
+'========================================

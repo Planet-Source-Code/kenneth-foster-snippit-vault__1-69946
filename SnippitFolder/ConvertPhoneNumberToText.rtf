@@ -1,0 +1,57 @@
+' You Will Need Two TextBox's And A Comm
+'     and Button
+
+
+Private Sub Command1_Click()
+    Text2 = ConvertNumber(Text1)
+End Sub
+
+
+Private Function ConvertNumber(strNumber) As String
+    Dim i As Integer
+    Dim strNumDone As String
+    Dim strNew As String
+    Dim num As String
+    Dim a As Boolean
+
+
+    For i = 1 To Len(strNumber)
+        num = (Mid(strNumber, i, 1))
+        a = IsNumeric(num)
+        strNew = ""
+
+
+        Select Case a
+            Case True
+            strNew = num
+            Case False
+            num = UCase(num)
+
+
+            Select Case num
+                Case "A", "B", "C"
+                strNew = "2"
+                Case " "
+                strNew = " "
+                Case "D", "E", "F"
+                strNew = "3"
+                Case "H", "I", "G"
+                strNew = "4"
+                Case "J", "K", "L"
+                strNew = "5"
+                Case "M", "N", "O"
+                strNew = "6"
+                Case "P", "Q", "R", "S"
+                strNew = "7"
+                Case "T", "U", "V"
+                strNew = "8"
+                Case "W", "X", "Y", "Z"
+                strNew = "9"
+            End Select
+    End Select
+If strNew <> "" Then strNumDone = strNumDone & strNew
+
+Next i
+ConvertNumber = strNumDone
+End Function
+

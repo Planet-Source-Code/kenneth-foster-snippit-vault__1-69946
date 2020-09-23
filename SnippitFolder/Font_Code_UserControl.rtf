@@ -1,0 +1,77 @@
+
+
+
+Option Explicit
+
+Private Const m_def_ForeColor = vbBlack
+
+Dim m_ForeColor As OLE_COLOR
+
+Private WithEvents m_Font1 As StdFont
+
+Private Sub m_Font1_FontChanged(ByVal PropertyName As String)
+    Set UserControl.Font = m_Font1
+End Sub
+
+Private Sub UserControl_Initialize()
+   Set m_Font1 = New StdFont
+   Set UserControl.Font = m_Font1
+End Sub
+
+Private Sub UserControl_InitProperties()
+   Set m_Font1 = Ambient.Font
+   Let ForeColor = m_def_ForeColor
+End Sub
+
+Private Sub UserControl_Resize()
+  With Label1
+    .Top = 0
+    .Left = 0
+    .Width = UserControl.Width
+    .Height = UserControl.Height
+  End With
+End Sub
+
+Public Property Set Font(ByVal NewFont As StdFont)
+   With m_Font1
+      .Bold = NewFont.Bold
+      .Charset = NewFont.Charset
+      .Italic = NewFont.Italic
+      .Name = NewFont.Name
+      .Size = NewFont.Size
+      .Strikethrough = NewFont.Strikethrough
+      .Underline = NewFont.Underline
+   End With
+  Set Label1.Font = m_Font1
+      
+   PropertyChanged "Font"
+End Property
+
+Public Property Get Font() As StdFont
+   Set Font = m_Font1
+End Property
+
+Public Property Get ForeColor() As OLE_COLOR
+   Let ForeColor = m_ForeColor
+End Property
+
+Public Property Let ForeColor(ByVal NewForeColor As OLE_COLOR)
+   Let m_ForeColor = NewForeColor
+   Label1.ForeColor = m_ForeColor
+   PropertyChanged "ForeColor"
+End Property
+
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+   With PropBag
+      Let ForeColor = .ReadProperty("ForeColor", m_def_ForeColor)
+      Set Font = .ReadProperty("Font", Ambient.Font)
+   End With
+End Sub
+
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+   With PropBag
+      .WriteProperty "ForeColor", m_ForeColor, m_def_ForeColor
+      .WriteProperty "Font", m_Font1, Ambient.Font
+   End With
+End Sub
+

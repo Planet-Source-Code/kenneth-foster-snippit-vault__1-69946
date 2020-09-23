@@ -1,0 +1,23 @@
+'Setup: add a 1 textbox(Text1) and 1 button(Command1)
+'Set text1's "multiline" to true and set text1's scrollbars to "vertical"
+'add a module(module1)
+'Start Module Code here
+
+
+Function GetTextFromFile(txtFile, txtopen As textbox) 
+    Dim sfile As String
+    Dim nfile As Integer
+    nfile = FreeFile
+    sfile = txtFile
+    Open sfile For Input As nfile
+    txtopen = Input(LOF(nfile), nfile)
+    Close nfile
+End Function
+'put In command1_click 
+
+
+Private Sub Command1_Click()
+    Call gettextfromfile("C:\WINDOWS\Win.ini", text1)
+End Sub
+'then run and click the button
+

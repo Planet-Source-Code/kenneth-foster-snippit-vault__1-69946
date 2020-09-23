@@ -1,0 +1,29 @@
+Public Function GradientPic(ByVal picIn As PictureBox, iColor As Integer)
+    Dim I As Integer
+    Dim Y As Integer
+
+
+    With picIn
+        .AutoRedraw = True
+        .DrawStyle = 6
+        .DrawMode = 13
+        .DrawWidth = 2
+        .ScaleMode = 3
+        .ScaleHeight = (256 * 2)
+    End With
+
+
+    For I = 0 To 255
+
+
+        Select Case iColor
+            Case 1 'Black To Red
+            picIn.Line (0, Y)-(picIn.Width, Y + 2), RGB(I, 0, 0), BF
+            Case 2 'Black To Green
+            picIn.Line (0, Y)-(picIn.Width, Y + 2), RGB(0, I, 0), BF
+            Case 3 'Black To Blue
+            picIn.Line (0, Y)-(picIn.Width, Y + 2), RGB(0, 0, I), BF
+        End Select
+    Y = Y + 2
+Next I
+End Function

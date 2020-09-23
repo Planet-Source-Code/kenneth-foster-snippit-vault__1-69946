@@ -1,0 +1,72 @@
+Option Explicit 
+
+Private Type RGBColor 
+    ReD as Integer 
+    Green as Integer 
+    Blue as Integer 
+End Type 
+
+Private Sub cmdGo_Click() 
+Dim Steps as Long 
+
+    Steps = pic.ScaleWidth / 6 
+    PaintGradientX &HFF, &HFFFF&, Steps * 0, Steps 
+    PaintGradientX &HFFFF&, &HFF00&, Steps * 1, Steps 
+    PaintGradientX &HFF00&, &HFFFF00, Steps * 2, Steps 
+    PaintGradientX &HFFFF00, &HFF0000, Steps * 3, Steps 
+    PaintGradientX &HFF0000, &HFF00FF, Steps * 4, Steps 
+    PaintGradientX &HFF00FF, &HFF&, Steps * 5, Steps 
+
+End Sub 
+
+Private Sub PaintGradientX(Color1 as Long, Color2 as Long, Start as Long, Steps as Long) 
+Dim Correction as RGBColor 
+Dim NewRed, NewGreen, NewBlue as Double 
+Dim Color as Long 
+Dim intCount as Long 
+
+    NewRed = ((DefineRGB(Color2).Red - DefineRGB(Color1).Red) / Steps) 
+    NewGreen = ((DefineRGB(Color2).Green - DefineRGB(Color1).Green) / Steps) 
+    NewBlue = ((DefineRGB(Color2).Blue - DefineRGB(Color1).Blue) / Steps) 
+
+    Correction.Red = DefineRGB(Color1).Red 
+    Correction.Green = DefineRGB(Color1).Green 
+    Correction.Blue = DefineRGB(Color1).Blue 
+
+    For intCount = 0 To Steps 
+        Color = RGB(Correction.Red + NewRed * intCount, Correction.Green + NewGreen * intCount, Correction.Blue + NewBlue * intCount) 
+        PaintGradientY &HFFFFFF, Color, pic.ScaleHeight / 2, Start + intCount, 0 
+        PaintGradientY Color, 0, pic.ScaleHeight / 2, Start + intCount, pic.ScaleHeight / 2 
+        pic.Refresh 
+    Next 
+
+End Sub 
+
+Private Sub PaintGradientY(Color1 as Long, Color2 as Long, Steps as Long, x as Long, y as Long) 
+Dim Correction as RGBColor 
+Dim intCount, NewRed, NewGreen, NewBlue as Double 
+
+    NewRed = ((DefineRGB(Color2).Red - DefineRGB(Color1).Red) / Steps) 
+    NewGreen = ((DefineRGB(Color2).Green - DefineRGB(Color1).Green) / Steps) 
+    NewBlue = ((DefineRGB(Color2).Blue - DefineRGB(Color1).Blue) / Steps) 
+
+    Correction.Red = DefineRGB(Color1).Red 
+    Correction.Green = DefineRGB(Color1).Green 
+    Correction.Blue = DefineRGB(Color1).Blue 
+
+    For intCount = 0 To Steps 
+
+        pic.PSet (x, y + intCount), RGB(Correction.Red + NewRed * intCount, Correction.Green + NewGreen * intCount, Correction.Blue + NewBlue * intCount) 
+
+    Next 
+
+End Sub 
+
+Private Function DefineRGB(ByVal Color as Long) as RGBColor 
+
+    DefineRGB.Blue = Color \ 65536 
+    DefineRGB.Green = (Color - (DefineRGB.Blue * 65536)) \ 256 
+    DefineRGB.Red = Color - ((DefineRGB.Blue * 65536) + (DefineRGB.Green * 256#)) 
+
+End Function 
+

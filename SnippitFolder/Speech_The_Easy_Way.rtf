@@ -1,0 +1,14 @@
+'Reference Microsoft speech object library
+
+Option Explicit
+Public Speech As SpVoice
+
+Private Sub Command1_Click()
+Set Speech = New SpVoice
+Speech.Speak Text1.Text
+End Sub
+
+Private Sub Form_Load()
+
+End Sub
+

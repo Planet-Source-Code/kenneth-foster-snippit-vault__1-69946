@@ -1,0 +1,41 @@
+Public Sub SelectLine(txtControl as TextBox, ByVal theLine as Integer) 
+
+Dim lneCount as Integer  'Number of lines found 
+Dim lneTxt as String     'Text of current line 
+
+lneCount = 0 
+
+For a = 1 To Len(txtControl.Text) 
+    'Add next character of line
+    lneTxt = lneTxt & Mid(txtControl.Text, a, 1) 
+    'If the next two characters are end-of-line markers
+    If Mid(txtControl.Text, a, 2) = vbCrLf Then 
+        'Increase line count
+        lneCount = lneCount + 1 
+        'If the current line is the line to be selected
+        If lneCount = theLine Then 
+            'Select the line and exit the sub
+            txtControl.SelStart = (a) - Len(lneTxt) 
+            txtControl.SelLength = Len(lneTxt) 
+            Exit Sub 
+        Else 
+            'Skip to the next line and empty the text holder
+            a = a + 1 
+            lneTxt = "" 
+        End If 
+    'If the end of the text has been reached
+    ElseIf a = Len(txtControl.Text) Then 
+        lneCount = lneCount + 1 
+        If lneCount = theLine Then 
+            txtControl.SelStart = a - Len(lneTxt) 
+            txtControl.SelLength = Len(lneTxt) 
+            Exit Sub 
+        End If 
+    End If 
+Next a 
+
+
+End Sub 
+
+
+

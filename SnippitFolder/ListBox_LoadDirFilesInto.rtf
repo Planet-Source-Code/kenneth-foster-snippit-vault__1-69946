@@ -1,0 +1,26 @@
+Private Sub Form_Load()
+Dim strPath As String
+Dim strMapName As String
+Dim fStg As String
+Dim fSLen As Integer
+
+
+lstRecipe.Clear
+strPath = Dir("D:\AProjectFolder3\RecipeFolder\*.rtf")
+
+If Not strPath = "" Then                                  'load recipes into listbox
+   Do
+      strMapName = strPath
+      fSLen = Len(strMapName) - 4                         'filename length minus extension
+      fStg = Mid$(strMapName, 1, fSLen)                   'filename without extension
+      lstRecipe.AddItem fStg                              'put filename into listbox
+
+      strPath = Dir$
+   Loop Until strPath = ""
+Else
+   MsgBox "No files found!", vbCritical + vbOKOnly, "File - Error"
+End If
+  
+   lblTotRecords.Caption = lstRecipe.ListCount            'Show how many recipes there are in list
+   txtRecipeName.Locked = True                            'disable textbox until needed
+End Sub

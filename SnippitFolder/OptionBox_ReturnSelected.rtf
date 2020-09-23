@@ -1,0 +1,16 @@
+'Use with array of Optionboxes
+'Returns the index number
+
+
+
+Public Function GetSelectedOption(Opt As Object) As Integer
+    Dim i As Integer
+    
+    GetSelectedOption = 0
+
+    For i = Opt.LBound To Opt.UBound
+        GetSelectedOption = -Opt(i).Value * i
+        If GetSelectedOption > 0 Then Exit For
+    Next
+
+End Function

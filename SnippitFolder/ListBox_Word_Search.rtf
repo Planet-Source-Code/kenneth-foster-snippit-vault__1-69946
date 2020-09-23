@@ -1,0 +1,114 @@
+
+
+Dim Car(80) As String
+Dim X, y, z As Byte
+Dim Result, LResult As String
+
+'**************************************
+' Name: Word Search
+' Description:This code searches for a s
+'     pecific word in a listbox. It returns al
+'     l the entries containing that word.
+' By: Jonathan Templer
+'
+' Assumes:'a textbox named txtSearchText
+'
+'a button named command1
+'a listbox named lstResults
+'a listbox named lstsource
+
+Private Sub Form_Load()
+    
+    With lstsource
+        .AddItem "Good Morning"
+        .AddItem "Good Bye"
+        .AddItem "Good Night"
+    End With
+End Sub
+
+Private Sub Command1_Click()
+  Dim i As Integer
+  
+    Screen.MousePointer = 11
+    X = 0
+    y = 0
+    lstResults.Clear
+
+    For z = 1 To Form1!lstsource.ListCount
+        Result = ""
+        LResult = ""
+
+        For i = 0 To Len(Form1!lstsource.List(y))
+            Car(i) = Mid(Form1!lstsource.List(y), i + 1, 1)
+
+            If Car(i) = " " Then
+                X = i + 1
+                Exit For
+            Else
+                Result = Result & Car(i)
+
+                If i = 0 Then
+                    LResult = LResult & LCase(Car(i))
+                Else
+                    LResult = LResult & Car(i)
+                End If
+            End If
+        Next i
+
+        If Result = txtSearchText.Text Or LResult = txtSearchText.Text Then
+            lstResults.AddItem Form1!lstsource.List(y)
+            y = y + 1
+        Else
+11:
+            LResult = ""
+            Result = ""
+
+            For i = X To Len(Form1!lstsource.List(y))
+                Car(i) = Mid(Form1!lstsource.List(y), i + 1, 1)
+
+                If Car(i) = " " Then
+                    X = i
+                    Exit For
+                Else
+                    Result = Result & Car(i)
+
+                    If i = X Then
+                        LResult = LResult & LCase(Car(i))
+                    Else
+                        LResult = LResult & Car(i)
+                    End If
+                End If
+            Next i
+
+            If Result = "" Then
+                y = y + 1
+                GoTo 12
+            End If
+
+            If Result = txtSearchText.Text Or LResult = txtSearchText.Text Then
+                lstResults.AddItem Form1!lstsource.List(y)
+                y = y + 1
+            Else
+                GoTo 10
+            End If
+        End If
+12:
+    Next z
+    txtSearchText.SelStart = 0
+    txtSearchText.SelLength = Len(txtSearchText.Text)
+
+    If lstResults.ListCount = 0 Then
+        MsgBox "No records were found for" & Chr(34) & txtSearchText.Text & Chr(34), vbExclamation, "Search Result"
+        txtSearchText.Text = ""
+    End If
+    Screen.MousePointer = 0
+    Exit Sub
+10:
+    X = X + 1
+    GoTo 11:
+End Sub
+
+Private Sub txtSearchText_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = 13 Then Command1_Click
+End Sub
+

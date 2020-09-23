@@ -1,0 +1,29 @@
+Function IsAlphaNumeric(ByVal StringToCheck As String) As Boolean 
+    Dim sValidChars As String: sValidChars = "abcdefghijklmnopqrstuvwxyz0123456789_"
+    Dim s As String: s = VBA.LCase(StringToCheck)
+    Dim i As Integer
+    Dim c As String * 1 ' Each char in the string
+
+
+    For i = 1 To VBA.Len(s)
+        c = VBA.Mid(s, i, 1)
+
+
+        If VBA.InStr(1, sValidChars, c) = 0 Then
+            IsAlphaNumeric = False
+            Exit Function
+        End If
+    Next
+    IsAlphaNumeric = True
+End Function
+
+
+'Example
+Private Sub Command1_Click()
+ If IsAlphaNumeric(Text1.Text) = True Then
+   Text1.Text = "Yes"
+ Else
+   Text1.Text = "No"
+ End If
+End Sub
+

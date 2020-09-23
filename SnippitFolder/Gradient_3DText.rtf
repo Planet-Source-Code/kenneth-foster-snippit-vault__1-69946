@@ -1,0 +1,95 @@
+Option Explicit
+
+Dim SStep As Integer
+Dim x As Integer
+Dim y As Integer
+Dim i As Integer
+Dim k As Integer
+
+Private Sub Form_Load()
+'********** First Gradient
+SStep = Me.Height / 2 / 255
+DrawWidth = SStep
+For i = 0 To Me.Height / 2 Step SStep
+k = k + 1
+Line (0, i)-(Me.Width, i), RGB(0, 0, k)
+Next
+
+'********** Second Gradient
+DrawWidth = 1
+For i = Me.Height / 2 To Me.Height
+k = k + 1: If k > 255 Then k = 0
+Line (0, i)-(Me.Width, i), RGB(0, 0, k)
+Next
+
+'********** Red Line
+DrawWidth = 3
+Line (0, Me.Height / 2)-(Me.Width, Me.Height / 2), RGB(250, 0, 0)
+
+' ********** 3D Text
+'********** Third Text
+x = 150
+y = 1500
+For i = 0 To 50
+ForeColor = RGB(50, 0, 0)
+x = x - 1
+y = y - 1
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+Next i
+ForeColor = RGB(250, 0, 0)
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+
+'********** Second Text
+x = 150
+y = 1000
+For i = 0 To 10
+ForeColor = RGB(150, 150, 150)
+x = x - 1
+y = y - 1
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+Next i
+ForeColor = RGB(250, 0, 0)
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+
+'********** First Text
+x = 150
+y = 500
+For i = 0 To 10
+ForeColor = RGB(255, 0, 0)
+x = x + 1
+y = y + 1
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+Next i
+ForeColor = RGB(0, 0, 255)
+CurrentX = x '+ 5
+CurrentY = y
+Print "Gradient and 3D Text"
+
+'********** Fourth Text
+x = 150
+y = 1800
+For i = 0 To 10
+ForeColor = RGB(255, 0, 0)
+x = x + 1
+y = y + 1
+CurrentX = x
+CurrentY = y
+Print "Gradient and 3D Text"
+Next i
+ForeColor = RGB(50, 0, 0)
+CurrentX = x '+ 5
+CurrentY = y
+Print "Gradient and 3D Text"
+
+End Sub
+

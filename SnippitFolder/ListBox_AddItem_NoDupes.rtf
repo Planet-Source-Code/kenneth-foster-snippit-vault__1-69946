@@ -1,0 +1,12 @@
+
+'ex:  AddUnique Text1.text, list1
+Private Sub AddUnique(StringToAdd As String, lst As ListBox) 
+    lst.Text = StringToAdd
+
+
+    If lst.ListIndex = -1 Then
+        'it does not exist, so add it..
+        lst.AddItem StringToAdd
+    End If
+End Sub
+

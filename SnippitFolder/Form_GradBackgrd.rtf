@@ -1,0 +1,27 @@
+Sub GradientPlus(frm As Form, StartRed As Integer, _
+StartGreen As Integer, StartBlue As Integer, _
+EndRed As Integer, EndGreen As Integer, EndBlue As Integer)
+
+    On Error Resume Next
+    Dim X As Integer
+    Dim RedChange As Integer
+    Dim GreenChange As Integer
+    Dim BlueChange As Integer
+    frm.DrawStyle = 6 ' Inside Solid
+    frm.ScaleMode = 3 ' Pixels
+    frm.DrawMode = 13 ' Copy Pen
+    frm.DrawWidth = 2
+    frm.ScaleHeight = 256
+    For X = 0 To 255 'Start Loop
+    
+        frm.Line (0, X)-(Screen.Width, X - 1), _
+        RGB(StartRed + RedChange, StartGreen + GreenChange, _
+        StartBlue + BlueChange), B 'Draws Line With correct color
+        
+        RedChange = RedChange + (EndRed - StartRed) / 255 '
+        GreenChange = GreenChange + (EndGreen - StartGreen) / 255 ' Sets Next Loops Color
+        BlueChange = BlueChange + (EndBlue - StartBlue) / 255 '
+    Next X
+End Sub
+
+

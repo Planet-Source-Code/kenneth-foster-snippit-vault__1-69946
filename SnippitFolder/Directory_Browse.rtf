@@ -1,0 +1,38 @@
+Option Explicit 
+Dim Mode as Boolean 
+
+Private Sub Dir1_Change() 
+Dim Str as String 
+
+ Str = Mid(Drive1.Drive, 1, 1) 
+
+      If Str <> "c" And Mode = False Then 
+           Dir1.Path = Str & ":\" 
+           Mode = True 
+      Else 
+           File1.Path = Dir1.Path 
+      End If 
+
+
+End Sub 
+
+Private Sub Drive1_Change() 
+Dir1.Path = Drive1.Drive 
+End Sub 
+
+Private Sub Form_Load() 
+Mode = False 
+Drive1.Drive = "C:\" 
+End Sub 
+
+Private Sub File1_Click()
+Dim n As Integer
+
+'add text1 to form
+
+   For n = 0 To File1.ListCount - 1
+
+    If File1.Selected(n) = True Then Text1.Text = Dir1.Path & "\" & File1.List(n)
+
+     Next n
+End Sub

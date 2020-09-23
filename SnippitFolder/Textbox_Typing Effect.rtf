@@ -1,0 +1,42 @@
+' need two textboxes, command button and timer
+
+
+Private Sub Command1_Click()
+    
+TypingEffect Text1.Text, 0.15
+
+End Sub
+
+Private Sub TypingEffect(msg As String, time)
+    
+    Dim msgLen As Integer
+    Dim currIndex As Integer
+    Dim currChar As String
+    Dim currText As String
+        
+    msgLen = Len(msg)
+    
+    Do While currIndex <= msgLen
+        DoEvents
+            currIndex = currIndex + 1
+            currChar = Mid(msg, currIndex, 1)
+            
+            currText = currText & currChar
+            Text2.Text = currText
+            delay time
+            
+        DoEvents
+     Loop
+
+End Sub
+
+
+Private Sub delay(time)
+Dim Start
+
+Start = Timer
+    Do While Timer - Start < time
+        DoEvents
+    Loop
+End Sub
+

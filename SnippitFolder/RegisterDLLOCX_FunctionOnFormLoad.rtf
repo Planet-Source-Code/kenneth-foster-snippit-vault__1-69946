@@ -1,0 +1,23 @@
+Public Function Reg_OCX_DLL(ocx_dll_path, ocx_dll_filename)
+
+
+' in order for this to work you must have the *.DLL or *.OCX
+' in the app.path and you must have REGSVR32.EXE in
+' "c:\windows\system\" directory.
+'  put this code in Form_Load()
+' example: Call Reg_OCX_DLL(App.Path & "\MyOCX.OCX", "MyOCX.OCX")
+' any questions or coments feel free to
+' email me at
+' u_tech@excite.com
+' and dont forget to vote.
+
+
+chk = GetSetting("MyAppMame", "Check", "Firstrun") ' check the registry to see if it's the first time running the app
+
+If chk = "" Then ' if app hasn't been run before then
+  FileCopy App.Path & "\" & ocx_dll_filename, "c:\windows\system\" & ocx_dll_filename ' copy the dll or ocx to "c:\windows\system\" directory
+    Shell "c:\windows\system\REGSVR32.EXE c:\windows\system\" & ocx_dll_filename, vbNormalFocus ' register the ocx or dll
+    SaveSetting "MyAppMame", "Check", "Firstrun", "Registered" ' write to the registry that the ocx or dll has been registered so that the next time the app is ran it wont register the ocx or dll
+  End If
+End Function
+

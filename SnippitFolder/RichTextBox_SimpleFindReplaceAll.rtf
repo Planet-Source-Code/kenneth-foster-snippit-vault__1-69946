@@ -1,0 +1,28 @@
+'will work with and control that deals with text
+
+
+Private Sub Command1_Click()
+    RTB1.Text = Replace(RTB1.Text, Text2.Text, Text3.Text, 1, , vbTextCompare)
+    'here's how it works:
+    ' where text1.text is , thats the source
+    '     of what ur looking in, ex: a label or te
+    '     xt box
+    ' where text2.text is , that's what u ar
+    '     e looking for
+    ' where text3.text is , thats what u wan
+    '     t to replace what u find with
+    ' leave everything else alone after that
+    Do
+    Loop Until InStr(1, RTB1.Text, Text2.Text) = 0
+    
+    Text2.Text = ""
+    Text3.Text = ""
+End Sub
+
+
+Private Sub Form_Load()
+    Text2.Text = "Text"
+    Text3.Text = "text"
+    RTB1.Text = "Type Text In Here Text"
+End Sub
+

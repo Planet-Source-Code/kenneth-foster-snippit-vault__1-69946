@@ -1,0 +1,45 @@
+'Put in Module or on Form
+Option Explicit
+
+Private Sub Form_Resize()
+menuLine Me
+End Sub
+'========================================================
+Public Sub menuLine(hostForm1 As Form) 'the form the line should be drawn on needs to be passed to this sub.
+    
+    Dim spacing As Single 'declare variable for determining the position of the lower line.
+    
+    With hostForm1
+        
+        hostForm1.Cls 'this will clear all drawn graphics from the form every time the form is resized.
+        
+        Call sclModeConv(hostForm1, spacing) 'calls the sclModeConv function to determine the .scalemode of the for so the lines can be drawn correctly no matter the mode that is set. Passes the form (for the .scalemode) and a variable (to store the Y distance between lines).
+        
+        hostForm1.Line (0, 0)-(.ScaleWidth, 0), &H8000000C 'draws upper line in dark grey along the very top of the form under the menu bar.
+        hostForm1.Line (0, spacing)-(.ScaleWidth, spacing), vbWhite 'draws the lower white line 10 twips (or equivalent in other scale modes) lower than the upper line.
+    
+    End With
+    
+End Sub
+'======================================================
+'this function converts the number 10(twips) to the appropriate equivalent in the set .scalemode.
+Public Function sclModeConv(sclForm As Form, ByRef dist As Single)
+        
+    dist = sclForm.ScaleY(10, vbTwips, sclForm.ScaleMode)
+
+End Function
+
+'this sub can be added to the _change() event of a text box etc. to only allow numerical input and backspacing.
+'=====================================================
+Public Sub numOnly(keyPrN As Integer) 'Should be passed KeyAscii from the _change() event of the control.
+    
+    If keyPrN < Asc("0") Or keyPrN > Asc("9") Then 'checks to see if the keypress was not numerical.
+        
+        If keyPrN <> Asc(vbBack) Then 'secondary check to see if the backspace key was pressed.
+            keyPrN = 0 'if both conditions are true sets keyPrN to 0 which cancels out the input from the user if any other keys were pressed other than 0-9 and Backspace.
+        End If
+        
+    End If
+    
+End Sub
+

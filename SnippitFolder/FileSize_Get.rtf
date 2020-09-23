@@ -1,0 +1,17 @@
+
+
+Where filenumber is the number of the file as specified in the Open statement. Example:
+
+Open "C:\Work\MyFile.Txt" For Input As #1 'Open the file
+size = LOF(1) 'Get file size
+Close #1 'Close the file
+
+If the file is not open in your program, you will need to use the FileLen function:
+
+FileLen(filepath)
+
+With filepath replaced by the name and path of the file. To view the size of the file of the above example, but without opening it, we'll type the code:
+
+size = FileLen("C:\Work\MyFile.Txt")
+In both examples, the size variable will contain the size, in bytes, of C:\Work\MyFile.Txt.
+

@@ -1,0 +1,50 @@
+Private Type TEXTMETRIC
+    tmHeight As Long
+    tmAscent As Long
+    tmDescent As Long
+    tmInternalLeading As Long
+    tmExternalLeading As Long
+    tmAveCharWidth As Long
+    tmMaxCharWidth As Long
+    tmWeight As Long
+    tmOverhang As Long
+    tmDigitizedAspectX As Long
+    tmDigitizedAspectY As Long
+    tmFirstChar As Byte
+    tmLastChar As Byte
+    tmDefaultChar As Byte
+    tmBreakChar As Byte
+    tmItalic As Byte
+    tmUnderlined As Byte
+    tmStruckOut As Byte
+    tmPitchAndFamily As Byte
+    tmCharSet As Byte
+End Type
+Private Declare Function GetTextMetrics Lib "gdi32" Alias "GetTextMetricsA" (ByVal hdc As Long, lpMetrics As TEXTMETRIC) As Long
+
+Sub PrintText(aStrg As String, lBaseLine As Long, objPrint As Object)
+    Dim M As TEXTMETRIC
+    GetTextMetrics objPrint.hdc, M
+    objPrint.CurrentY = lBaseLine - M.tmAscent * Screen.TwipsPerPixelY
+    Print aStrg;
+End Sub
+
+Private Sub Form_Load()
+    Show
+    AutoRedraw = True
+    Dim lBaseLine As Long
+    lBaseLine = ScaleHeight \ 2
+    With Font
+        PrintText .Name, lBaseLine, Me
+        .Name = "Arial"
+        .Size = 18
+        PrintText " " & "Ken Foster", lBaseLine, Me
+        .Name = "Times New Roman"
+        .Size = 12
+        .Italic = True
+        .Bold = True
+        PrintText " " & "Ken Foster", lBaseLine, Me
+    End With
+    Line (0, lBaseLine)-(ScaleWidth, lBaseLine + Screen.TwipsPerPixelY), Form1.BackColor, BF
+End Sub
+

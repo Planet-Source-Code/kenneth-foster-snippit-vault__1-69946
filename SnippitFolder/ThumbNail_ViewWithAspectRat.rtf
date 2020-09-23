@@ -1,0 +1,57 @@
+Option Explicit
+
+Public Sub ViewImage(strFile As String, picTemp As PictureBox, picTarget As PictureBox)
+    Dim x&, y&, x1&, y1&, z1!
+    Dim sNoPreview$
+    On Error GoTo ErrorHandler
+    'Set default stuffs
+    picTarget.Cls
+    picTarget.AutoRedraw = True
+    picTemp.Visible = False
+    picTemp.AutoSize = True
+    'get target sizing info
+    x = picTarget.Width
+    y = picTarget.Height
+    'Load the image
+    picTemp.Picture = LoadPicture(strFile)
+    'get source sizing info
+    x1 = picTemp.Width
+    y1 = picTemp.Height
+    'Determin conversion ratio to use
+    z1 = IIf(x / x1 * y1 < y, x / x1, y / y1)
+    'Calculate new image size
+    x1 = x1 * z1
+    y1 = y1 * z1
+    'Draw Image
+    picTarget.PaintPicture picTemp.Picture, (x - x1) / 2, (y - y1) / 2, x1, y1
+    Exit Sub
+ErrorHandler:
+    'set temp image to nothing
+    picTemp.Picture = LoadPicture()
+    'Display default error message
+    sNoPreview = "No Preview Available"
+    picTarget.CurrentX = x / 2 - picTarget.TextWidth(sNoPreview) / 2
+    picTarget.CurrentY = y / 2 - picTarget.TextHeight(sNoPreview) / 2
+    picTarget.Print sNoPreview
+End Sub
+Private Sub Dir1_Change()
+File1.Path = Dir1.Path
+File1.Pattern = "*.*"
+End Sub
+
+Private Sub Drive1_Change()
+Dir1.Path = Drive1.Drive
+End Sub
+
+Private Sub File1_Click()
+Dim SelFile As String
+On Error GoTo Err
+SelFile = File1.Path & "\" & File1.FileName
+picTemp.Picture = LoadPicture(SelFile)
+ViewImage SelFile, picTemp, picTarget
+Text1.Text = File1.Path & "\" & File1.FileName
+
+Err:
+ Exit Sub
+End Sub
+

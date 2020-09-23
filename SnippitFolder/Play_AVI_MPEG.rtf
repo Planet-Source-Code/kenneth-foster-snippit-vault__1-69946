@@ -1,0 +1,42 @@
+'Put Picture1,MMControl and Common Dialog on Form with 3 command buttons
+
+
+Option Explicit
+
+Private Sub Command1_Click()
+     MMControl1.DeviceType = "MPEGVideo"
+     MMControl1.hWndDisplay = Picture1.hWnd
+    CommonDialog1.Filter = "MPEG Files |*.MPEG"
+    CommonDialog1.ShowOpen
+    MMControl1.FileName = CommonDialog1.FileName
+    MMControl1.Command = "open"
+
+End Sub
+
+Private Sub Command2_Click()
+
+    MMControl1.DeviceType = "AVIVideo"
+    MMControl1.hWndDisplay = Picture1.hWnd
+    CommonDialog1.Filter = "AVI Files |*.AVI"
+    CommonDialog1.ShowOpen
+    MMControl1.FileName = CommonDialog1.FileName
+    MMControl1.Command = "open"
+End Sub
+
+Private Sub Command3_Click()
+ MMControl1.Command = "close"
+ 
+End Sub
+
+
+Private Sub Form_Unload(Cancel As Integer)
+    'Close the multimedia control to free re
+    '     sources
+    MMControl1.Command = "close"
+End Sub
+Private Sub MMControl1_Done(NotifyCode As Integer)
+    'Close the multimedia control to free re
+    '     sources
+    MMControl1.Command = "close"
+End Sub
+

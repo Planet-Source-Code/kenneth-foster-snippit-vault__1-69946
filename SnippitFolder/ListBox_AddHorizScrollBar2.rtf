@@ -1,0 +1,31 @@
+'Put in a module
+
+Option Explicit
+
+#If Win16 Then
+
+
+Declare Function SendMessage Lib "User" (ByVal hwnd As Integer, ByVal wMsg As Integer, ByVal wParam As Integer, lParam As Any) As Long
+#Else
+
+
+Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+#End If
+
+
+'Put on Form
+
+Option Explicit
+
+Const WM_USER = 1024
+Const LB_SETHORIZONTALEXTENT = (WM_USER + 21)
+'--------------------------------------------
+
+Private Sub Form_Load()
+Dim nRet As Long
+Dim nNewWidth As Integer
+
+nNewWidth = List1.Width + 100 'new width in pixels
+nRet = SendMessage(List1.hwnd, LB_SETHORIZONTALEXTENT, nNewWidth, ByVal 0&)
+End Sub
+

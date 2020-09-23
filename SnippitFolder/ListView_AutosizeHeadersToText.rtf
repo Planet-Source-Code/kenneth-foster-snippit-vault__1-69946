@@ -1,0 +1,27 @@
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hwndLock As Long) As Long
+
+Const LVM_FIRST As Long = &H1000
+Const LVM_SETCOLUMNWIDTH As Long = (LVM_FIRST + 30)
+Const LVSCW_AUTOSIZE As Long = -1
+Const LVSCW_AUTOSIZE_USEHEADER As Long = -2
+
+Private Sub Form_Load()
+
+lstView1.ColumnHeaders.Add 1, , "One"
+lstView1.ColumnHeaders.Add 2, , "Two"
+lstView1.ColumnHeaders.Add 3, , "Three"
+lstView1.ListItems.Add 1, , "Ken Foster"
+lstView1.ListItems(1).SubItems(1) = "was"
+lstView1.ListItems(1).SubItems(2) = "here"
+lstView1.ListItems.Add 2, , "Was"
+lstView1.ListItems(2).SubItems(1) = "here"
+lstView1.ListItems(2).SubItems(2) = "again"
+
+    'autosize code
+    LockWindowUpdate lstView1.hWnd               '
+    SendMessage lstView1.hWnd, LVM_SETCOLUMNWIDTH, 0, LVSCW_AUTOSIZE_USEHEADER
+    SendMessage lstView1.hWnd, LVM_SETCOLUMNWIDTH, 1, LVSCW_AUTOSIZE_USEHEADER
+    LockWindowUpdate 0
+End Sub
+

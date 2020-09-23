@@ -1,0 +1,75 @@
+Option Explicit 
+
+   Private Declare Function GetWindowLong& Lib "user32" _ 
+   Alias "GetWindowLongA" (ByVal hwnd as Long, _ 
+   ByVal nIndex as Long) 
+
+   Private Declare Function SetWindowLong& Lib "user32" _ 
+   Alias "SetWindowLongA" (ByVal hwnd as Long, _ 
+   ByVal nIndex as Long, ByVal dwNewLong as Long) 
+
+   Private Declare Function SetWindowPos& Lib "user32" _ 
+   (ByVal hwnd as Long, ByVal hWndInsertAfter as Long, _ 
+   ByVal X as Long, ByVal Y as Long, ByVal cx as Long, _ 
+   ByVal cy as Long, ByVal wFLAGS as Long) 
+
+   Private Const SWP_NOZORDER = &H4 
+   Private Const SWP_NOSIZE = &H1 
+   Private Const SWP_NOMOVE = &H2 
+   Private Const SWP_DRAWFRAME = &H20 
+   Private Const SWP_FRAMECHANGED = &H20 
+   Private Const SWP_NOOWNERZORDER = &H200 
+
+   Private Const wFLAGS = _ 
+   SWP_NOMOVE or _ 
+   SWP_NOSIZE or _ 
+   SWP_NOOWNERZORDER or _ 
+   SWP_NOZORDER or _ 
+   SWP_FRAMECHANGED 
+
+   Private Const WS_DLGFRAME = &H400000 
+   Private Const WS_EX_DLGMODALFRAME = &H1 
+   Private Const WS_EX_CLIENTEDGE = &H200& 
+   Private Const WS_EX_STATICEDGE = &H20000 
+
+   Private Const GWL_STYLE as Long = (-16) 
+   Private Const GWL_EXSTYLE = (-20) 
+'=============================================================
+Private Sub Form_Load() 
+   'examples of use
+   Call SetStyle(Command1, True) 
+   Call SetStyle(Command2, True) 
+   Call SetStyle(Command3, True) 
+   Call SetStyle(Check1, , , True) 
+   Call SetStyle(Frame1, , , True) 
+   Call SetStyle(Text1, , , True) 
+End Sub 
+'============================================================
+Private Sub SetStyle(Obj as Object, Optional S1 as Boolean = False, Optional S2 as Boolean = False, Optional S3 as Boolean = False) 
+   Dim lRet as Long 
+
+   With Obj 
+      If S1 = True Then 
+         lRet = GetWindowLong(.hwnd, GWL_EXSTYLE) 
+         lRet = IIf(True, lRet or WS_EX_CLIENTEDGE, lRet And Not WS_EX_CLIENTEDGE) 
+         SetWindowLong .hwnd, GWL_EXSTYLE, lRet 
+         SetWindowPos .hwnd, 0, 0, 0, 0, 0, wFLAGS 
+      End If 
+      If S2 = True Then 
+         lRet = GetWindowLong(.hwnd, GWL_EXSTYLE) 
+         lRet = IIf(True, lRet or WS_EX_STATICEDGE, lRet And Not WS_EX_STATICEDGE) 
+         SetWindowLong .hwnd, GWL_EXSTYLE, lRet 
+         SetWindowPos .hwnd, 0, 0, 0, 0, 0, wFLAGS 
+      End If 
+      If S3 = True Then 
+         lRet = GetWindowLong(.hwnd, GWL_EXSTYLE) 
+         lRet = IIf(True, lRet or WS_EX_DLGMODALFRAME, lRet And Not WS_EX_DLGMODALFRAME) 
+         SetWindowLong .hwnd, GWL_EXSTYLE, lRet 
+         SetWindowPos .hwnd, 0, 0, 0, 0, 0, wFLAGS 
+      End If 
+   End With 
+
+End Sub 
+
+
+

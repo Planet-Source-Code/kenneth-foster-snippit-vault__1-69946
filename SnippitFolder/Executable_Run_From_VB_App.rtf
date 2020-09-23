@@ -1,0 +1,15 @@
+'I have made the code to run the calculator, which 
+' is present in every Windows Based PC. 'the command button click() event triggers 
+'the application to run.
+
+'General Syntax is RetVal = Shell([Pathname of EXE],[WindowStyle As vbAppWinStyle = vbMinimisedFocus]) 
+'----------------CODE-------------------- 
+
+Private Sub cmdExec_Click() 
+'cmdExec is the name of the command button on any form. 
+Dim RetVal  
+RetVal = Shell("C:\WINDOWS\System32\calc.exe", 1) ' Run Calculator.  
+End Sub  
+
+
+

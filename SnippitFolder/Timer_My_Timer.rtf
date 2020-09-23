@@ -1,0 +1,44 @@
+'Put in Module
+
+Option Explicit 
+
+' Project:      vbpMyTimer
+' Description:  Uses WinAPI calls to replace the standart timer ocx
+' Spin-Doc / www.Spin-Doc.org
+
+Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd as Long, ByVal nIDEvent as Long, ByVal uElapse as Long, ByVal lpTimerFunc as Long) as Long 
+
+Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd as Long, ByVal nIDEvent as Long) as Long 
+
+Private Const m_nIDEvent = 1    ' to ensure that you can kill the timer 
+Private Const m_uElapse = 500  ' Timer-interval in ms 
+
+Public Sub Tick() 
+
+'Place action to be taken here
+'example
+
+Static Counter
+    Counter = Counter + 1
+    Form1.Caption = Counter
+    
+End Sub 
+
+Public Sub SetMyTimer(Form as Form) 
+  Dim RetVal as Long 
+    RetVal = SetTimer(Form.hWnd, m_nIDEvent, m_uElapse, AddressOf Tick) 
+End Sub 
+
+Public Sub KillMyTimer(Form as Form) 
+  Dim RetVal as Long 
+    RetVal = KillTimer(Form.hWnd, m_nIDEvent) 
+End Sub 
+
+'example of use
+
+Call KillMyTimer(Me)   'stops timer 
+Call SetMyTimer(Me)  'starts timer 
+
+
+
+

@@ -1,0 +1,15 @@
+Private Declare Function GetSysColor Lib "user32" _ (ByVal nIndex As Long) As Long
+ Private Const COLOR_BTNFACE = 15
+ Private Const COLOR_BTNSHADOW = 16 
+
+
+'Put one or the other in form1_Paint event
+==============================================================
+  'raised 
+  Me.Line (0, 15)-(ScaleWidth, 15), GetSysColor(COLOR_BTNSHADOW)
+  Me.Line (0, 0)-(ScaleWidth, 0), vbWhite 
+========================================================  
+'etched
+   Me.Line (0, 15)-(ScaleWidth, 15), vbWhite
+   Me.Line (0, 0)-(ScaleWidth, 0), GetSysColor(COLOR_BTNSHADOW) 
+

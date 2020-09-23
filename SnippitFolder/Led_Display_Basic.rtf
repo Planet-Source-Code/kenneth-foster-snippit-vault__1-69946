@@ -1,0 +1,77 @@
+Option Explicit 
+'one picturebox and timer
+
+Private Slots(0 To 255) as IPictureDisp 'Vertical sections  
+Private Panel as Collection ' Horizontal order  
+
+Private Sub Form_Load()  
+Dim i as Long  
+Me.Move 1000, 1000, 11000, 4000  
+With Picture1  
+.BackColor = vbBlack  
+.Move 0, 0, 390, 2550  
+.AutoRedraw = True  
+.FillStyle = vbFSSolid  
+.Visible = False  
+End With  
+Set Panel = New Collection  
+For i = 0 To 30  
+AddBar 0  
+Next  
+' H E L L 0 
+AddBarGroup 255, 255, 16, 16, 255, 255, 0, 0  
+AddBarGroup 255, 255, 145, 145, 129, 129, 0, 0  
+AddBarGroup 255, 255, 1, 1, 1, 1, 0, 0  
+AddBarGroup 255, 255, 1, 1, 1, 1, 0, 0  
+AddBarGroup 126, 255, 129, 129, 255, 126, 0, 0  
+Timer1.Interval = 60  
+Timer1.Enabled = True  
+End Sub  
+
+Private Sub AddBarGroup(ParamArray Bars())  
+Dim bar  
+For Each bar in Bars  
+AddBar bar  
+Next  
+End Sub  
+
+Private Sub AddBar(ByVal Value as Byte)  
+If Slots(Value) Is Nothing Then Set Slots(Value) = DrawDots(Value)  
+Panel.Add Slots(Value)  
+End Sub  
+
+Private Function DrawDots(ByVal Value as Byte) as IPictureDisp  
+Dim top as Long  
+Set Picture1.Picture = Nothing  
+top = 2300  
+Do While top > 0  
+If Value And 1 Then  
+Picture1.FillColor = &H40C0FF  
+Picture1.Circle (150, top), 120, &H206080  
+Else  
+Picture1.FillColor = &H6080&  
+Picture1.Circle (150, top), 105, &H4040&  
+End If  
+Value = Value \ 2  
+top = top - 300  
+Loop  
+Set DrawDots = Picture1.Image  
+End Function  
+
+Private Sub DisplayPanel()  
+Dim x as Long, bar as IPictureDisp  
+' Quickly coded with raw values for demo puposes.... 
+For x = 1 To 30  
+Set bar = Panel(x)  
+bar.Render Me.hDC, x * 22, 200, 22, -168, 0, 0, bar.Width, bar.Height, ByVal 0&  
+Next  
+End Sub  
+
+Private Sub Timer1_Timer()  
+Panel.Add Panel(1)  
+Panel.Remove 1  
+DisplayPanel  
+End Sub  
+
+
+

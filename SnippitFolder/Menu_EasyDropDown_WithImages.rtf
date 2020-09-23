@@ -1,0 +1,70 @@
+ Add To Form
+-----------------------------------------------------
+'Add picture boxs and make AutoReDraw = True and
+'AutoSize = True and Visible = False
+'Make sure all images are the same size
+
+
+Private Sub Form_Load()
+
+Dim hMenu As Long, hSubMenu As Long, MenuID As Long, g As Long
+
+    g = Picture1.TextWidth("Copy")
+    Picture1.CurrentX = Picture1.Width
+    Picture1.CurrentY = 0
+    Picture1.Width = Picture1.Width + g + 120
+    Picture1.Print "Copy"
+    
+    g = Picture2.TextWidth("Save")
+    Picture2.CurrentX = Picture2.Width
+    Picture2.CurrentY = 0
+    Picture2.Width = Picture2.Width + g + 120
+    Picture2.Print "Save"
+    
+    g = Picture3.TextWidth(" Open")
+    Picture3.CurrentX = Picture3.Width
+    Picture3.CurrentY = 0
+    Picture3.Width = Picture3.Width + g + 120
+    Picture3.Print " Open"
+    
+    g = Picture4.TextWidth("Exit")
+    Picture4.CurrentX = Picture4.Width
+    Picture4.CurrentY = 0
+    Picture4.Width = Picture4.Width + g + 120
+    Picture4.Print "Exit"
+
+    Picture1.Picture = Picture1.Image
+    Picture2.Picture = Picture2.Image
+    Picture3.Picture = Picture3.Image
+    Picture4.Picture = Picture4.Image
+
+
+    hMenu = GetMenu(Me.hwnd)
+    hSubMenu = GetSubMenu(hMenu, 0) 'The "0" here is For the first menu Item.
+    
+    
+    MenuID = GetMenuItemID(hSubMenu, 0) 'The "0" here is For the first SUB menu Item.
+    X% = ModifyMenu(hMenu, MenuID, MF_BITMAP, MenuID, CLng(Picture1.Picture))
+    MenuID = GetMenuItemID(hSubMenu, 1)
+    X% = ModifyMenu(hMenu, MenuID, MF_BITMAP, MenuID, CLng(Picture2.Picture))
+    MenuID = GetMenuItemID(hSubMenu, 2)
+    X% = ModifyMenu(hMenu, MenuID, MF_BITMAP, MenuID, CLng(Picture3.Picture))
+    MenuID = GetMenuItemID(hSubMenu, 3)
+    X% = ModifyMenu(hMenu, MenuID, MF_BITMAP, MenuID, CLng(Picture4.Picture))
+            
+        
+
+End Sub
+
+--------------------------------------------------------------
+Add To Module
+--------------------------------------------------------------
+
+Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
+Declare Function GetMenuItemID Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function ModifyMenu Lib "user32" Alias "ModifyMenuA" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal wIDNewItem As Long, ByVal lpString As Any) As Long
+Declare Function GetSystemMenu Lib "user32" (ByVal hwnd As Long, ByVal bRevert As Long) As Long
+
+Global Const MF_BITMAP = 4
+

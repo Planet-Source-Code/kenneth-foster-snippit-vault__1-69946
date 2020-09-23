@@ -1,0 +1,96 @@
+'Put in module called "modTransParentFrame"
+
+Option Explicit
+
+'------------------------------------------------------
+' Module    : modTranspFrame
+' Created:  : By Jim K on March, 2004
+' e-mail    : vb6@c2i.net
+'------------------------------------------------------
+' Therms    : This code can be used for free
+' of use    : If you use it, you'r encouraged to give
+'           : credits to the author of the code.
+'------------------------------------------------------
+
+Public Sub DrawBevel(frm As Form, X1 As Integer, Y1 As Integer, X2 As Integer, Y2 As Integer, HueSatVal As Integer)
+    
+    'If HueSatVal has a positive value, it will draw an outer bevel
+    'If it's a (-negative value), it will draw an inner bevel
+    'The bigger value both ways, the darker the bevel will be.
+    Dim I As Integer
+    
+    For I = X1 To X2
+        frm.PSet (I, Y1), ChangeColor(frm.Point(I, Y1), HueSatVal)
+    Next I
+    
+    For I = Y1 + 1 To Y2 - 1
+        frm.PSet (X1, I), ChangeColor(frm.Point(X1, I), HueSatVal)
+    Next I
+    
+    For I = X1 To X2
+        frm.PSet (I, Y2), ChangeColor(frm.Point(I, Y2), -HueSatVal)
+    Next I
+    
+    For I = Y1 + 1 To Y2 - 1
+        frm.PSet (X2, I), ChangeColor(frm.Point(X2, I), -HueSatVal)
+    Next I
+
+End Sub
+
+Public Function ChangeColor(CurPxl As Long, HueSatVal As Integer) As Long
+    
+    Dim R, G, B As Integer
+    
+    'Finds the current pixels RGB Value and adds
+    'the HueSatVal (Hue/Saturation) that is set to either make a
+    'brighter or darker shade of the current pixels color
+    R = (CurPxl And RGB(255, 0, 0)) + HueSatVal
+    G = ((CurPxl And RGB(0, 255, 0)) \ 256) + HueSatVal
+    B = ((CurPxl And RGB(0, 0, 255)) \ 65536) + HueSatVal
+    
+    'Value will go < 0 or > 255 at some point.
+    If HueSatVal > 0 Then
+        If R > 255 Then R = 255
+        If G > 255 Then G = 255
+        If B > 255 Then B = 255
+    ElseIf HueSatVal < 0 Then
+        If R < 0 Then R = 0
+        If G < 0 Then G = 0
+        If B < 0 Then B = 0
+    End If
+    
+    ChangeColor = RGB(R, G, B)
+    
+End Function
+
+Public Sub DrawFrameOnControl(frm As Form, Ctl As Object, BWidth As Integer, HSPosNegVal As Integer)
+    
+    Dim I As Integer
+
+    'Set mode to Pixels
+    frm.ScaleMode = 3
+    
+    For I = 1 To BWidth
+        DrawBevel frm, Ctl.Left - I, Ctl.Top - I, Ctl.Left + Ctl.Width + I - 1, Ctl.Top + Ctl.Height + I - 1, HSPosNegVal
+    Next I
+    
+End Sub
+
+'==========================================
+'put on form
+'autoredraw = true
+'MinButton = false
+'MaxButton = false
+'example of calls
+'==========================================
+Private Sub Form_Load()
+
+    'DrawFrameOnControl Frm, Ctl, Width, Outer/Inner bevel
+    DrawFrameOnControl Me, Text1, 4, -60
+    DrawFrameOnControl Me, Command1, 3, -50
+    DrawFrameOnControl Me, Command2, 3, -50
+    DrawFrameOnControl Me, Combo1, 4, 50
+    DrawFrameOnControl Me, Label1, 3, 40
+        
+End Sub
+

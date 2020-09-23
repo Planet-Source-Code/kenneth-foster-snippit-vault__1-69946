@@ -1,0 +1,7 @@
+Private Declare Function SetVolumeLabel Lib "kernel32" Alias "SetVolumeLabelA" (ByVal lpRootPathName As String, ByVal lpVolumeName As String) As Long
+
+
+Public sub Command_Click()
+SetVolumeLabel "C:\", "DANISHAFZAL"
+end 
+End Sub

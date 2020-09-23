@@ -1,0 +1,12 @@
+
+'Used in a usercontrol to change Zorder on main form so they do not show thru on usercontrol.
+'Sort of like stay on top for a usercontrol
+
+Dim ZX As Long
+  Dim c As Control
+  On Error Resume Next
+  
+     For ZX = 1 To UserControl.ParentControls.Count
+       Set c = UserControl.ParentControls.Item(ZX)
+       c.ZOrder 0
+     Next

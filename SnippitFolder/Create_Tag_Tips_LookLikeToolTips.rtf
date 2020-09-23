@@ -1,0 +1,21 @@
+' Name: Create a tag tip
+' Description:You can use the Tag proper
+'     ty and the MouseMove event to create "ta
+'     g tips," which look
+like tool tips.
+' By: Found on the World Wide Web
+'**************************************
+
+Create a label To be used as the tool tip box and Set its visible
+Property To False, and its AutoSize property to True. Then add this code to the
+MouseMove Event of the control To which you are adding tag tip text: 
+Label1.Caption = Command1.Tag
+Label1.Top = Command1.Top + Command1.Height
+Label1.Left = Command1.Left + Command1.Width / 2
+Label1.Visible = True
+Set the Tag Property of the control To the text you want to display as the tag tip: 
+Command1.TAG = "This is the TAG TIP"
+Add this To the MouseMove Event of the form. It turns off the tag tip when you
+move your mouse off the control: 
+Label1.Visible = False
+

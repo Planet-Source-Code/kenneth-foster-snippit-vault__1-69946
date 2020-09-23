@@ -1,0 +1,112 @@
+'Put in a module
+
+
+'EVERY THING IN THIS MODULE MAKES THE SYSTRAY ICON PROGRAM WORK'
+'SO YOU WILL NEED IT ALL,YOU MIGHT NOT USE IT ALL BUT JUST LEAVE IT IN'
+
+Option Explicit
+
+Public Declare Function Shell_NotifyIcon Lib "shell32" Alias "Shell_NotifyIconA" (ByVal dwMessage As Long, pnid As NOTIFYICONDATA) As Boolean
+
+Public Const NIM_ADD = &H0
+Public Const NIM_MODIFY = &H1
+Public Const NIM_DELETE = &H2
+Public Const NIF_MESSAGE = &H1
+Public Const NIF_ICON = &H2
+Public Const NIF_TIP = &H4
+Public Const WM_MOUSEMOVE = &H200
+Public Const WM_LBUTTONDOWN = &H201
+Public Const WM_LBUTTONUP = &H202
+Public Const WM_LBUTTONDBLCLK = &H203
+Public Const WM_RBUTTONDOWN = &H204
+Public Const WM_RBUTTONUP = &H205
+Public Const WM_RBUTTONDBLCLK = &H206
+Public Const HWND_TOPMOST = -1
+
+Public nid As NOTIFYICONDATA
+
+Public Type NOTIFYICONDATA
+cbSize As Long
+hwnd As Long
+uId As Long
+uFlags As Long
+uCallBackMessage As Long
+hIcon As Long
+szTip As String * 64
+End Type
+
+'---------------------------------------------------------------------------
+
+'Put on Form
+
+
+'THIS SOURCE CODE WILL USE WHAT EVER ICON YOUR PROGRAM USES'
+
+'THIS MAKES THE MENU POPUP WHEN THE FORM IS HIDDEN IN THE SYSTRAY'
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Dim Sys As Long
+Sys = x / Screen.TwipsPerPixelX
+Select Case Sys
+Case WM_LBUTTONDOWN:
+Me.PopupMenu mnuSystray
+End Select
+End Sub
+
+'THIS MAKES THE FOR DISSAPEAR/MINIMIZE TO THE SYSTRAY'
+
+Private Sub Form_Resize()
+If WindowState = vbMinimized Then
+Me.Hide
+Me.Refresh
+With nid
+.cbSize = Len(nid)
+.hwnd = Me.hwnd
+.uId = vbNull
+.uFlags = NIF_ICON Or NIF_TIP Or NIF_MESSAGE
+.uCallBackMessage = WM_MOUSEMOVE
+.hIcon = Me.Icon
+.szTip = Me.Caption & vbNullChar
+End With
+Shell_NotifyIcon NIM_ADD, nid
+Else
+Shell_NotifyIcon NIM_DELETE, nid
+End If
+End Sub
+
+'THIS WILL KILL THE SYSTRAY ICON IF THE FORM IS UNLOADED'
+
+Private Sub Form_Unload(Cancel As Integer)
+Shell_NotifyIcon NIM_DELETE, nid
+End
+End Sub
+'THIS UNLOADS THE FORM FROM THE MENU'
+
+Private Sub mnuexit_Click()
+Unload Me
+End Sub
+'THIS RESTORES THE FORM'
+Private Sub mnuRestore_Click()
+WindowState = vbNormal
+Me.Show
+End Sub
+'THIS MINIMIZES THE FORM WHICH WILL START EVERYTHING ELSE'
+
+Private Sub Command1_Click()
+WindowState = vbMinimized
+End Sub
+
+Private Sub mnuSystray_Click()
+'mnuSystray is name that goes in menu editor"Name"
+End Sub
+
+
+'-----------------------------------------------------------------
+
+'Menu editor
+
+'Caption = Systray , Name = mnuSystray
+'....&Exit , mnuExit
+'....
+'....Restore/Open ,mnuRestore
+

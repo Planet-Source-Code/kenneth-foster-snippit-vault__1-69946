@@ -1,0 +1,30 @@
+Sub Command1_Click()
+  Dim i As Integer
+  
+    Picture1.ForeColor = RGB(255, 0, 255) 'use blue bar
+    For i = 0 To 100
+        updateprogress Picture1, i
+    Next
+   ' Picture1.Cls 'clear bar at they End
+ 
+End Sub
+
+
+Private Sub updateprogress(pb As Control, ByVal percent)
+    Dim num As String   'use percent
+
+    If percent > 100 Then percent = 100
+    If Not pb.AutoRedraw Then 'picture In memory ?
+        pb.AutoRedraw = -1 'no, make one
+    End If
+    pb.Cls 'clear picture In memory
+    pb.ScaleWidth = 100 'new sclaemodus
+    pb.DrawMode = 10 'not XOR Pen Modus
+    num$ = Format$(percent, "###") + "%"
+    pb.CurrentX = 50 - pb.TextWidth(num$) / 2
+    pb.CurrentY = (pb.ScaleHeight - pb.TextHeight(num$)) / 2
+    pb.Print num$ 'print percent
+    pb.Line (0, 0)-(percent, pb.ScaleHeight), , BF
+    pb.Refresh 'show differents
+End Sub
+

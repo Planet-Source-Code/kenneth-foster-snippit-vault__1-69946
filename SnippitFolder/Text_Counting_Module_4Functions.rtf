@@ -1,0 +1,76 @@
+Public Function CountCharsWOSpaces(TextInput As String, Optional OtherDelimeter As String) 
+    Dim NoSpacesArr() As String
+    Dim NoSpaces As String
+    Dim X As Variant
+
+    If OtherDelimeter = "" Then
+        NoSpacesArr = Split(TextInput, " ")
+    Else
+        NoSpacesArr = Split(TextInput, OtherDelimeter)
+    End If
+
+    For X = 0 To UBound(NoSpacesArr)
+        NoSpaces = NoSpaces & NoSpacesArr(X)
+    Next X
+    CountCharsWOSpaces = Len(NoSpaces)
+End Function
+
+
+Public Function CountChars(TextInput As String) As Integer
+    CountChars = Len(TextInput)
+End Function
+
+
+Public Function CountLettersNumbers(TextInput As String, Optional OnlyLetters As Boolean, Optional OnlyNumbers As Boolean) ', CountSpaces As Boolean) As Variant
+    Dim CurrentChar As String
+    Dim OnlyLettersNumbers As String
+    Dim X As Variant
+
+    If OnlyLetters = True And OnlyNumbers = True Then
+        CountLettersNumbers = "Error,1: OnlyLetters And OnlyNumbers are both true"
+        Exit Function
+    End If
+
+    For X = 1 To Len(TextInput)
+        CurrentChar = UCase(Mid(TextInput, X, 1))
+
+        If OnlyLetters = True Then
+            If Asc(CurrentChar) > 64 Then
+                If Asc(CurrentChar) < 91 Then
+                    OnlyLettersNumbers = OnlyLettersNumbers & CurrentChar
+                End If
+            End If
+        Else
+            If OnlyNumbers = True Then
+                If Asc(CurrentChar) > 47 Then
+                    If Asc(CurrentChar) < 58 Then
+                        OnlyLettersNumbers = OnlyLettersNumbers & CurrentChar
+                    End If
+                End If
+            Else
+                If Asc(CurrentChar) > 64 Then
+                    If Asc(CurrentChar) < 91 Then
+                        OnlyLettersNumbers = OnlyLettersNumbers & CurrentChar
+                    End If
+                ElseIf Asc(CurrentChar) > 47 Then
+
+                    If Asc(CurrentChar) < 58 Then
+                        OnlyLettersNumbers = OnlyLettersNumbers & CurrentChar
+                    End If
+                End If
+            End If
+        End If
+    Next X
+    CountLettersNumbers = Len(OnlyLettersNumbers)
+End Function
+
+
+Public Function CountWords(TextInput As String, Optional Delimeter As String) As Integer
+    Dim WordsArr() As String
+    Dim X As Variant
+    Dim Del As String
+    If Delimeter = "" Then Del = " " Else Del = Delimeter
+    WordsArr = Split(TextInput, Del)
+    CountWords = Int(UBound(WordsArr) + 1)
+End Function
+

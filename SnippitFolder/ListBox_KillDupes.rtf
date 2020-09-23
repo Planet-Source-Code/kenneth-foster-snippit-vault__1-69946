@@ -1,0 +1,15 @@
+Public Function killListDuplicates(listBox As listBox) 
+    Dim A%, B%
+
+    For A% = 0 To listBox.ListCount - 1
+        For B% = 0 To listBox.ListCount - 1
+            If B% <> A% Then
+                If listBox.List(A%) = listBox.List(B%) Then
+                    listBox.RemoveItem B%
+                    B% = B% - 1
+                End If
+            End If
+        Next B%
+    Next A%
+End Function
+

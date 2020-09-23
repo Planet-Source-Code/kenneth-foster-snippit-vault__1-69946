@@ -1,0 +1,56 @@
+'Move borderless form using a label as header or use just to move form by itself
+'Code below shows how to do both.
+
+
+
+Option Explicit
+
+Dim UserDown As Boolean
+Dim UserStartX, UserStartY
+
+' Code for form move only
+
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+ On Error Resume Next
+    UserDown = True
+    UserStartX = X
+    UserStartY = Y
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+On Error Resume Next
+    If UserDown = True Then
+        Frm_Main.Left = Frm_Main.Left + (X - UserStartX)
+        Frm_Main.Top = Frm_Main.Top + (Y - UserStartY)
+    End If
+End Sub
+
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+On Error Resume Next
+    UserDown = False
+End Sub
+
+
+' Code using label as header. Could be a picture also
+
+
+Private Sub Label1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    On Error Resume Next
+    UserDown = True
+    UserStartX = X
+    UserStartY = Y
+End Sub
+
+Private Sub Label1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    On Error Resume Next
+    If UserDown = True Then
+        Frm_Main.Left = Frm_Main.Left + (X - UserStartX)
+        Frm_Main.Top = Frm_Main.Top + (Y - UserStartY)
+    End If
+End Sub
+
+Private Sub Label1_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    On Error Resume Next
+    UserDown = False
+End Sub
+

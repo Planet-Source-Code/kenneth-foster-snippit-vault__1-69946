@@ -1,0 +1,33 @@
+Private Sub Form_Load()
+'Place a shape control anywhere on form for each textbox
+'Place and size your textbox and set multiline to your choice.
+'Program does the rest
+
+TextBorder Text1, Shape1, &H80C0FF
+TextBorder Text2, Shape2, &H80C0FF
+TextBorder Text3, Shape3, &H80C0FF
+End Sub
+
+Private Function TextBorder(txt As TextBox, shp As Shape, colr As OLE_COLOR)
+shp.Top = txt.Top - 10
+shp.Left = txt.Left - 10
+shp.Height = txt.Height + 50
+shp.Width = txt.Width + 50
+shp.BorderColor = colr
+shp.BorderWidth = 2
+shp.Shape = 0
+shp.BorderStyle = 1  'solid
+txt.BorderStyle = 0 'none
+txt.Appearance = 0 'flat
+End Function
+
+Private Sub Text2_GotFocus()
+'just an example of how it can be used
+
+TextBorder Text2, Shape2, vbBlue
+End Sub
+
+Private Sub Text2_LostFocus()
+TextBorder Text2, Shape2, &H80C0FF
+End Sub
+

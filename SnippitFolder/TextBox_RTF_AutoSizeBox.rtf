@@ -1,0 +1,38 @@
+Option Explicit
+
+Private Type RECT
+   Left As Long
+   Top As Long
+   Right As Long
+   Bottom As Long
+End Type
+
+Private Const DT_CALCRECT = &H400
+Private Const DT_WORDBREAK = &H10
+
+Private Declare Function DrawText Lib "user32" Alias "DrawTextA" (ByVal hdc As Long, ByVal lpStr As String, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
+
+Sub AutoSize_Text_Or_RichText_Height(Ctl As Control)
+
+   Dim tR As RECT
+   Dim lHeight As Long
+
+   tR.Right = (Ctl.Width / Screen.TwipsPerPixelX)
+   DrawText Me.hdc, Ctl.Text, -1, tR, (DT_CALCRECT Or DT_WORDBREAK)
+   lHeight = (tR.Bottom - tR.Top) + 10
+   Ctl.Height = (lHeight * Screen.TwipsPerPixelY)
+End Sub
+
+
+Private Sub Form_Load()
+
+   Text1 = "This is an example of" & vbCrLf & _
+           "using autosizing of a textbox" & vbCrLf & _
+           "and avoid clunky looking scrollbars :)" & vbCrLf & vbCrLf & _
+           "This is an example of" & vbCrLf & _
+           "using autosizing of a textbox" & vbCrLf & _
+           "and avoid clunky looking scrollbars :)" & vbCrLf & _
+           "Now is the time for all good men to come to the aid of their country."
+           AutoSize_Text_Or_RichText_Height Text1
+End Sub
+

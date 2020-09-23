@@ -1,0 +1,49 @@
+'Numbers to Words
+
+
+Private Sub Command1_Click()
+Text1.Text = ToWords(Text2.Text)
+End Sub
+
+Public Function ToWords(Num As String) As String
+Dim sFormated As String, Unit() As String, Ans(5) As String, K As Integer
+Ans(0) = "trillion ": Ans(1) = "billion "
+Ans(2) = "million ": Ans(3) = "thousand ": Ans(4) = ""
+'==================================
+sFormated = Format(Num, "000,000,000,000,000.00")
+Unit = Split(sFormated, ",")
+For K = 0 To 4
+    If Val(Unit(K)) > 0 Then ToWords = ToWords + ToNum(Unit(K)) + Ans(K)
+Next
+'HANDLES DECIMAL PARTS (IF ANY)
+If Val(Mid(Unit(4), 5, 2)) <> 0 Then ToWords = ToWords + "and " + Mid$(Unit(4), 5, 2) + "/100"
+End Function
+
+ 
+
+'Function used by ToWords function
+Public Function ToNum(Num As String) As String
+Dim N(19) As String, NN(8) As String, Formated As String
+Dim Hun As Integer, Tens As Integer
+N(0) = "": N(1) = "one": N(2) = "two": N(3) = "three": N(4) = "four"
+N(5) = "five": N(6) = "six": N(7) = "seven": N(8) = "eight": N(9) = "nine"
+N(10) = "ten": N(11) = "eleven": N(12) = "twelve": N(13) = "thirteen"
+N(14) = "fourteen": N(15) = "fifteen": N(16) = "sixteen": N(17) = "seventeen"
+N(18) = "eighteen": N(19) = "nineteen"
+NN(0) = "twenty": NN(1) = "thirty": NN(2) = "forty": NN(3) = "fifty"
+NN(4) = "sixty": NN(5) = "seventy": NN(6) = "eighty": NN(7) = "ninety"
+'=======================================
+Formated = Format(Num, "000.00")
+Hun = Mid$(Formated, 1, 1)
+Tens = Mid$(Formated, 2, 2)
+If Hun <> 0 Then ToNum = N(Hun) + " hundred "
+If Tens <> 0 Then
+    If Tens < 20 Then
+        ToNum = ToNum + N(Tens) + " "
+    Else '>20
+        ToNum = ToNum + NN(Mid(Tens, 1, 1) - 2) + " " + N(Mid(Tens, 2, 1)) + " "
+    End If
+
+End If 'Tens <> 0
+End Function
+

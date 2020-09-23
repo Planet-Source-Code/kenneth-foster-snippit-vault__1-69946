@@ -1,0 +1,9 @@
+'Use the keypress-event:
+
+
+Select Case KeyAscii
+    Case 8, 48 To 57 'allow Backspace,numbers 0-9
+    Case Else 'ignore everything else
+    KeyAscii = 0
+End Select
+

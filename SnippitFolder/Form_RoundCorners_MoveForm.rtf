@@ -1,0 +1,100 @@
+Option Explicit
+Private s_X As Long
+Private s_Y As Long
+Private Declare Function CreateRoundRectRgn Lib "gdi32" _
+  (ByVal X1 As Long, ByVal Y1 As Long, _
+  ByVal X2 As Long, ByVal Y2 As Long, _
+  ByVal X3 As Long, ByVal Y3 As Long) As Long
+
+Private Declare Function SetWindowRgn Lib "User32" _
+  (ByVal hwnd As Long, ByVal hRgn As Long, _
+  ByVal bRedraw As Boolean) As Long
+
+Private Sub Command3_Click()
+End
+End Sub
+
+Private Sub Form_Load()
+ 
+  Command2.Enabled = False
+End Sub
+
+
+Private Sub Command1_Click()
+Dim X As Long
+  Dim Y As Long
+  Dim n As Long
+  
+  X = Me.Width / Screen.TwipsPerPixelX
+  Y = Me.Height / Screen.TwipsPerPixelY
+
+  
+  n = 50
+  
+  SetWindowRgn Me.hwnd, CreateRoundRectRgn(0, 0, X, Y, n, n), True
+  
+ 
+  Command1.Enabled = False
+  
+ 
+  Command2.Enabled = True
+End Sub
+
+
+Private Sub Command2_Click()
+  Dim X As Long
+  Dim Y As Long
+  Dim n As Long
+  
+  X = Me.Width / Screen.TwipsPerPixelX
+  Y = Me.Height / Screen.TwipsPerPixelY
+  
+  
+  n = 0
+  
+  SetWindowRgn Me.hwnd, CreateRoundRectRgn(0, 0, X, Y, n, n), True
+  
+  
+  Command1.Enabled = True
+  
+  
+  Command2.Enabled = False
+End Sub
+
+
+
+
+Private Sub Form_MouseDown(Button As Integer, _
+  Shift As Integer, X As Single, Y As Single)
+  
+
+  s_X = X: s_Y = Y
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, _
+  Shift As Integer, X As Single, Y As Single)
+  
+  Dim lPos As Long
+  
+  If Button > 0 Then
+   
+    lPos = Me.Left + X - s_X
+    If lPos < 350 Then lPos = 0
+    If lPos > Screen.Width - 350 - Me.Width Then _
+      lPos = Screen.Width - Me.Width
+    Me.Left = lPos
+    
+    
+    lPos = Me.Top + Y - s_Y
+    If lPos < 350 Then lPos = 0
+    If lPos > Screen.Height - 350 - Me.Height Then _
+      lPos = Screen.Height - Me.Height
+    Me.Top = lPos
+  End If
+End Sub
+Private Sub cmdExit_Click()
+  
+  Unload Me
+  End
+End Sub
+

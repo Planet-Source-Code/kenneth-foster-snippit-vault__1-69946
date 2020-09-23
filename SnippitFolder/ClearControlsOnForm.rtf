@@ -1,0 +1,6 @@
+Dim Control As Control
+For Each Control In Me
+If TypeOf Control Is CheckBox Then Control.Value = 0
+If TypeOf Control Is TextBox Then Control.Text = ""
+Next Control
+

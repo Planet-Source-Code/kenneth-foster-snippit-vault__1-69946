@@ -1,0 +1,67 @@
+'Put in a module
+
+Option Explicit
+
+Public Const MF_BITMAP = &H4&
+Public Const MIIM_ID = &H2
+Public Const MIIM_TYPE = &H10
+Public Const MFT_STRING = &H0&
+
+Public Type MENUITEMINFO
+    cbSize As Long
+    fMask As Long
+    fType As Long
+    fState As Long
+    wID As Long
+    hSubmenu As Long
+    hbmpChecked As Long
+    hbmpUnchecked As Long
+    dwItemData As Long
+    dwTypeData As String
+    cch As Long
+End Type
+
+Declare Function GetMenuItemCount Lib "user32" (ByVal hMenu As Long) As Long
+Declare Function GetMenuItemInfo Lib "user32" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal b As Boolean, lpMenuItemInfo As MENUITEMINFO) As Boolean
+Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
+Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function GetMenuItemID Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Declare Function SetMenuItemBitmaps Lib "user32" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal hBitmapUnchecked As Long, ByVal hBitmapChecked As Long) As Long
+
+'Example of code on a form
+'Images loaded into an ImageList
+
+
+Private Sub Form_Load()
+On Error GoTo err
+    Dim hMenu As Long, hSubmenu As Long
+    Dim hID As Long
+    
+    'Get the menuhandle of your app
+    hMenu = GetMenu(Me.hwnd)
+    
+    'Get the handle of the first submenu
+    hSubmenu = GetSubMenu(hMenu, 0)
+    
+    'Get the menuId of the first entry (Bitmap)
+    hID = GetMenuItemID(hSubmenu, 0)
+    
+    'You can add two bitmaps to a menuentry
+    'One for the checked and one for the unchecked
+    'state.
+    'Add the bitmap
+    SetMenuItemBitmaps hMenu, hID, MF_BITMAP, Me.ImageList1.ListImages(1).Picture, Me.ImageList1.ListImages(1).Picture
+    ' do the next submenu
+    hID = GetMenuItemID(hSubmenu, 1)
+    ' add the bitmap
+    SetMenuItemBitmaps hMenu, hID, MF_BITMAP, Me.ImageList1.ListImages(2).Picture, Me.ImageList1.ListImages(2).Picture
+    'do the next submenu
+    hID = GetMenuItemID(hSubmenu, 2)
+    ' add the bitmap
+    SetMenuItemBitmaps hMenu, hID, MF_BITMAP, Me.ImageList1.ListImages(3).Picture, Me.ImageList1.ListImages(3).Picture
+    
+    Exit Sub
+err:
+    err.Clear
+    Me.Show
+End Sub

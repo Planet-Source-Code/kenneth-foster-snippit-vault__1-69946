@@ -1,0 +1,20 @@
+Private Type POINTAPI
+    X As Long
+    Y As Long
+End Type
+
+Private pt As POINTAPI
+
+Private Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+
+Private Sub Form_Load()
+Form1.ScaleMode = 3
+
+End Sub
+
+Private Sub Picture1_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+GetCursorPos pt
+Label1.Caption = pt.X
+Label2.Caption = pt.Y
+End Sub
+

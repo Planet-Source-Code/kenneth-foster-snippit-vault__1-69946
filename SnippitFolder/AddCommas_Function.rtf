@@ -1,0 +1,26 @@
+Private Function AddComma(num As String)
+Dim com As String
+Dim x As Integer
+Dim dec As String
+Dim decfo As Boolean
+Dim NumLen As String
+
+'simple search for decimal point
+NumLen = Len(num)
+For x = 1 To NumLen
+   dec = Mid(num, x, 1)
+   If dec = "." Then
+      decfo = True
+   End If
+ Next x
+ 
+ 'format to use, based on decimal point search
+ If decfo = True Then
+     com = Format(num, "###,###,###.##")
+ Else
+     com = Format(num, "###,###,###")
+ End If
+ 
+AddComma = com
+End Function
+

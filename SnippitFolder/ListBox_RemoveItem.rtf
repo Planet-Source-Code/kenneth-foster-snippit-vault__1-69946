@@ -1,0 +1,7 @@
+Dim i as integer 'Declare our variables 
+For i = (List1.ListCount - 1) to 0 Step -1 'Loop through the listbox backwards 
+If InStr(List1.List(i), "B") <> 0 Then'B exists in this item...we need to remove it 
+List1.RemoveItem i 'Remove the offending item 
+End If 
+Next i 
+

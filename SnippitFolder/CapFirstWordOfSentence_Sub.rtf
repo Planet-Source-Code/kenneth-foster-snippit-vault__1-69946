@@ -1,0 +1,59 @@
+
+
+'call example---goes in KeyPress event of control
+
+'Private Sub Text1_KeyPress(KeyAscii As Integer)
+'Cap_First Text1, KeyAscii
+'End Sub
+
+'put in a module
+'--------------------------------------
+
+Dim KP As Boolean
+Dim PD As Boolean
+Dim SB As String
+Dim strResult As String
+Dim strTemp As String
+
+Public Sub Cap_First(txt As TextBox, KeyAscii As Integer)
+
+On Error Resume Next
+If Len(txt) = 1 Then
+    strResult = txt
+    ' Set first letter on left of string to uppercase
+    strResult = UCase$(Left$(strResult, 1)) & Mid$(strResult, 2)
+    ' Place results of uppercase statement in txtField
+    txt = strResult
+     ' Place cursor at end of txt string
+     txt.SelStart = Len(strResult) + 1
+ ' Check to see if Spacebar was pressed, Y=Yes
+ ElseIf SB = "Y" Then
+     ' strTemp is the 1st letter after the spacebar is pressed & set to uppercase
+     strTemp = UCase$(Right$(txt, 1))
+     ' txtField becomes strresult + the uppercase strTemp
+     txt = strResult & strTemp
+    ' Place the cursor at the end of the string
+    txt.SelStart = Len(strResult) + 1
+    ' Set SB to NULL
+    SB = ""
+End If
+strResult = txt
+
+If KeyAscii = 46 Then
+    PD = True
+ ElseIf KeyAscii = 33 Then
+    PD = True
+ ElseIf KeyAscii = 63 Then
+    PD = True
+ ElseIf KeyAscii = 32 And PD = True Then
+    ' If the spacebar is pressed then  KP is true
+    KP = True
+ ' Spacebar was pressed on previous key
+ ElseIf KP = True Then
+     ' Set SB to Yes identifying spacebar was pressed
+     SB = "Y"
+    ' Set KP to False until next time spacebar is pressed
+    PD = False
+    KP = False
+End If
+End Sub

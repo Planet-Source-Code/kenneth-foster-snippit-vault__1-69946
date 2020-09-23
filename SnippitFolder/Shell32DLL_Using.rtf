@@ -1,0 +1,103 @@
+'======================================
+'Using shell32.dll
+'======================================
+
+
+Dim SH As New Shell  'reference to shell32.dll class
+Dim ShBFF As Folder  'Shell Browse For Folder
+
+Private Sub Command1_Click() 'Show BFF Dialog
+On Error Resume Next
+'set object
+Set ShBFF = SH.BrowseForFolder(hWnd, "Hey this is a sample, " & _
+            "please choose a folder and click OK!", 1)
+With ShBFF.Items.Item
+   'get folder props
+   Text1 = .Path
+   Text2 = "Name: " & .Name & vbCrLf & _
+           "Type: " & .Type & vbCrLf & _
+           "Last Modified: " & .ModifyDate & vbCrLf & _
+           "Parent: " & .Parent & vbCrLf
+End With
+
+End Sub
+
+Private Sub Command10_Click() 'Show help
+  SH.Help
+End Sub
+
+Private Sub Command11_Click() 'Show compute find dialog
+  SH.FindComputer
+End Sub
+
+Private Sub Command12_Click() 'Show shut down dialog
+
+  If MsgBox("Are you sure you want to do this!?", _
+     vbQuestion + vbYesNo + vbDefaultButton2, _
+     "Confirm Action!") <> vbYes Then Exit Sub
+     
+    SH.ShutdownWindows
+
+End Sub
+
+Private Sub Command13_Click() 'Open path
+  SH.Open Text3.Text
+End Sub
+
+Private Sub Command14_Click() 'Explore path
+  SH.Explore Text3.Text
+End Sub
+
+Private Sub Command15_Click() 'Open URL
+  SH.Open "http://www.geocities.com/bs20014/"
+End Sub
+
+Private Sub Command16_Click() 'Show Taskbar & Start Menu Properties
+  SH.TrayProperties
+End Sub
+
+Private Sub Command17_Click() 'Show clock dialog
+  SH.SetTime
+End Sub
+
+Private Sub Command2_Click() 'Cascade windows
+  SH.CascadeWindows
+End Sub
+
+Private Sub Command3_Click() 'Minimize all windows
+  SH.MinimizeAll
+End Sub
+
+Private Sub Command4_Click() 'Tile windows horizentally
+  SH.TileHorizontally
+End Sub
+
+Private Sub Command5_Click() 'Tile windows vertically
+  SH.TileVertically
+End Sub
+
+Private Sub Command6_Click() 'Undo minimizing windows
+  SH.UndoMinimizeALL
+End Sub
+
+Private Sub Command7_Click() 'Load something in Control Panel
+  SH.ControlPanelItem "sysdm.cpl" 'System Properties
+  'This can be easily changed
+  'Search for *.cpl in your system directory
+  'inetcpl.cpl    ==> Internet Options
+  'appwiz.cpl     ==> Add/Remove Programs
+  'and many more...
+End Sub
+
+Private Sub Command8_Click() 'Find files dialog
+  SH.FindFiles
+End Sub
+
+Private Sub Command9_Click() 'Run dialog
+  SH.FileRun
+End Sub
+
+Private Sub Form_Load() 'Form Load
+ Text3 = App.Path
+End Sub
+

@@ -1,0 +1,324 @@
+'put on form
+'autoRedraw = true
+
+Option Explicit
+
+Private Fade As New ColorFade
+Private FadeDirection As ColorFadeGradientConstants
+Private FadeCycles As Long
+
+Private Sub Form_Load()
+
+   'gradient colors
+   Fade.FadeStartColor = RGB(0, 0, 0)
+   Fade.FadeEndColor = RGB(255, 0, 255)
+   
+   'fade directions
+   'FadeDirection = HorizontalGradient
+   'FadeDirection = VerticalGradient
+   FadeDirection = DiagUpperLeftGradient
+  ' FadeDirection = DiagUpperRightGradient
+  ' FadeDirection = DiagLowerLeftGradient
+  ' FadeDirection = DiagLowerRightGradient
+  
+   FadeCycles = 2    'CLng(spnCycles.Value)
+   
+   Fade.PaintObj Me, FadeDirection   'use for no cycles
+   'Fade.PaintObj2 Me, FadeDirection, FadeCycles  'use for multi-cycles
+   
+End Sub
+
+
+'put in a class call "ColorFade"
+
+Option Explicit
+
+Private mvarFadeStartColor As Long  'Start Color
+Private mvarFadeEndColor As Long    'End Color
+
+Private fcsr As Long    'Red Start
+Private fcsg As Long    'Green Start
+Private fcsb As Long    'Blue Start
+
+Private fcer As Long    'Red End
+Private fceg As Long    'Green End
+Private fceb As Long    'Blue End
+
+Enum ColorFadeGradientConstants
+    HorizontalGradient = 0
+    VerticalGradient = 1
+    DiagUpperLeftGradient = 2
+    DiagUpperRightGradient = 3
+    DiagLowerLeftGradient = 4
+    DiagLowerRightGradient = 5
+End Enum
+
+Public Function GetFadeColor(Optional fcFadePercent As Long = 50) As Long
+   GetFadeColor = DetermineFade(fcsr, fcsg, fcsb, fcer, fceg, fceb, fcFadePercent)
+End Function
+
+Public Function GetFadeColor2(Optional fcFadePercent As Long = 50, Optional fcSegments As Long = 2) As Long
+ 
+   Dim fcs As Long, fcp As Long, s As Single, p As Single
+   Dim np As Long
+   
+   fcs = fcSegments                'Maybe I should of ByVal'd, but who cares?
+   If fcs > 100 Then fcs = 100     'More than 12 segments looks like crap
+   If fcs < 1 Then fcs = 1         '0 segments makes no fade here
+   
+   fcp = fcFadePercent             'Another byval waiting to happen
+   If fcp > 100 Then fcp = 100     'More than 100% could cause an error
+   If fcp < 1 Then fcp = 1         'Same with less than 1% for the simple
+  
+   s = CSng(100 / fcs)             'Get a fraction for percentage perposes.
+   p = CSng(Int(fcp / s) + 1)      'Determine the segment based on the percent
+   
+   If p = 1 Then
+      np = fcp * fcs
+   Else
+      np = (fcp - ((p - 1) * s)) * fcs    'Don't Ask.
+   End If
+   
+   If (p / 2) = Int(p / 2) Then
+      ' Even Segment - End-Start
+      GetFadeColor2 = DetermineFade(fcer, fceg, fceb, fcsr, fcsg, fcsb, np)
+   Else
+      ' Odd Segment - Start-End
+      GetFadeColor2 = DetermineFade(fcsr, fcsg, fcsb, fcer, fceg, fceb, np)
+   End If
+   
+End Function
+
+Public Sub PaintObj(Obj As Object, Gradient As ColorFadeGradientConstants)
+ 
+   If (TypeOf Obj Is Form) Or (TypeOf Obj Is PictureBox) Then
+      ' We only support forms and picture boxes for now.
+      PaintObject Obj, Gradient
+   End If
+   
+End Sub
+
+Public Sub PaintObj2(Obj As Object, Gradient As ColorFadeGradientConstants, Optional CycleCount As Long = 1)
+  
+   If (TypeOf Obj Is Form) Or (TypeOf Obj Is PictureBox) Then
+      ' We only support forms and picture boxes for now.
+      PaintObject2 Obj, Gradient, CycleCount
+   End If
+   
+End Sub
+
+Private Sub PaintObject(frm As Object, Gradient As ColorFadeGradientConstants)
+   
+   Dim ScreenX As Long     'Screen dimension
+   Dim ScreenY As Long     'Screen dimension
+   Dim h As Long           'Object Height
+   Dim w As Long           'Object Width
+   Dim y As Long           'Current Y-Position
+   Dim x As Long           'Current X-Position
+   Dim a As Long           'Current Angle Offset Multiplier
+   Dim ax As Long          'Current Angle Offset
+   
+   Dim x1 As Long, x2 As Long  'Left and Right of the object
+   Dim y1 As Long, y2 As Long  'Top and Bottom of the object
+   
+   Dim i As Long   'Loop Counter
+   Dim j As Long   'Loop Counter
+   Dim c As Long   'Cycles or other value
+   
+   ScreenX = Screen.TwipsPerPixelX 'Determine the horizontal screen dimension
+   ScreenY = Screen.TwipsPerPixelY 'Determine the vertical screen dimension
+   
+   x1 = 0: x2 = (frm.Width / ScreenX)  'Get the pixel width of the object
+   y1 = 0: y2 = (frm.Height / ScreenY) 'Get the pixel height of the object
+   
+   ax = (y2 / 2)
+   
+   Select Case Gradient
+      Case HorizontalGradient
+         For i = y1 To y2
+            y = (i / y2) * 100
+            frm.Line (x1 * ScreenX, i * ScreenY)-(x2 * ScreenX, i * ScreenY), Me.GetFadeColor(y)
+         Next i
+         
+      Case VerticalGradient
+         For i = x1 To x2
+            x = (i / x2) * 100
+            frm.Line (i * ScreenX, y1 * ScreenY)-(i * ScreenX, y2 * ScreenY), Me.GetFadeColor(x)
+         Next i
+         
+      Case DiagLowerLeftGradient
+         For i = x1 - ax To x2 + ax
+            x = (i / x2) * 100
+            frm.Line ((i - ax) * ScreenX, y1 * ScreenY)-((i + ax) * ScreenX, y2 * ScreenY), Me.GetFadeColor(x)
+         Next i
+         
+      Case DiagUpperLeftGradient
+         For i = x2 + ax To x1 - ax Step -1
+            x = (i / x2) * 100
+            frm.Line ((i + ax) * ScreenX, y1 * ScreenY)-((i - ax) * ScreenX, y2 * ScreenY), Me.GetFadeColor(x)
+         Next i
+         
+      Case DiagUpperRightGradient
+         For i = x1 - ax To x2 + ax
+            x = 100 - ((i / x2) * 100)
+            frm.Line ((i - ax) * ScreenX, y1 * ScreenY)-((i + ax) * ScreenX, y2 * ScreenY), Me.GetFadeColor(x)
+         Next i
+         
+      Case DiagLowerRightGradient
+         For i = x2 + ax To x1 - ax Step -1
+            x = 100 - ((i / x2) * 100)
+            frm.Line ((i + ax) * ScreenX, y1 * ScreenY)-((i - ax) * ScreenX, y2 * ScreenY), Me.GetFadeColor(x)
+         Next i
+         
+      Case Else
+      
+   End Select
+   
+End Sub
+
+Private Sub PaintObject2(frm As Object, Gradient As ColorFadeGradientConstants, Optional CycleCount As Long = 1)
+   
+   Dim ScreenX As Long     'Screen dimension
+   Dim ScreenY As Long     'Screen dimension
+   Dim h As Long           'Object Height
+   Dim w As Long           'Object Width
+   Dim y As Long           'Current Y-Position
+   Dim x As Long           'Current X-Position
+   Dim a As Long           'Current Angle Offset Multiplier
+   Dim ax As Long          'Current Angle Offset
+   
+   Dim x1 As Long, x2 As Long  'Left and Right of the object
+   Dim y1 As Long, y2 As Long  'Top and Bottom of the object
+   
+   Dim i As Long   'Loop Counter
+   Dim j As Long   'Loop Counter
+   Dim c As Long   'Cycles or other value
+   
+   ScreenX = Screen.TwipsPerPixelX 'Determine the horizontal screen dimension
+   ScreenY = Screen.TwipsPerPixelY 'Determine the vertical screen dimension
+   
+   x1 = 0: x2 = (frm.Width / ScreenX)  'Get the pixel width of the object
+   y1 = 0: y2 = (frm.Height / ScreenY) 'Get the pixel height of the object
+   
+   c = CycleCount
+   If c < 1 Then c = 1     'We are capping the cycle count for the sake
+   If c > 12 Then c = 12   'of a slower computers resources.
+   c = c * 2               'Double it for the rounded effect.
+   
+   Select Case Gradient
+      Case HorizontalGradient
+         x1 = 0: x2 = frm.Width
+         y1 = 1: y2 = Int(frm.Height / (ScreenY * 100)) + 1
+         
+         For j = y1 To y2
+            For i = 1 To 100
+               frm.Line (x1, y)-(x2, y), Me.GetFadeColor2(i, c)
+               y = (((ScreenY * 100) * (j - 1)) + (i * ScreenY))
+            Next i
+         Next j
+         
+      Case VerticalGradient
+         x1 = 1: x2 = Int(frm.Width / (ScreenX * 100)) + 1
+         y1 = 0: y2 = frm.Height
+         
+         For j = x1 To x2
+            For i = 1 To 100
+               frm.Line (x, y1)-(x, y2), Me.GetFadeColor2(i, c)
+               x = (((ScreenX * 100) * (j - 1)) + (i * ScreenX))
+            Next i
+         Next j
+         
+      Case DiagUpperRightGradient, DiagLowerLeftGradient
+         x1 = 1: x2 = Int(frm.Width / (ScreenX * 100)) + 1
+         y1 = 0: y2 = frm.Height
+         
+         ax = Int(((y2 / (ScreenY * 100)) + 1) / 2) + 1
+         a = (y2 / 2)
+         
+         For j = x1 - ax To x2 + ax
+            For i = 1 To 100
+               frm.Line (x - a, y1)-(x + a, y2), Me.GetFadeColor2(i, c)
+               x = (((ScreenX * 100) * (j - 1)) + (i * ScreenX))
+            Next i
+         Next j
+         
+      Case DiagUpperLeftGradient, DiagLowerRightGradient
+         x1 = 1: x2 = Int(frm.Width / (ScreenX * 100)) + 1
+         y1 = 0: y2 = frm.Height
+         
+         ax = Int(((y2 / (ScreenY * 100)) + 1) / 2) + 1
+         a = (y2 / 2)
+         
+         For j = x1 - ax To x2 + ax
+            For i = 1 To 100
+               frm.Line (x + a, y1)-(x - a, y2), Me.GetFadeColor2(i, c)
+               x = (((ScreenX * 100) * (j - 1)) + (i * ScreenX))
+            Next i
+         Next j
+   End Select
+   
+End Sub
+
+Public Property Let FadeEndColor(ByVal vData As Long)
+mvarFadeEndColor = vData
+Call DetermineRGB(vData, fcer, fceg, fceb)
+End Property
+
+Public Property Get FadeEndColor() As Long
+   FadeEndColor = mvarFadeEndColor
+End Property
+
+Public Property Let FadeStartColor(ByVal vData As Long)
+mvarFadeStartColor = vData
+Call DetermineRGB(vData, fcsr, fcsg, fcsb)
+End Property
+
+Public Property Get FadeStartColor() As Long
+   FadeStartColor = mvarFadeStartColor
+End Property
+
+Private Sub DetermineRGB(varRGB As Long, varRed As Long, varGreen As Long, varBlue As Long)
+   
+   Dim rs$ 'String to hold the hex of the color
+   rs$ = Hex(varRGB)
+   
+   While Len(rs$) < 6
+      rs$ = "0" & rs$
+      Wend
+      
+      varRed = Val("&H" & Mid(rs$, 5, 2))     'Duh
+      varGreen = Val("&H" & Mid(rs$, 3, 2))   'Duh again
+      varBlue = Val("&H" & Mid(rs$, 1, 2))    'Duh one more time.
+      
+   End Sub
+
+Private Function DetermineFade(R1 As Long, G1 As Long, B1 As Long, R2 As Long, G2 As Long, B2 As Long, Percent As Long) As Long
+   
+   Dim fcr As Long     'Red
+   Dim fcg As Long     'Green
+   Dim fcb As Long     'Blue
+   
+   Dim fcp As Long     'Percentage
+   
+   fcp = Percent       ' I know, I know.  ByVal it...
+   If fcp > 100 Then fcp = 100
+   If fcp < 0 Then fcp = 0
+   
+   fcr = MidPoint(R1, R2, fcp)     'Interpolate
+   fcg = MidPoint(G1, G2, fcp)     'Interpolate
+   fcb = MidPoint(B1, B2, fcp)     'Interpolate
+   
+   DetermineFade = RGB(fcr, fcg, fcb)  'Return a long number.
+   
+End Function
+
+Private Function MidPoint(x1 As Long, x2 As Long, p As Long) As Long
+  
+   If x1 > x2 Then
+      MidPoint = x1 - ((x1 - x2) * (p / 100))
+   Else
+      MidPoint = ((x2 - x1) * (p / 100)) + x1
+   End If
+   
+End Function
+

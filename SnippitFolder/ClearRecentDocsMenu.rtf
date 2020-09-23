@@ -1,0 +1,5 @@
+Private Declare Sub SHAddToRecentDocs Lib "shell32.dll" (ByVal uFlags As Long, ByVal pv As Any)
+
+Private Sub Command1_Click()
+   SHAddToRecentDocs 0, CLng(0)
+End Sub

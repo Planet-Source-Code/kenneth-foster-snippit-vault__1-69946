@@ -1,0 +1,38 @@
+Option Explicit
+
+Private Sub Command1_Click()
+MsSpellCheck (Text1.Text)
+
+End Sub
+
+Function MsSpellCheck(strText As String) As String
+    Dim oWord As Object
+    Dim strSelection As String
+    Set oWord = CreateObject("Word.Basic")
+    oWord.AppMinimize
+    MsSpellCheck = strText
+    oWord.FileNewDefault
+    oWord.EditSelectAll
+    oWord.EditCut
+    oWord.Insert strText
+    oWord.StartOfDocument
+    On Error Resume Next
+    oWord.ToolsSpelling
+    On Error GoTo 0
+    oWord.EditSelectAll
+    strSelection = oWord.Selection$
+
+
+    If Mid(strSelection, Len(strSelection), 1) = Chr(13) Then
+        strSelection = Mid(strSelection, 1, Len(strSelection) - 1)
+    End If
+
+
+    If Len(strSelection) > 1 Then
+        MsSpellCheck = strSelection
+        Text1.Text = strSelection
+    End If
+    oWord.FileCloseAll 2
+    oWord.AppClose
+    Set oWord = Nothing
+End Function

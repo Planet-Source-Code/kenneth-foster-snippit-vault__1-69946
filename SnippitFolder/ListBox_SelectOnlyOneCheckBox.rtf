@@ -1,0 +1,32 @@
+
+
+Dim x As Integer
+
+Private Sub Command1_Click()
+    MsgBox "You selected :" & List1
+End Sub
+
+Private Sub Form_Load()
+    'clear the list
+    List1.Clear
+    For x = 1 To 12
+        'add item to list
+        List1.AddItem MonthName(x)
+    Next x
+End Sub
+
+Private Sub List1_Click()
+    Dim bSelected As Integer
+    'get the index value of clicked list into bSelected variable
+    bSelected = List1.ListIndex
+    'loop to the list items
+    For x = 0 To List1.ListCount - 1
+        'check if x is equal to checked item
+        If x = bSelected Then
+            List1.Selected(x) = True
+        Else
+            'remove checked item
+            List1.Selected(x) = False
+        End If
+    Next x
+End Sub

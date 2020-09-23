@@ -1,0 +1,41 @@
+Public Sub ReadList(List As ListBox, Filename As String, Optional ClearList As Boolean)
+    On Error Goto Err
+    Open Filename For Input As #1
+    If ClearList = True Then List.Clear
+
+
+    Do While Not EOF(1)
+        Input #1, lstinput
+        List.AddItem lstinput
+    Loop
+    Close #1
+    Exit Sub
+    Err:
+    MsgBox "Error In ReadList" & Chr(13) & Chr(13) & Err.Number _
+    & " - " & Err.Description, vbCritical, "Error"
+    Exit Sub
+End Sub
+
+
+Public Sub WriteList(List As ListBox, Filename As String)
+
+
+    If List.ListCount <= 0 Then
+        MsgBox "Listbox is empty - cannot Write To file!", vbCritical, "Error"
+        End
+    End If
+    On Error Goto Err
+    Open Filename For Output As #1
+
+
+    For i = 0 To List.ListCount - 1
+        Print #1, List.List(i)
+    Next
+    Close #1
+    Exit Sub
+    Err:
+    MsgBox "Error In WriteList" & Chr(13) & Chr(13) & Err.Number _
+    & " - " & Err.Description, vbCritical, "Error"
+    Exit Sub
+End Sub
+

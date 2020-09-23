@@ -1,0 +1,12 @@
+Private Sub Command1_Click()
+Text1.Text = RoundPennies(Text1.Text)
+End Sub
+
+Function RoundPennies(piNum)
+    Dim newNum
+    newNum = CDbl(Round(piNum, 2))
+    If (CDbl(newNum) < CDbl(piNum) And CDbl(piNum - newNum) >= CDbl(0.005)) Then
+        newNum = newNum + CDbl(0.01)
+    End If
+    RoundPennies = newNum
+End Function
